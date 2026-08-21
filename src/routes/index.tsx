@@ -36,7 +36,7 @@ function Index() {
         <Link to="/" className="transition-opacity hover:opacity-60">
           <img src={logo.url} alt="Your Message Here" className="h-9 w-auto md:h-12" />
         </Link>
-        <div className="flex items-baseline gap-8 text-sm text-muted-foreground">
+        <div className="flex items-center gap-8 text-sm text-muted-foreground">
           <span>
             Current bid{" "}
             <span className="font-medium text-foreground tabular-nums">
@@ -44,6 +44,12 @@ function Index() {
             </span>
           </span>
           <Countdown target={endsAt} />
+          <Link
+            to="/buy"
+            className="bg-foreground px-5 py-2 text-sm font-medium tracking-tight text-background transition-opacity hover:opacity-80"
+          >
+            Buy
+          </Link>
         </div>
       </header>
 
