@@ -6,7 +6,7 @@ import { Countdown } from "@/components/Countdown";
 import { useAuction } from "@/hooks/useAuction";
 import { formatUsd, placeBid } from "@/lib/ymh";
 import { isSupabaseConfigured } from "@/lib/supabase";
-import logo from "@/assets/logo.png.asset.json";
+import { SiteFooter, SiteLinks, SiteNav } from "@/components/SiteNav";
 
 export const Route = createFileRoute("/buy")({
   head: () => ({
