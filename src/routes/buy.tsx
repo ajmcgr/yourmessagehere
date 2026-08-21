@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Billboard } from "@/components/Billboard";
 import { Countdown } from "@/components/Countdown";
 import { useAuction } from "@/hooks/useAuction";
 import { useSiteDescriptions } from "@/hooks/useSiteDescriptions";
-import { formatUsd, placeBid, weekEndingLabel } from "@/lib/ymh";
+import { formatUsd, placeBid, recordPageView, weekEndingLabel } from "@/lib/ymh";
+
 import { isSupabaseConfigured } from "@/lib/supabase";
 import { SiteFooter, SiteLinks, SiteNav } from "@/components/SiteNav";
 
