@@ -89,9 +89,12 @@ function Buy() {
                 Current bid
               </dt>
               <dd className="text-4xl font-medium tracking-tight tabular-nums md:text-6xl">
-                {currentBidCents === null ? "No bids yet" : formatUsd(currentBidCents)}
+                <span className="marker-highlight">
+                  {currentBidCents === null ? "No bids yet" : formatUsd(currentBidCents)}
+                </span>
               </dd>
             </div>
+
             <div>
               <dt className="text-xs uppercase tracking-widest text-muted-foreground">
                 Auction ends in
@@ -111,20 +114,21 @@ function Buy() {
 
         {bids.length > 0 && (
           <section className="mt-16">
-            <h2 className="text-sm uppercase tracking-widest text-muted-foreground">
+            <h2 className="text-sm font-bold tracking-normal text-foreground">
               Bidders ({bids.length})
             </h2>
             <div className="mt-4 max-h-[28rem] overflow-y-auto border-t border-foreground/10">
               <table className="w-full text-sm">
                 <thead className="sticky top-0 bg-background">
-                  <tr className="text-left text-xs uppercase tracking-widest text-muted-foreground">
-                    <th className="w-8 py-3 font-normal">#</th>
-                    <th className="py-3 font-normal">Advertiser</th>
-                    <th className="hidden py-3 font-normal sm:table-cell">Bidder</th>
-                    <th className="hidden py-3 font-normal md:table-cell whitespace-nowrap">Date &amp; time</th>
-                    <th className="py-3 text-right font-normal">Bid</th>
+                  <tr className="text-left text-xs font-bold tracking-normal text-foreground">
+                    <th className="w-8 py-3 font-bold">#</th>
+                    <th className="py-3 font-bold">Advertiser</th>
+                    <th className="hidden py-3 font-bold sm:table-cell">Bidder</th>
+                    <th className="hidden py-3 font-bold md:table-cell whitespace-nowrap">Date &amp; time</th>
+                    <th className="py-3 text-right font-bold">Bid</th>
                   </tr>
                 </thead>
+
                 <tbody>
                   {bids.map((b, i) => {
                     const host = b.website
