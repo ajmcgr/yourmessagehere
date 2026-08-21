@@ -71,6 +71,11 @@ const sections: { title: string; items: QA[] }[] = [
         a: "Yes — bid as many times as you like, as long as each new bid beats the current high bid.",
       },
       {
+        q: "Do older bids disappear once they are beaten?",
+        a: "No. Every bid stays in the bidders table for the whole auction, including your previous bids and everyone else's. Nothing is removed when it is outbid — the full bidding history stays visible, and it is archived with the week once the auction closes.",
+      },
+
+      {
         q: "What happens if I get outbid?",
         a: "We email you immediately so you can bid again before the deadline.",
       },
