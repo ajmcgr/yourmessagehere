@@ -196,7 +196,7 @@ function Buy() {
             <div className="mt-4 border-t border-foreground/10">
               {Array.from({ length: 4 }).map((_, i) => (
                 <div key={i} className="flex items-center gap-4 border-b border-foreground/10 py-5">
-                  <Skeleton className="size-10 shrink-0 rounded" />
+                  <Skeleton className="size-8 shrink-0 rounded sm:size-10" />
                   <div className="min-w-0 flex-1 space-y-2">
                     <Skeleton className="h-4 w-40" />
                     <Skeleton className="h-3 w-64 max-w-full" />
@@ -215,13 +215,13 @@ function Buy() {
               Bids ({bids.length})
             </h2>
             <div className="mt-4 max-h-[28rem] overflow-y-auto border-t border-foreground/10">
-              <table className="w-full text-base">
+              <table className="w-full table-fixed text-base">
                 <thead className="sticky top-0 bg-background">
                   <tr className="text-left text-xs font-bold tracking-normal text-foreground">
-                    <th className="w-8 py-4 pl-4 font-bold sm:pl-6">#</th>
-                    <th className="px-4 py-4 font-bold">Brand</th>
+                    <th className="w-7 py-4 pl-3 font-bold sm:w-8 sm:pl-6">#</th>
+                    <th className="px-2 py-4 font-bold sm:px-4">Brand</th>
                     <th className="hidden px-4 py-4 font-bold md:table-cell whitespace-nowrap">Placed</th>
-                    <th className="py-4 pr-4 text-right font-bold sm:pr-6">Bid</th>
+                    <th className="w-24 py-4 pr-3 text-right font-bold whitespace-nowrap sm:pr-6">Bid</th>
                   </tr>
                 </thead>
 
@@ -247,20 +247,20 @@ function Buy() {
                           b.website ? "cursor-pointer transition-colors hover:bg-foreground/5" : ""
                         }`}
                       >
-                        <td className="py-5 pl-4 text-sm tabular-nums text-muted-foreground sm:pl-6">{i + 1}</td>
-                        <td className="px-4 py-5">
-                          <div className="flex items-center gap-4">
+                        <td className="py-5 pl-3 text-sm tabular-nums text-muted-foreground sm:pl-6">{i + 1}</td>
+                        <td className="px-2 py-5 sm:px-4">
+                          <div className="flex min-w-0 items-center gap-3 sm:gap-4">
                             {host ? (
                               <img
                                 src={`https://www.google.com/s2/favicons?sz=128&domain=${host}`}
                                 alt=""
                                 loading="lazy"
-                                className="size-10 shrink-0 rounded"
+                                className="size-8 shrink-0 rounded sm:size-10"
                               />
                             ) : (
-                              <span className="size-10 shrink-0 rounded bg-foreground/10" />
+                              <span className="size-8 shrink-0 rounded bg-foreground/10 sm:size-10" />
                             )}
-                            <span className="min-w-0">
+                            <span className="min-w-0 flex-1">
                               {b.website ? (
                                 <a
                                   href={b.website}
@@ -285,7 +285,7 @@ function Buy() {
                         <td className="hidden whitespace-nowrap px-4 py-5 text-sm text-muted-foreground md:table-cell">
                           {timeAgo(b.created_at)}
                         </td>
-                        <td className="py-5 pr-4 text-right font-bold tabular-nums text-money sm:pr-6">
+                        <td className="py-5 pr-3 text-right font-bold tabular-nums whitespace-nowrap text-money sm:pr-6">
                           {formatUsd(b.amount_cents)}
                         </td>
                       </tr>
