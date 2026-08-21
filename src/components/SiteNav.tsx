@@ -3,7 +3,7 @@ import logo from "@/assets/logo.png.asset.json";
 
 export function SiteNav() {
   return (
-    <header className="flex w-full flex-wrap items-center justify-between gap-4 px-6 py-8 md:px-10">
+    <header className="flex w-full flex-wrap items-center justify-between gap-4 px-6 pt-3 pb-6 md:px-10">
       <Link to="/" className="transition-opacity hover:opacity-60">
         <img src={logo.url} alt="Your Message Here" className="h-12 w-auto md:h-16" />
       </Link>
