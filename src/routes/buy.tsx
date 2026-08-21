@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Elements, PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { Billboard } from "@/components/Billboard";
 import { Countdown } from "@/components/Countdown";
 import { useAuction } from "@/hooks/useAuction";
@@ -12,116 +11,13 @@ import {
   recordPageView,
   startBid,
   weekEndingLabel,
-  type StartBidResult,
 } from "@/lib/ymh";
-import { getStripe, isStripeConfigured } from "@/lib/stripe";
 
 import { isSupabaseConfigured } from "@/lib/supabase";
 import { SiteFooter, SiteLinks, SiteNav } from "@/components/SiteNav";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const PAGE_SIZE = 50;
-
-/**
- * Stripe SetupIntent step. The card is verified and saved, never charged here.
- * The bid only becomes public after the server confirms the SetupIntent.
- */
-function VerifyStep({
-  pending,
-  onVerified,
-  onCancel,
-  onStale,
-}: {
-  pending: StartBidResult;
-  onVerified: () => Promise<void> | void;
-  onCancel: () => void;
-  onStale: (message: string) => Promise<void> | void;
-}) {
-  return (
-    <Elements
-      stripe={getStripe()}
-      options={{
-        clientSecret: pending.client_secret,
-        appearance: { variables: { colorPrimary: "#111111", borderRadius: "8px" } },
-      }}
-    >
-      <VerifyForm
-        pending={pending}
-        onVerified={onVerified}
-        onCancel={onCancel}
-        onStale={onStale}
-      />
-    </Elements>
-  );
-}
-
-function VerifyForm({
-  pending,
-  onVerified,
-  onCancel,
-  onStale,
-}: {
-  pending: StartBidResult;
-  onVerified: () => Promise<void> | void;
-  onCancel: () => void;
-  onStale: (message: string) => Promise<void> | void;
-}) {
-  const stripe = useStripe();
-  const elements = useElements();
-  const [busy, setBusy] = useState(false);
-
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!stripe || !elements) return;
-    setBusy(true);
-    try {
-      const { error, setupIntent } = await stripe.confirmSetup({
-        elements,
-        redirect: "if_required",
-      });
-      if (error || setupIntent?.status !== "succeeded") {
-        toast.error(
-          error?.message ??
-            "Your payment method could not be verified. You have not been charged — please try again.",
-        );
-        return;
-      }
-      await confirmBid(pending.bid_id, pending.setup_intent_id);
-      await onVerified();
-    } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Your bid could not be verified. Please try again.";
-      if (/current bid changed|auction closed/i.test(message)) {
-        await onStale(message);
-        return;
-      }
-      toast.error(message);
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  return (
-    <form onSubmit={submit} className="mt-8 space-y-6">
-      <p className="text-sm leading-relaxed text-muted-foreground">
-        Verifying your bid of{" "}
-        <span className="font-bold text-foreground">{formatUsd(pending.amount_cents)}</span>. You
-        won't be charged now.
-      </p>
-      <PaymentElement />
-      <button type="submit" disabled={busy || !stripe} className="btn-cta w-full">
-        {busy ? "Verifying…" : "Verify payment method"} <span className="btn-arrow">→</span>
-      </button>
-      <button
-        type="button"
-        onClick={onCancel}
-        className="w-full text-sm text-muted-foreground underline-offset-4 hover:underline"
-      >
-        Cancel
-      </button>
-    </form>
-  );
-}
 
 
 
@@ -183,10 +79,41 @@ function Buy() {
     amount: "",
   });
   const [terms, setTerms] = useState(false);
-  const [pending, setPending] = useState<StartBidResult | null>(null);
+  const [verifying, setVerifying] = useState(false);
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
+
+  // Coming back from hosted Stripe Checkout: activate the bid server-side.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const bidId = params.get("ymh_bid");
+    const sessionId = params.get("ymh_session");
+    const cancelled = params.get("ymh_cancelled");
+    if (!bidId && !sessionId && !cancelled) return;
+    window.history.replaceState({}, "", "/buy");
+
+    if (cancelled) {
+      toast.error("Verification cancelled. Your card was not charged and no bid was placed.");
+      return;
+    }
+    if (!bidId || !sessionId) return;
+
+    setVerifying(true);
+    void confirmBid(bidId, sessionId)
+      .then(async () => {
+        toast.success("Bid verified. You're the highest bidder.");
+        await reload();
+      })
+      .catch((err) => {
+        toast.error(
+          err instanceof Error ? err.message : "Your bid could not be verified. Please try again.",
+        );
+        void reload();
+      })
+      .finally(() => setVerifying(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -211,10 +138,10 @@ function Buy() {
         terms_accepted: true,
         ...(website ? { website } : {}),
       });
-      setPending(started);
+      // Off to stripe.com to verify the card. No charge happens there.
+      window.location.href = started.checkout_url;
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Your bid could not be started.");
-    } finally {
       setSubmitting(false);
     }
   };
@@ -442,8 +369,9 @@ function Buy() {
         <section id="place-bid" className="mt-16 scroll-mt-24">
           <h1 className="text-2xl font-medium tracking-tight">Place a bid</h1>
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
-            No account. You won't be charged now — Stripe verifies your payment method so your bid
-            counts. Minimum bid {formatUsd(minBidCents)} (increments of {formatUsd(incrementCents)}).
+            No account. You won't be charged now — you'll verify a card on Stripe's secure checkout
+            page so your bid counts. Minimum bid {formatUsd(minBidCents)} (increments of{" "}
+            {formatUsd(incrementCents)}).
           </p>
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
             Creative spec: <span className="text-foreground">1600 × 900 px</span> (16:9), JPG or
@@ -456,29 +384,11 @@ function Buy() {
               Bidding is offline until VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY are set.
             </p>
           )}
-          {isSupabaseConfigured && !isStripeConfigured && (
-            <p className="mt-6 border border-foreground/20 p-4 text-sm text-muted-foreground">
-              Bidding is offline until VITE_STRIPE_PUBLISHABLE_KEY is set.
-            </p>
-          )}
 
-          {pending ? (
-            <VerifyStep
-              pending={pending}
-              onCancel={() => setPending(null)}
-              onVerified={async () => {
-                setPending(null);
-                setForm((f) => ({ ...f, amount: "" }));
-                setTerms(false);
-                toast.success("Bid verified. You're the highest bidder.");
-                await reload();
-              }}
-              onStale={async (message) => {
-                setPending(null);
-                toast.error(message);
-                await reload();
-              }}
-            />
+          {verifying ? (
+            <p className="mt-8 border border-foreground/20 p-4 text-sm text-muted-foreground">
+              Verifying your payment method with Stripe…
+            </p>
           ) : (
             <form onSubmit={onSubmit} className="mt-8 space-y-6">
               <input required placeholder="Name" className={field} value={form.name} onChange={set("name")} />
@@ -542,10 +452,10 @@ function Buy() {
 
               <button
                 type="submit"
-                disabled={submitting || !isSupabaseConfigured || !isStripeConfigured}
+                disabled={submitting || !isSupabaseConfigured}
                 className="btn-cta w-full"
               >
-                {submitting ? "Starting…" : "Continue & verify bid"}{" "}
+                {submitting ? "Redirecting to Stripe…" : "Continue to secure checkout"}{" "}
                 <span className="btn-arrow">→</span>
               </button>
             </form>

@@ -3,8 +3,8 @@
 // Secrets: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, STRIPE_SECRET_KEY,
 //          RESEND_API_KEY, BEEHIIV_API_KEY
 //
-// Step 2 of bidding: Stripe has verified the payment method client-side. We
-// re-check the SetupIntent server-side, re-check the auction and the minimum
+// Step 2 of bidding: the bidder returned from hosted Stripe Checkout. We
+// re-check the Checkout session and its SetupIntent server-side, re-check the auction and the minimum
 // bid, then activate the bid transactionally. Only now does it become public.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import Stripe from "https://esm.sh/stripe@17.0.0?target=deno";
@@ -131,22 +131,34 @@ Deno.serve(async (req) => {
   try {
     const body = await req.json();
     const bidId = String(body.bid_id ?? "");
-    const setupIntentId = String(body.setup_intent_id ?? "");
-    if (!bidId || !setupIntentId) return json({ error: "Missing bid reference." }, 400);
+    const sessionId = String(body.checkout_session_id ?? "");
+    if (!bidId || !sessionId) return json({ error: "Missing bid reference." }, 400);
 
     const { data: bid } = await admin
       .from("ymh_bids")
-      .select("id, auction_id, bidder_name, bidder_email, amount_cents, status, stripe_setup_intent_id")
+      .select("id, auction_id, bidder_name, bidder_email, amount_cents, status")
       .eq("id", bidId)
       .maybeSingle();
     if (!bid) return json({ error: "Bid not found." }, 404);
-    if (bid.stripe_setup_intent_id !== setupIntentId) {
-      return json({ error: "Payment verification did not match this bid." }, 403);
+    if (bid.status === "active") {
+      return json({ ok: true, amount_cents: bid.amount_cents, already: true });
     }
 
     // Authoritative check: never trust the client's word that Stripe succeeded.
-    const intent = await stripe.setupIntents.retrieve(setupIntentId);
-    if (intent.status !== "succeeded" || !intent.payment_method) {
+    // The hosted Checkout session is the source of truth, and its metadata must
+    // point back at this exact bid.
+    const session = await stripe.checkout.sessions.retrieve(sessionId, {
+      expand: ["setup_intent"],
+    });
+    if (session.metadata?.ymh_bid_id !== bidId) {
+      return json({ error: "Payment verification did not match this bid." }, 403);
+    }
+    const intent =
+      typeof session.setup_intent === "string"
+        ? await stripe.setupIntents.retrieve(session.setup_intent)
+        : session.setup_intent;
+    const setupIntentId = intent?.id ?? "";
+    if (!intent || intent.status !== "succeeded" || !intent.payment_method) {
       return json(
         {
           error:
