@@ -97,7 +97,7 @@ function Index() {
         </section>
 
 
-        <SiteLinks />
+        <SiteLinks className="mt-16 md:mt-[70vh]" />
       </main>
 
       <SiteFooter />

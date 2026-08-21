@@ -20,9 +20,11 @@ export function SiteNav() {
   );
 }
 
-export function SiteLinks() {
+export function SiteLinks({ className = "mt-8" }: { className?: string }) {
   return (
-    <nav className="mt-8 flex flex-wrap items-center justify-center gap-8 text-sm text-muted-foreground">
+    <nav
+      className={`${className} flex flex-wrap items-center justify-center gap-8 text-sm text-muted-foreground`}
+    >
       <Link to="/archive" className="transition-colors hover:text-foreground">
         Archive
       </Link>
