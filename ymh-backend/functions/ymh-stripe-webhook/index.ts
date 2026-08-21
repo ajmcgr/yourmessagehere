@@ -62,8 +62,16 @@ Deno.serve(async (req) => {
         await sendEmail(
           bid.bidder_email,
           "Payment received — upload your creative",
-          `<p>The billboard is yours for the week.</p><p><a href="https://yourmessagehere.co/upload?token=${bid.payment_token}">Upload your creative</a> (1600×900, JPG or PNG).</p>`,
+          emailLayout({
+            heading: "The billboard is yours 🎉",
+            body: `<p style="margin:0 0 16px 0;">Payment received. You own the one billboard on the internet for the week.</p><p style="margin:0;">Upload your creative — 1600×900, JPG or PNG.</p>`,
+            cta: {
+              label: "Upload your creative",
+              url: `https://yourmessagehere.co/upload?token=${bid.payment_token}`,
+            },
+          }),
         );
+
         await admin.from("ymh_email_events").insert({
           auction_id: auctionId,
           bid_id: bidId,
