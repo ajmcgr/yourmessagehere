@@ -132,6 +132,11 @@ function Buy() {
             creative. Minimum bid {formatUsd(minBidCents)} (increments of{" "}
             {formatUsd(incrementCents)}).
           </p>
+          <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground">
+            Creative spec: <span className="text-foreground">1600 × 900 px</span> (16:9), JPG or
+            PNG, under 2 MB. 2× retina file: 3200 × 1800 px.
+          </p>
+
 
           {!isSupabaseConfigured && (
             <p className="mt-6 border border-foreground/20 p-4 text-sm text-muted-foreground">
@@ -163,16 +168,21 @@ function Buy() {
               value={form.website}
               onChange={set("website")}
             />
-            <input
-              required
-              type="number"
-              min={minBidCents / 100}
-              step={incrementCents / 100}
-              placeholder={`Bid amount (min ${minBidCents / 100})`}
-              className={field}
-              value={form.amount}
-              onChange={set("amount")}
-            />
+            <div className="flex items-baseline gap-2 border-b border-foreground/20 focus-within:border-foreground">
+              <span className="text-base text-muted-foreground">$</span>
+              <input
+                required
+                type="number"
+                min={minBidCents / 100}
+                step={incrementCents / 100}
+                placeholder={`Bid amount in USD (min ${minBidCents / 100})`}
+                className="w-full border-0 bg-transparent py-3 text-base tabular-nums outline-none placeholder:text-muted-foreground"
+                value={form.amount}
+                onChange={set("amount")}
+              />
+              <span className="text-xs uppercase tracking-widest text-muted-foreground">USD</span>
+            </div>
+
             <button
               type="submit"
               disabled={submitting || !isSupabaseConfigured}
