@@ -124,7 +124,7 @@ function Index() {
 
         <section className="mt-6 text-center md:mt-7">
           <p className="mx-auto max-w-md text-sm leading-relaxed text-muted-foreground">
-            The internet's billboard. One message for one week. Highest bid wins the next one.
+            The internet's billboard. One brand owns it for a week. Highest bid wins the next one.
           </p>
         </section>
 
