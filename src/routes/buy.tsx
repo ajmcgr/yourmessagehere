@@ -324,9 +324,8 @@ function Buy() {
         <section id="place-bid" className="mt-16 scroll-mt-24">
           <h1 className="text-2xl font-medium tracking-tight">Place a bid</h1>
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
-            No account. No payment now. If you win, we email you a Stripe link and you upload your
-            creative. Minimum bid {formatUsd(minBidCents)} (increments of{" "}
-            {formatUsd(incrementCents)}).
+            No account. You won't be charged now — Stripe verifies your payment method so your bid
+            counts. Minimum bid {formatUsd(minBidCents)} (increments of {formatUsd(incrementCents)}).
           </p>
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
             Creative spec: <span className="text-foreground">1600 × 900 px</span> (16:9), JPG or
@@ -339,56 +338,102 @@ function Buy() {
               Bidding is offline until VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY are set.
             </p>
           )}
+          {isSupabaseConfigured && !isStripeConfigured && (
+            <p className="mt-6 border border-foreground/20 p-4 text-sm text-muted-foreground">
+              Bidding is offline until VITE_STRIPE_PUBLISHABLE_KEY is set.
+            </p>
+          )}
 
-          <form onSubmit={onSubmit} className="mt-8 space-y-6">
-            <input required placeholder="Name" className={field} value={form.name} onChange={set("name")} />
-            <input
-              required
-              type="email"
-              placeholder="Email"
-              className={field}
-              value={form.email}
-              onChange={set("email")}
+          {pending ? (
+            <VerifyStep
+              pending={pending}
+              onCancel={() => setPending(null)}
+              onVerified={async () => {
+                setPending(null);
+                setForm((f) => ({ ...f, amount: "" }));
+                setTerms(false);
+                toast.success("Bid verified. You're the highest bidder.");
+                await reload();
+              }}
+              onStale={async (message) => {
+                setPending(null);
+                toast.error(message);
+                await reload();
+              }}
             />
-            <input
-              required
-              placeholder="Advertiser / company"
-              className={field}
-              value={form.advertiser}
-              onChange={set("advertiser")}
-            />
-            <input
-              type="text"
-              inputMode="url"
-              placeholder="Website (optional)"
-              className={field}
-              value={form.website}
-              onChange={set("website")}
-            />
-            <div className="flex items-baseline gap-2 border-b border-foreground/20 focus-within:border-foreground">
-              <span className="text-base text-muted-foreground">$</span>
+          ) : (
+            <form onSubmit={onSubmit} className="mt-8 space-y-6">
+              <input required placeholder="Name" className={field} value={form.name} onChange={set("name")} />
               <input
                 required
-                type="number"
-                min={minBidCents / 100}
-                step={incrementCents / 100}
-                placeholder={`Bid amount in USD (min ${minBidCents / 100})`}
-                className="w-full border-0 bg-transparent py-3 text-base tabular-nums outline-none placeholder:text-muted-foreground"
-                value={form.amount}
-                onChange={set("amount")}
+                type="email"
+                placeholder="Email"
+                className={field}
+                value={form.email}
+                onChange={set("email")}
               />
-              <span className="text-xs uppercase tracking-widest text-muted-foreground">USD</span>
-            </div>
+              <input
+                required
+                placeholder="Advertiser / company"
+                className={field}
+                value={form.advertiser}
+                onChange={set("advertiser")}
+              />
+              <input
+                type="text"
+                inputMode="url"
+                placeholder="Website (optional)"
+                className={field}
+                value={form.website}
+                onChange={set("website")}
+              />
+              <div className="flex items-baseline gap-2 border-b border-foreground/20 focus-within:border-foreground">
+                <span className="text-base text-muted-foreground">$</span>
+                <input
+                  required
+                  type="number"
+                  min={minBidCents / 100}
+                  step={incrementCents / 100}
+                  placeholder={`Bid amount in USD (min ${minBidCents / 100})`}
+                  className="w-full border-0 bg-transparent py-3 text-base tabular-nums outline-none placeholder:text-muted-foreground"
+                  value={form.amount}
+                  onChange={set("amount")}
+                />
+                <span className="text-xs uppercase tracking-widest text-muted-foreground">USD</span>
+              </div>
 
-            <button
-              type="submit"
-              disabled={submitting || !isSupabaseConfigured}
-              className="btn-cta w-full"
-            >
-              {submitting ? "Placing bid…" : "Place bid"}
-            </button>
-          </form>
+              <label className="flex cursor-pointer items-start gap-3 text-sm leading-relaxed">
+                <input
+                  required
+                  type="checkbox"
+                  checked={terms}
+                  onChange={(e) => setTerms(e.target.checked)}
+                  className="mt-1 size-4 shrink-0 accent-foreground"
+                />
+                <span>
+                  I understand that if I win this auction, I authorize Your Message Here to charge
+                  my payment method for my winning bid.
+                </span>
+              </label>
+
+              <p className="max-w-xl text-sm leading-relaxed text-muted-foreground">
+                You won't be charged now. Your payment method is required to verify your bid. If
+                you're the highest bidder when the auction closes, we'll attempt to charge your
+                winning bid.
+              </p>
+
+              <button
+                type="submit"
+                disabled={submitting || !isSupabaseConfigured || !isStripeConfigured}
+                className="btn-cta w-full"
+              >
+                {submitting ? "Starting…" : "Continue & verify bid"}{" "}
+                <span className="btn-arrow">→</span>
+              </button>
+            </form>
+          )}
         </section>
+
 
       </main>
 
