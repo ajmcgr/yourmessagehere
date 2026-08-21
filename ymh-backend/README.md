@@ -35,11 +35,17 @@ supabase secrets set \
   STRIPE_SECRET_KEY=sk_live_... \
   STRIPE_WEBHOOK_SECRET=whsec_... \
   RESEND_API_KEY=re_... \
+  BEEHIIV_API_KEY=... \
   YMH_CRON_SECRET=$(openssl rand -hex 32) \
   SITE_URL=https://yourmessagehere.co
 ```
 
 `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are injected automatically.
+
+beehiiv: every bid email is enrolled into publication
+`pub_34f2ec46-4dd5-4040-9758-31a8acfb7022` from `ymh-place-bid` (reactivates
+existing subscribers, no welcome email). Subscription failures are logged and
+never block a bid.
 
 ## 4. Stripe webhook
 

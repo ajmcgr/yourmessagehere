@@ -1,6 +1,6 @@
 // Copy to supabase/functions/ymh-place-bid/index.ts in the ROCKET project.
 // Deploy: supabase functions deploy ymh-place-bid --no-verify-jwt
-// Secrets: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, RESEND_API_KEY
+// Secrets: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, RESEND_API_KEY, BEEHIIV_API_KEY
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const cors = {
@@ -27,6 +27,34 @@ async function sendEmail(to: string, subject: string, html: string) {
     headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
     body: JSON.stringify({ from: "Your Message Here <hello@yourmessagehere.co>", to, subject, html }),
   });
+}
+
+// beehiiv — enroll every bidder in the Rocket mailing list.
+const BEEHIIV_PUB_ID = "pub_34f2ec46-4dd5-4040-9758-31a8acfb7022";
+
+async function subscribeToBeehiiv(email: string, name: string) {
+  const key = Deno.env.get("BEEHIIV_API_KEY");
+  if (!key) return;
+  try {
+    const res = await fetch(
+      `https://api.beehiiv.com/v2/publications/${BEEHIIV_PUB_ID}/subscriptions`,
+      {
+        method: "POST",
+        headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          reactivate_existing: true,
+          send_welcome_email: false,
+          utm_source: "yourmessagehere.co",
+          utm_medium: "bid_form",
+          custom_fields: [{ name: "First Name", value: name }],
+        }),
+      },
+    );
+    if (!res.ok) console.error(`beehiiv subscribe failed [${res.status}]: ${await res.text()}`);
+  } catch (e) {
+    console.error("beehiiv subscribe error", e);
+  }
 }
 
 Deno.serve(async (req) => {
