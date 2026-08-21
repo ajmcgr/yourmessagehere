@@ -9,6 +9,7 @@ import { formatUsd, placeBid, recordPageView, weekEndingLabel } from "@/lib/ymh"
 
 import { isSupabaseConfigured } from "@/lib/supabase";
 import { SiteFooter, SiteLinks, SiteNav } from "@/components/SiteNav";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/buy")({
   head: () => ({
@@ -32,8 +33,17 @@ export const Route = createFileRoute("/buy")({
 });
 
 function Buy() {
-  const { auction, billboard, bids, currentBidCents, minBidCents, incrementCents, endsAt, reload } =
-    useAuction();
+  const {
+    auction,
+    billboard,
+    bids,
+    currentBidCents,
+    minBidCents,
+    incrementCents,
+    endsAt,
+    loading,
+    reload,
+  } = useAuction();
   const descriptions = useSiteDescriptions(bids.map((b) => b.website));
   const [views, setViews] = useState<number | null>(null);
   const [submitting, setSubmitting] = useState(false);
