@@ -101,9 +101,12 @@ function Buy() {
               </dd>
             </div>
           </dl>
+          <a href="#place-bid" className="btn-cta mt-8 inline-flex">
+            Place a bid <span className="btn-arrow">↓</span>
+          </a>
         </section>
 
-        <section className="mt-16">
+        <section id="place-bid" className="mt-16 scroll-mt-24">
           <h1 className="text-2xl font-medium tracking-tight">Place a bid</h1>
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
             No account. No payment now. If you win, we email you a Stripe link and you upload your
