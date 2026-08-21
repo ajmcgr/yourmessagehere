@@ -103,42 +103,63 @@ function Buy() {
 
       <main className="mx-auto max-w-3xl px-6 pb-32">
         <section>
-          <Billboard billboard={billboard} />
+          <Billboard billboard={billboard} loading={loading} />
           <dl className="mt-10 space-y-6">
             <div>
               <dt className="text-xs uppercase tracking-widest text-muted-foreground">
                 Current bid
               </dt>
-              <dd className="text-4xl font-medium tracking-tight tabular-nums md:text-6xl">
-                <span className="marker-highlight">
-                  {currentBidCents === null ? "No bids yet" : formatUsd(currentBidCents)}
-                </span>
-              </dd>
+              {loading ? (
+                <dd className="mt-2">
+                  <Skeleton className="h-10 w-56 md:h-14" />
+                </dd>
+              ) : (
+                <dd className="text-4xl font-medium tracking-tight tabular-nums md:text-6xl">
+                  <span className="marker-highlight">
+                    {currentBidCents === null ? "No bids yet" : formatUsd(currentBidCents)}
+                  </span>
+                </dd>
+              )}
             </div>
 
             <div>
               <dt className="text-xs uppercase tracking-widest text-muted-foreground">
                 Auction ends in
               </dt>
-              <dd>
-                <Countdown target={endsAt} size="lg" />
-              </dd>
-              <dd className="mt-2 text-sm text-muted-foreground">
-                {weekEndingLabel(auction, endsAt)}
-              </dd>
+              {loading ? (
+                <>
+                  <dd className="mt-2">
+                    <Skeleton className="h-10 w-64 md:h-14" />
+                  </dd>
+                  <dd className="mt-2">
+                    <Skeleton className="h-4 w-40" />
+                  </dd>
+                </>
+              ) : (
+                <>
+                  <dd>
+                    <Countdown target={endsAt} size="lg" />
+                  </dd>
+                  <dd className="mt-2 text-sm text-muted-foreground">
+                    {weekEndingLabel(auction, endsAt)}
+                  </dd>
+                </>
+              )}
             </div>
 
-            {views !== null && (
-              <div>
-                <dt className="text-xs uppercase tracking-widest text-muted-foreground">
-                  Audience
-                </dt>
+            <div>
+              <dt className="text-xs uppercase tracking-widest text-muted-foreground">Audience</dt>
+              {views === null ? (
+                <dd className="mt-2">
+                  <Skeleton className="h-10 w-32 md:h-14" />
+                </dd>
+              ) : (
                 <dd className="text-4xl font-medium tracking-tight tabular-nums md:text-6xl">
                   {views.toLocaleString("en-US")}
                 </dd>
-                <dd className="mt-2 text-sm text-muted-foreground">page views since launch</dd>
-              </div>
-            )}
+              )}
+              <dd className="mt-2 text-sm text-muted-foreground">page views since launch</dd>
+            </div>
 
 
           </dl>
@@ -146,6 +167,7 @@ function Buy() {
             Place a bid <span className="btn-arrow">↓</span>
           </a>
         </section>
+
 
         {bids.length > 0 && (
           <section className="mt-16 lg:-mx-24 xl:-mx-40">
