@@ -140,7 +140,11 @@ export type StartBidResult = {
 };
 
 /** Reads the JSON error body an Edge Function returns alongside a 4xx status. */
-async function invoke<T>(name: string, body: unknown, fallback: string): Promise<T> {
+async function invoke<T>(
+  name: string,
+  body: Record<string, unknown>,
+  fallback: string,
+): Promise<T> {
   if (!isSupabaseConfigured || !supabase) {
     throw new Error("Bidding is not available yet — Supabase is not configured.");
   }
