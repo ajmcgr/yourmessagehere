@@ -47,7 +47,7 @@ export async function sendEmail(to: string, subject: string, html: string) {
   await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ from: FROM, to, subject, html }),
+    body: JSON.stringify({ from: FROM, to, subject: subject.startsWith("Your Message Here") ? subject : `Your Message Here — ${subject}`, html }),
   });
 }
 
