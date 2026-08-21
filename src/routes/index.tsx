@@ -35,6 +35,7 @@ export const Route = createFileRoute("/")({
 function Index() {
   const { auction, billboard, currentBidCents, startingBidCents, endsAt, loading } = useAuction();
   const [views, setViews] = useState<number | null>(null);
+  const hasActiveAdvertiser = !loading && billboard?.status === "approved";
 
   useEffect(() => {
     void recordPageView().then(setViews);
@@ -59,7 +60,7 @@ function Index() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <SiteNav />
+      <SiteNav ctaActive={hasActiveAdvertiser} />
 
       <main className="mx-auto max-w-5xl px-6 pb-8">
         <h1 className="sr-only">Your Message Here — the internet's billboard</h1>
@@ -123,7 +124,7 @@ function Index() {
 
         <section className="mt-6 text-center md:mt-7">
           <p className="mx-auto max-w-md text-sm leading-relaxed text-muted-foreground">
-            The internet's billboard. Highest bid wins every Friday at 10 PM New York time.
+            The internet's billboard. One message for one week. Highest bid wins the next one.
           </p>
         </section>
 
