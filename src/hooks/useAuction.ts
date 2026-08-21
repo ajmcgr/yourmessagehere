@@ -53,8 +53,8 @@ export function useAuction() {
     [auction?.ends_at],
   );
 
-  const currentBidCents =
-    auction?.current_bid_cents ?? bids[0]?.amount_cents ?? null;
+  // Derive from real bid rows so deleted bids disappear immediately.
+  const currentBidCents = bids[0]?.amount_cents ?? null;
   const startingBidCents = auction?.starting_bid_cents ?? DEFAULT_STARTING_BID_CENTS;
   const incrementCents = auction?.min_increment_cents ?? DEFAULT_INCREMENT_CENTS;
   const minBidCents =
