@@ -142,3 +142,15 @@
     color: var(--color-foreground);
   }
 }
+
+/* Your Message Here — Swiss typographic base */
+html {
+  font-family:
+    "Inter",
+    "Helvetica Neue",
+    Helvetica,
+    Arial,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.011em;
+}
