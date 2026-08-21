@@ -107,17 +107,10 @@ function Index() {
 
               <Link
                 to="/buy"
-                className="order-4 font-semibold text-foreground underline-offset-4 hover:underline md:order-first"
+                className="order-4 font-semibold text-foreground underline underline-offset-4 md:order-first"
               >
                 Buy the billboard →
               </Link>
-
-              <span className="order-5 text-xs text-muted-foreground md:order-none">
-                <span className="md:hidden">{weekEndingLabel(auction, endsAt, { short: true })}</span>
-                <span className="hidden md:inline">
-                  {weekEndingLabel(auction, endsAt, { short: true })}
-                </span>
-              </span>
             </>
           )}
         </section>
