@@ -165,7 +165,7 @@ function Buy() {
             <button
               type="submit"
               disabled={submitting || !isSupabaseConfigured}
-              className="w-full rounded-lg bg-foreground px-6 py-2.5 text-sm font-medium tracking-tight text-background transition-opacity hover:opacity-80 disabled:opacity-40"
+              className="btn-cta w-full"
             >
               {submitting ? "Placing bid…" : "Place bid"}
             </button>
