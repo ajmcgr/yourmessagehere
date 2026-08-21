@@ -1,0 +1,183 @@
+// Copy to supabase/functions/ymh-confirm-bid/index.ts in the ROCKET project.
+// Deploy: supabase functions deploy ymh-confirm-bid --no-verify-jwt
+// Secrets: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, STRIPE_SECRET_KEY,
+//          RESEND_API_KEY, BEEHIIV_API_KEY
+//
+// Step 2 of bidding: Stripe has verified the payment method client-side. We
+// re-check the SetupIntent server-side, re-check the auction and the minimum
+// bid, then activate the bid transactionally. Only now does it become public.
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import Stripe from "https://esm.sh/stripe@17.0.0?target=deno";
+import { sendEmail, emailLayout, weekEndingLabel } from "../_shared/email.ts";
+
+const cors = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
+
+const json = (body: unknown, status = 200) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: { ...cors, "Content-Type": "application/json" },
+  });
+
+const admin = createClient(
+  Deno.env.get("SUPABASE_URL")!,
+  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+);
+const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, { apiVersion: "2024-06-20" });
+
+const BEEHIIV_PUB_ID = "pub_34f2ec46-4dd5-4040-9758-31a8acfb7022";
+
+async function subscribeToBeehiiv(email: string, name: string) {
+  const key = Deno.env.get("BEEHIIV_API_KEY");
+  if (!key) return "missing_key";
+  try {
+    const res = await fetch(
+      `https://api.beehiiv.com/v2/publications/${BEEHIIV_PUB_ID}/subscriptions`,
+      {
+        method: "POST",
+        headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          reactivate_existing: true,
+          send_welcome_email: false,
+          utm_source: "yourmessagehere.co",
+          utm_medium: "bid_form",
+          custom_fields: [{ name: "First Name", value: name }],
+        }),
+      },
+    );
+    if (!res.ok) {
+      console.error(`[ymh-confirm-bid] Beehiiv failed [${res.status}]: ${await res.text()}`);
+      return "failed";
+    }
+    return "accepted";
+  } catch (e) {
+    console.error("[ymh-confirm-bid] Beehiiv error", e);
+    return "failed";
+  }
+}
+
+const usd = (c: number) => `$${(c / 100).toFixed(0)}`;
+
+Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
+  if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
+
+  try {
+    const body = await req.json();
+    const bidId = String(body.bid_id ?? "");
+    const setupIntentId = String(body.setup_intent_id ?? "");
+    if (!bidId || !setupIntentId) return json({ error: "Missing bid reference." }, 400);
+
+    const { data: bid } = await admin
+      .from("ymh_bids")
+      .select("id, auction_id, bidder_name, bidder_email, amount_cents, status, stripe_setup_intent_id")
+      .eq("id", bidId)
+      .maybeSingle();
+    if (!bid) return json({ error: "Bid not found." }, 404);
+    if (bid.stripe_setup_intent_id !== setupIntentId) {
+      return json({ error: "Payment verification did not match this bid." }, 403);
+    }
+
+    // Authoritative check: never trust the client's word that Stripe succeeded.
+    const intent = await stripe.setupIntents.retrieve(setupIntentId);
+    if (intent.status !== "succeeded" || !intent.payment_method) {
+      return json(
+        {
+          error:
+            "Your payment method could not be verified. Your card has not been charged — please try again.",
+        },
+        402,
+      );
+    }
+    if (intent.metadata?.["ymh_bid_id"] !== bidId) {
+      return json({ error: "Payment verification did not match this bid." }, 403);
+    }
+
+    // Who currently leads (for the outbid email) before we activate.
+    const { data: previous } = await admin
+      .from("ymh_bids")
+      .select("bidder_email, bidder_name")
+      .eq("auction_id", bid.auction_id)
+      .eq("status", "active")
+      .order("amount_cents", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    const { data: activated, error } = await admin.rpc("ymh_activate_bid", {
+      p_bid_id: bidId,
+      p_customer_id: typeof intent.customer === "string" ? intent.customer : intent.customer?.id,
+      p_payment_method_id:
+        typeof intent.payment_method === "string" ? intent.payment_method : intent.payment_method.id,
+      p_setup_intent_id: setupIntentId,
+    });
+
+    if (error) {
+      const msg = error.message ?? "";
+      if (msg.includes("BID_TOO_LOW")) {
+        return json(
+          {
+            error:
+              "The current bid changed while you were verifying your card. Your card has not been charged. Place a new bid to continue.",
+          },
+          409,
+        );
+      }
+      if (msg.includes("AUCTION_CLOSED")) {
+        return json(
+          { error: "This auction closed while you were verifying your card. Your card has not been charged." },
+          409,
+        );
+      }
+      return json({ error: msg || "Your bid could not be activated." }, 400);
+    }
+
+    const { data: auction } = await admin
+      .from("ymh_auctions")
+      .select("week_end")
+      .eq("id", bid.auction_id)
+      .maybeSingle();
+
+    const beehiiv = await subscribeToBeehiiv(bid.bidder_email, bid.bidder_name);
+
+    await sendEmail(
+      bid.bidder_email,
+      "Your bid is in",
+      emailLayout({
+        heading: "You're in.",
+        body: `<p style="margin:0 0 16px 0;">Your verified bid: <strong style="color:#111111;">${usd(bid.amount_cents)}</strong></p><p style="margin:0 0 16px 0;">The auction ends Friday at 10 PM New York time — ${weekEndingLabel(auction?.week_end)}.</p><p style="margin:0 0 16px 0;">If you're the highest bidder when the auction closes, we'll attempt to charge your payment method for your winning bid.</p><p style="margin:0;">We'll email you if you're outbid or if you win.</p>`,
+        cta: { label: "View auction", url: "https://yourmessagehere.co/buy" },
+      }),
+    );
+    await admin.from("ymh_email_events").insert({
+      auction_id: bid.auction_id,
+      bid_id: bid.id,
+      recipient: bid.bidder_email,
+      template: "bid_confirmation",
+    });
+
+    if (previous && previous.bidder_email !== bid.bidder_email) {
+      await sendEmail(
+        previous.bidder_email,
+        "You've been outbid",
+        emailLayout({
+          heading: "You've been outbid",
+          body: `<p style="margin:0;">Hi ${previous.bidder_name}, the current verified bid is now <strong style="color:#111111;">${usd(bid.amount_cents)}</strong>. There's still time to take the billboard back — ${weekEndingLabel(auction?.week_end)}.</p>`,
+          cta: { label: "Bid again", url: "https://yourmessagehere.co/buy" },
+        }),
+      );
+      await admin.from("ymh_email_events").insert({
+        auction_id: bid.auction_id,
+        recipient: previous.bidder_email,
+        template: "outbid",
+      });
+    }
+
+    return json({ ok: true, amount_cents: activated?.amount_cents ?? bid.amount_cents, beehiiv });
+  } catch (e) {
+    console.error("[ymh-confirm-bid] Unhandled error", e);
+    return json({ error: e instanceof Error ? e.message : "Unexpected error" }, 500);
+  }
+});
