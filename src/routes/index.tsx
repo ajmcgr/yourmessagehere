@@ -70,6 +70,18 @@ function Index() {
             seven days.
           </p>
         </section>
+
+        <nav className="mt-8 flex flex-wrap items-center justify-center gap-8 text-sm text-muted-foreground">
+          <Link to="/archive" className="transition-colors hover:text-foreground">
+            Archive
+          </Link>
+          <Link to="/faq" className="transition-colors hover:text-foreground">
+            FAQ
+          </Link>
+          <Link to="/about" className="transition-colors hover:text-foreground">
+            About
+          </Link>
+        </nav>
       </main>
 
       <footer className="mx-auto max-w-5xl px-6 pb-10 text-center text-xs leading-relaxed text-muted-foreground">
