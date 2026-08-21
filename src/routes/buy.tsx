@@ -70,6 +70,8 @@ function Buy() {
     website: "",
     amount: "",
   });
+  const [terms, setTerms] = useState(false);
+  const [pending, setPending] = useState<StartBidResult | null>(null);
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
@@ -81,26 +83,30 @@ function Buy() {
       toast.error(`Minimum bid is ${formatUsd(minBidCents)}.`);
       return;
     }
+    if (!terms) {
+      toast.error("Please accept the payment authorization to bid.");
+      return;
+    }
     setSubmitting(true);
     try {
       const raw = form.website.trim();
       const website = raw && !/^https?:\/\//i.test(raw) ? `https://${raw}` : raw;
-      await placeBid({
+      const started = await startBid({
         name: form.name.trim(),
         email: form.email.trim(),
         advertiser: form.advertiser.trim(),
         amount_cents: amountCents,
+        terms_accepted: true,
         ...(website ? { website } : {}),
       });
-      toast.success("Bid placed. You're the highest bidder.");
-      setForm((f) => ({ ...f, amount: "" }));
-      await reload();
+      setPending(started);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Your bid could not be placed.");
+      toast.error(err instanceof Error ? err.message : "Your bid could not be started.");
     } finally {
       setSubmitting(false);
     }
   };
+
 
   const timeAgo = (iso: string) => {
     const secs = Math.max(0, (Date.now() - new Date(iso).getTime()) / 1000);
