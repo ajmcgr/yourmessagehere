@@ -5,6 +5,8 @@ import { Countdown } from "@/components/Countdown";
 import { useAuction } from "@/hooks/useAuction";
 import { formatUsd, recordPageView, weekEndingLabel } from "@/lib/ymh";
 import { SiteFooter, SiteLinks, SiteNav } from "@/components/SiteNav";
+import { Skeleton } from "@/components/ui/skeleton";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
