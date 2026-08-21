@@ -56,7 +56,7 @@ const sections: { title: string; items: QA[] }[] = [
       },
       {
         q: "What is the minimum bid?",
-        a: "The auction opens at $50 USD. Every subsequent bid must beat the current high bid by at least the $10 increment. All amounts are in USD.",
+        a: "The auction opens at $5 USD. Every subsequent bid must beat the current high bid by at least the $10 increment. All amounts are in USD.",
       },
       {
         q: "Can I bid more than the increment?",
