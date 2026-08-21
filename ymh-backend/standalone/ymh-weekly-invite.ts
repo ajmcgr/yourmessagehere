@@ -112,11 +112,6 @@ Deno.serve(async (req) => {
     return new Response("Unauthorized", { status: 401 });
   }
 
-  const url = new URL(req.url);
-
-  // --- one-click unsubscribe (also reachable without the cron secret below) ---
-  // handled in the separate GET branch further down.
-
   const { data: locked } = await admin.rpc("ymh_try_lock", {
     p_name: "ymh_weekly_invite",
     p_seconds: 300,
@@ -216,7 +211,6 @@ Deno.serve(async (req) => {
       sent,
       remaining: list.length === BATCH ? "more" : 0,
       failures,
-      path: url.pathname,
     }),
     { headers: { "Content-Type": "application/json" } },
   );
