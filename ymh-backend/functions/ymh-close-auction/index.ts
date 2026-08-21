@@ -4,6 +4,7 @@
 // Schedule hourly with pg_cron (see ../README.md); the Friday 22:00 ET close and
 // the 24-hour payment expiry are both handled by the same run.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { sendEmail, emailLayout } from "../_shared/email.ts";
 
 const admin = createClient(
   Deno.env.get("SUPABASE_URL")!,
@@ -11,15 +12,6 @@ const admin = createClient(
 );
 const SUPA_URL = Deno.env.get("SUPABASE_URL")!;
 
-async function sendEmail(to: string, subject: string, html: string) {
-  const key = Deno.env.get("RESEND_API_KEY");
-  if (!key) return;
-  await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ from: "Your Message Here <hello@yourmessagehere.co>", to, subject, html }),
-  });
-}
 
 Deno.serve(async (req) => {
   if (req.headers.get("x-ymh-cron-secret") !== Deno.env.get("YMH_CRON_SECRET")) {
