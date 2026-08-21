@@ -250,7 +250,7 @@ function Faq() {
             to="/buy"
             className="btn-cta"
           >
-            Buy this billboard <span className="btn-arrow" aria-hidden="true">→</span>
+            Buy the billboard <span className="btn-arrow" aria-hidden="true">→</span>
           </Link>
         </div>
       </main>

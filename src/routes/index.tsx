@@ -109,7 +109,7 @@ function Index() {
                 to="/buy"
                 className="order-4 font-semibold text-foreground underline-offset-4 hover:underline md:order-first"
               >
-                Buy this billboard →
+                Buy the billboard →
               </Link>
 
               <span className="order-5 text-xs text-muted-foreground md:order-none">
