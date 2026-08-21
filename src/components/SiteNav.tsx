@@ -3,30 +3,33 @@ import logo from "@/assets/logo.png.asset.json";
 
 export function SiteNav() {
   return (
-    <header className="flex w-full flex-wrap items-center justify-between gap-4 px-6 pt-3 pb-6 md:px-10">
-      <Link to="/" className="transition-opacity hover:opacity-60">
-        <img src={logo.url} alt="Your Message Here" className="h-12 w-auto md:h-16" />
+    <header className="grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-6 pt-3 pb-6 md:px-10">
+      <Link to="/" className="min-w-0 transition-opacity hover:opacity-60">
+        <img src={logo.url} alt="Your Message Here" className="h-9 w-auto md:h-12" />
       </Link>
-      <nav className="flex items-center gap-8 text-sm text-muted-foreground">
-        <Link to="/archive" className="transition-colors hover:text-foreground">
-          Archive
-        </Link>
-        <Link to="/faq" className="transition-colors hover:text-foreground">
-          FAQ
-        </Link>
-        <Link to="/about" className="transition-colors hover:text-foreground">
-          About
-        </Link>
-
-        <Link
-          to="/buy"
-          className="rounded-lg bg-foreground px-6 py-2.5 text-sm font-medium tracking-tight text-background transition-opacity hover:opacity-80"
-        >
-          Buy this billboard →
-
-        </Link>
-      </nav>
+      <Link
+        to="/buy"
+        className="shrink-0 rounded-lg bg-foreground px-6 py-2.5 text-sm font-medium tracking-tight text-background transition-opacity hover:opacity-80"
+      >
+        Buy this billboard →
+      </Link>
     </header>
+  );
+}
+
+export function SiteLinks() {
+  return (
+    <nav className="mt-8 flex flex-wrap items-center justify-center gap-8 text-sm text-muted-foreground">
+      <Link to="/archive" className="transition-colors hover:text-foreground">
+        Archive
+      </Link>
+      <Link to="/faq" className="transition-colors hover:text-foreground">
+        FAQ
+      </Link>
+      <Link to="/about" className="transition-colors hover:text-foreground">
+        About
+      </Link>
+    </nav>
   );
 }
 
