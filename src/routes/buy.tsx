@@ -265,7 +265,7 @@ function Buy() {
                   <tr className="text-left text-xs font-bold tracking-normal text-foreground">
                     <th className="w-7 py-4 pl-3 font-bold sm:w-8 sm:pl-6">#</th>
                     <th className="px-2 py-4 font-bold sm:px-4">Brand</th>
-                    <th className="hidden px-4 py-4 font-bold md:table-cell whitespace-nowrap">Placed</th>
+                    <th className="hidden w-32 px-4 py-4 text-right font-bold whitespace-nowrap md:table-cell">Placed</th>
                     <th className="w-24 py-4 pr-3 text-right font-bold whitespace-nowrap sm:pr-6">Bid</th>
                   </tr>
                 </thead>
@@ -327,7 +327,7 @@ function Buy() {
                             </span>
                           </div>
                         </td>
-                        <td className="hidden whitespace-nowrap px-4 py-5 text-sm text-muted-foreground md:table-cell">
+                        <td className="hidden whitespace-nowrap px-4 py-5 text-right text-sm text-muted-foreground md:table-cell">
                           {timeAgo(b.created_at)}
                         </td>
                         <td className="py-5 pr-3 text-right font-bold tabular-nums whitespace-nowrap text-money sm:pr-6">
