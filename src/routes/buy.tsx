@@ -53,7 +53,8 @@ function Buy() {
     }
     setSubmitting(true);
     try {
-      const website = form.website.trim();
+      const raw = form.website.trim();
+      const website = raw && !/^https?:\/\//i.test(raw) ? `https://${raw}` : raw;
       await placeBid({
         name: form.name.trim(),
         email: form.email.trim(),
@@ -139,7 +140,8 @@ function Buy() {
               onChange={set("advertiser")}
             />
             <input
-              type="url"
+              type="text"
+              inputMode="url"
               placeholder="Website (optional)"
               className={field}
               value={form.website}
