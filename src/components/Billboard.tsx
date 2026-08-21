@@ -38,7 +38,7 @@ export function Billboard({
     </div>
   );
 
-  if (billboard?.click_url) {
+  if (billboard?.click_url && !loading) {
     return (
       <a href={billboard.click_url} target="_blank" rel="noopener noreferrer nofollow">
         {frame}
