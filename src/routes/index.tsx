@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Billboard } from "@/components/Billboard";
 import { Countdown } from "@/components/Countdown";
 import { useAuction } from "@/hooks/useAuction";
-import { formatUsd } from "@/lib/ymh";
+import { formatUsd, weekEndingLabel } from "@/lib/ymh";
 import { SiteFooter, SiteLinks, SiteNav } from "@/components/SiteNav";
 
 export const Route = createFileRoute("/")({
@@ -28,7 +28,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const { billboard, currentBidCents, startingBidCents, endsAt } = useAuction();
+  const { auction, billboard, currentBidCents, startingBidCents, endsAt } = useAuction();
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -52,6 +52,7 @@ function Index() {
           <span className="tabular-nums">
             <Countdown target={endsAt} />
           </span>
+          <span className="text-muted-foreground">{weekEndingLabel(auction, endsAt)}</span>
         </section>
 
         <section className="mt-8 text-center md:mt-10">

@@ -161,3 +161,19 @@ export async function fetchArchivedBillboards(): Promise<Billboard[]> {
   if (error) return [];
   return (data as Billboard[]) ?? [];
 }
+
+/** "Week ending Aug 28, 2026" — the seven-day run the current auction is for. */
+export function weekEndingLabel(
+  auction: Auction | null,
+  endsAt: Date,
+): string {
+  const end = auction?.week_end
+    ? new Date(auction.week_end)
+    : new Date(endsAt.getTime() + 7 * 24 * 60 * 60 * 1000);
+  return `Week ending ${end.toLocaleDateString("en-US", {
+    timeZone: "America/New_York",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  })}`;
+}

@@ -5,7 +5,7 @@
 // Stripe endpoint: https://<rocket-ref>.supabase.co/functions/v1/ymh-stripe-webhook
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import Stripe from "https://esm.sh/stripe@17.0.0?target=deno";
-import { sendEmail, emailLayout } from "../_shared/email.ts";
+import { sendEmail, emailLayout, weekEndingLabel } from "../_shared/email.ts";
 
 const admin = createClient(
   Deno.env.get("SUPABASE_URL")!,
@@ -64,7 +64,7 @@ Deno.serve(async (req) => {
           "Payment received — upload your creative",
           emailLayout({
             heading: "The billboard is yours 🎉",
-            body: `<p style="margin:0 0 16px 0;">Payment received. You own the one billboard on the internet for the week.</p><p style="margin:0;">Upload your creative — 1600×900, JPG or PNG.</p>`,
+            body: `<p style="margin:0 0 16px 0;">Payment received. You own the one billboard on the internet for the week — ${weekEndingLabel(auction.week_end)}.</p><p style="margin:0;">Upload your creative — 1600×900, JPG or PNG.</p>`,
             cta: {
               label: "Upload your creative",
               url: `https://yourmessagehere.co/upload?token=${bid.payment_token}`,

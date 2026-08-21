@@ -50,3 +50,14 @@ export async function sendEmail(to: string, subject: string, html: string) {
     body: JSON.stringify({ from: FROM, to, subject, html }),
   });
 }
+
+/** "Week ending Aug 28, 2026" for a week_end timestamp. */
+export function weekEndingLabel(weekEnd?: string | null) {
+  if (!weekEnd) return "";
+  return `Week ending ${new Date(weekEnd).toLocaleDateString("en-US", {
+    timeZone: "America/New_York",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  })}`;
+}

@@ -3,6 +3,17 @@
 // Secrets: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, RESEND_API_KEY, BEEHIIV_API_KEY
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+function weekEndingLabel(weekEnd) {
+  if (!weekEnd) return "";
+  return `Week ending ${new Date(weekEnd).toLocaleDateString("en-US", {
+    timeZone: "America/New_York",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  })}`;
+}
+
+
 // ---- inlined from _shared/email.ts (single-file deploy) ----
 const SITE = "https://yourmessagehere.co";
 const LOGO = `${SITE}/__l5e/assets-v1/95a7cebf-ad72-4869-836e-e9359f2439f1/email-logo.png`;
@@ -120,7 +131,7 @@ Deno.serve(async (req) => {
     // Who currently leads (so we can send an outbid email)
     const { data: auction } = await admin
       .from("ymh_auctions")
-      .select("id")
+      .select("id, week_end")
       .eq("status", "open")
       .order("ends_at", { ascending: true })
       .limit(1)
@@ -155,7 +166,7 @@ Deno.serve(async (req) => {
       `You're the highest bidder — ${usd(amount)}`,
       emailLayout({
         heading: "You're the highest bidder 📣",
-        body: `<p style="margin:0 0 16px 0;">Hi ${name}, your bid of <strong style="color:#111111;">${usd(amount)}</strong> is now the highest bid for the billboard.</p><p style="margin:0;">The auction closes Friday at 10:00 PM New York time. We'll email you if someone outbids you.</p>`,
+        body: `<p style="margin:0 0 16px 0;">Hi ${name}, your bid of <strong style="color:#111111;">${usd(amount)}</strong> is now the highest bid for the billboard.</p><p style="margin:0;">This auction is for the seven-day run — ${weekEndingLabel(auction?.week_end)}. It closes Friday at 10:00 PM New York time. We'll email you if someone outbids you.</p>`,
         cta: { label: "View the auction", url: "https://yourmessagehere.co/buy" },
       }),
     );
@@ -172,7 +183,7 @@ Deno.serve(async (req) => {
         "You've been outbid",
         emailLayout({
           heading: "You've been outbid",
-          body: `<p style="margin:0;">Hi ${previous.bidder_name}, the current bid is now <strong style="color:#111111;">${usd(amount)}</strong>. There's still time to take the billboard back.</p>`,
+          body: `<p style="margin:0;">Hi ${previous.bidder_name}, the current bid is now <strong style="color:#111111;">${usd(amount)}</strong>. There's still time to take the billboard back — ${weekEndingLabel(auction?.week_end)}.</p>`,
           cta: { label: "Bid again", url: "https://yourmessagehere.co/buy" },
         }),
       );
