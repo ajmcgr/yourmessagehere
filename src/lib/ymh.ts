@@ -278,3 +278,10 @@ export async function fetchArchivedWeeks(): Promise<ArchivedWeek[]> {
     bids: bids.filter((b) => b.auction_id === auction.id),
   }));
 }
+
+/** Self-serve signup for the weekly "new window is open" reminder email. */
+export async function subscribeToAlerts(email: string): Promise<boolean> {
+  if (!isSupabaseConfigured || !supabase) return false;
+  const { error } = await supabase.rpc("ymh_subscribe_email", { p_email: email });
+  return !error;
+}
