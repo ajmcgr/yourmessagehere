@@ -123,27 +123,68 @@ export async function fetchLiveBillboard(): Promise<Billboard | null> {
   return (data as Billboard) ?? null;
 }
 
-export type PlaceBidInput = {
+export type StartBidInput = {
   name: string;
   email: string;
   advertiser: string;
   website?: string;
   amount_cents: number;
+  terms_accepted: true;
 };
 
-/** Bids are validated server-side by the ymh-place-bid Edge Function. */
-export async function placeBid(input: PlaceBidInput) {
+export type StartBidResult = {
+  bid_id: string;
+  amount_cents: number;
+  client_secret: string;
+  setup_intent_id: string;
+};
+
+/** Reads the JSON error body an Edge Function returns alongside a 4xx status. */
+async function invoke<T>(
+  name: string,
+  body: Record<string, unknown>,
+  fallback: string,
+): Promise<T> {
   if (!isSupabaseConfigured || !supabase) {
     throw new Error("Bidding is not available yet — Supabase is not configured.");
   }
-  const { data, error } = await supabase.functions.invoke("ymh-place-bid", { body: input });
+  const { data, error } = await supabase.functions.invoke(name, { body });
   if (error) {
-    throw new Error(error.message || "Your bid could not be placed.");
+    const res = (error as { context?: Response }).context;
+    if (res && typeof res.json === "function") {
+      try {
+        const parsed = (await res.clone().json()) as { error?: string };
+        if (parsed?.error) throw new Error(parsed.error);
+      } catch (e) {
+        if (e instanceof Error && e.message && !/json/i.test(e.message)) throw e;
+      }
+    }
+    throw new Error(error.message || fallback);
   }
   if (data && (data as { error?: string }).error) {
     throw new Error((data as { error: string }).error);
   }
-  return data as { ok: true; amount_cents: number };
+  return data as T;
+}
+
+/**
+ * Step 1 — validate the amount and open a PENDING bid plus a Stripe SetupIntent.
+ * The bid is not public and does not move the current bid at this point.
+ */
+export async function startBid(input: StartBidInput) {
+  return invoke<StartBidResult>("ymh-start-bid", input, "Your bid could not be started.");
+}
+
+/**
+ * Step 2 — after Stripe verifies the payment method, the server re-checks the
+ * SetupIntent and the auction, then activates the bid. Only now is it public.
+ */
+export async function confirmBid(bidId: string, setupIntentId: string) {
+  return invoke<{ ok: true; amount_cents: number }>(
+    "ymh-confirm-bid",
+    { bid_id: bidId, setup_intent_id: setupIntentId },
+    "Your bid could not be verified.",
+  );
 }
 
 export { functionsUrl };

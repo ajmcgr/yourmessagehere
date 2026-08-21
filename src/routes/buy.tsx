@@ -1,17 +1,129 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { Elements, PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { Billboard } from "@/components/Billboard";
 import { Countdown } from "@/components/Countdown";
 import { useAuction } from "@/hooks/useAuction";
 import { useSiteDescriptions } from "@/hooks/useSiteDescriptions";
-import { formatUsd, placeBid, recordPageView, weekEndingLabel } from "@/lib/ymh";
+import {
+  confirmBid,
+  formatUsd,
+  recordPageView,
+  startBid,
+  weekEndingLabel,
+  type StartBidResult,
+} from "@/lib/ymh";
+import { getStripe, isStripeConfigured } from "@/lib/stripe";
 
 import { isSupabaseConfigured } from "@/lib/supabase";
 import { SiteFooter, SiteLinks, SiteNav } from "@/components/SiteNav";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const PAGE_SIZE = 50;
+
+/**
+ * Stripe SetupIntent step. The card is verified and saved, never charged here.
+ * The bid only becomes public after the server confirms the SetupIntent.
+ */
+function VerifyStep({
+  pending,
+  onVerified,
+  onCancel,
+  onStale,
+}: {
+  pending: StartBidResult;
+  onVerified: () => Promise<void> | void;
+  onCancel: () => void;
+  onStale: (message: string) => Promise<void> | void;
+}) {
+  return (
+    <Elements
+      stripe={getStripe()}
+      options={{
+        clientSecret: pending.client_secret,
+        appearance: { variables: { colorPrimary: "#111111", borderRadius: "8px" } },
+      }}
+    >
+      <VerifyForm
+        pending={pending}
+        onVerified={onVerified}
+        onCancel={onCancel}
+        onStale={onStale}
+      />
+    </Elements>
+  );
+}
+
+function VerifyForm({
+  pending,
+  onVerified,
+  onCancel,
+  onStale,
+}: {
+  pending: StartBidResult;
+  onVerified: () => Promise<void> | void;
+  onCancel: () => void;
+  onStale: (message: string) => Promise<void> | void;
+}) {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [busy, setBusy] = useState(false);
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!stripe || !elements) return;
+    setBusy(true);
+    try {
+      const { error, setupIntent } = await stripe.confirmSetup({
+        elements,
+        redirect: "if_required",
+      });
+      if (error || setupIntent?.status !== "succeeded") {
+        toast.error(
+          error?.message ??
+            "Your payment method could not be verified. You have not been charged — please try again.",
+        );
+        return;
+      }
+      await confirmBid(pending.bid_id, pending.setup_intent_id);
+      await onVerified();
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Your bid could not be verified. Please try again.";
+      if (/current bid changed|auction closed/i.test(message)) {
+        await onStale(message);
+        return;
+      }
+      toast.error(message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <form onSubmit={submit} className="mt-8 space-y-6">
+      <p className="text-sm leading-relaxed text-muted-foreground">
+        Verifying your bid of{" "}
+        <span className="font-bold text-foreground">{formatUsd(pending.amount_cents)}</span>. You
+        won't be charged now.
+      </p>
+      <PaymentElement />
+      <button type="submit" disabled={busy || !stripe} className="btn-cta w-full">
+        {busy ? "Verifying…" : "Verify payment method"} <span className="btn-arrow">→</span>
+      </button>
+      <button
+        type="button"
+        onClick={onCancel}
+        className="w-full text-sm text-muted-foreground underline-offset-4 hover:underline"
+      >
+        Cancel
+      </button>
+    </form>
+  );
+}
+
+
 
 export const Route = createFileRoute("/buy")({
   head: () => ({
@@ -70,6 +182,8 @@ function Buy() {
     website: "",
     amount: "",
   });
+  const [terms, setTerms] = useState(false);
+  const [pending, setPending] = useState<StartBidResult | null>(null);
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
@@ -81,26 +195,30 @@ function Buy() {
       toast.error(`Minimum bid is ${formatUsd(minBidCents)}.`);
       return;
     }
+    if (!terms) {
+      toast.error("Please accept the payment authorization to bid.");
+      return;
+    }
     setSubmitting(true);
     try {
       const raw = form.website.trim();
       const website = raw && !/^https?:\/\//i.test(raw) ? `https://${raw}` : raw;
-      await placeBid({
+      const started = await startBid({
         name: form.name.trim(),
         email: form.email.trim(),
         advertiser: form.advertiser.trim(),
         amount_cents: amountCents,
+        terms_accepted: true,
         ...(website ? { website } : {}),
       });
-      toast.success("Bid placed. You're the highest bidder.");
-      setForm((f) => ({ ...f, amount: "" }));
-      await reload();
+      setPending(started);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Your bid could not be placed.");
+      toast.error(err instanceof Error ? err.message : "Your bid could not be started.");
     } finally {
       setSubmitting(false);
     }
   };
+
 
   const timeAgo = (iso: string) => {
     const secs = Math.max(0, (Date.now() - new Date(iso).getTime()) / 1000);
@@ -324,9 +442,8 @@ function Buy() {
         <section id="place-bid" className="mt-16 scroll-mt-24">
           <h1 className="text-2xl font-medium tracking-tight">Place a bid</h1>
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
-            No account. No payment now. If you win, we email you a Stripe link and you upload your
-            creative. Minimum bid {formatUsd(minBidCents)} (increments of{" "}
-            {formatUsd(incrementCents)}).
+            No account. You won't be charged now — Stripe verifies your payment method so your bid
+            counts. Minimum bid {formatUsd(minBidCents)} (increments of {formatUsd(incrementCents)}).
           </p>
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
             Creative spec: <span className="text-foreground">1600 × 900 px</span> (16:9), JPG or
@@ -339,56 +456,102 @@ function Buy() {
               Bidding is offline until VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY are set.
             </p>
           )}
+          {isSupabaseConfigured && !isStripeConfigured && (
+            <p className="mt-6 border border-foreground/20 p-4 text-sm text-muted-foreground">
+              Bidding is offline until VITE_STRIPE_PUBLISHABLE_KEY is set.
+            </p>
+          )}
 
-          <form onSubmit={onSubmit} className="mt-8 space-y-6">
-            <input required placeholder="Name" className={field} value={form.name} onChange={set("name")} />
-            <input
-              required
-              type="email"
-              placeholder="Email"
-              className={field}
-              value={form.email}
-              onChange={set("email")}
+          {pending ? (
+            <VerifyStep
+              pending={pending}
+              onCancel={() => setPending(null)}
+              onVerified={async () => {
+                setPending(null);
+                setForm((f) => ({ ...f, amount: "" }));
+                setTerms(false);
+                toast.success("Bid verified. You're the highest bidder.");
+                await reload();
+              }}
+              onStale={async (message) => {
+                setPending(null);
+                toast.error(message);
+                await reload();
+              }}
             />
-            <input
-              required
-              placeholder="Advertiser / company"
-              className={field}
-              value={form.advertiser}
-              onChange={set("advertiser")}
-            />
-            <input
-              type="text"
-              inputMode="url"
-              placeholder="Website (optional)"
-              className={field}
-              value={form.website}
-              onChange={set("website")}
-            />
-            <div className="flex items-baseline gap-2 border-b border-foreground/20 focus-within:border-foreground">
-              <span className="text-base text-muted-foreground">$</span>
+          ) : (
+            <form onSubmit={onSubmit} className="mt-8 space-y-6">
+              <input required placeholder="Name" className={field} value={form.name} onChange={set("name")} />
               <input
                 required
-                type="number"
-                min={minBidCents / 100}
-                step={incrementCents / 100}
-                placeholder={`Bid amount in USD (min ${minBidCents / 100})`}
-                className="w-full border-0 bg-transparent py-3 text-base tabular-nums outline-none placeholder:text-muted-foreground"
-                value={form.amount}
-                onChange={set("amount")}
+                type="email"
+                placeholder="Email"
+                className={field}
+                value={form.email}
+                onChange={set("email")}
               />
-              <span className="text-xs uppercase tracking-widest text-muted-foreground">USD</span>
-            </div>
+              <input
+                required
+                placeholder="Advertiser / company"
+                className={field}
+                value={form.advertiser}
+                onChange={set("advertiser")}
+              />
+              <input
+                type="text"
+                inputMode="url"
+                placeholder="Website (optional)"
+                className={field}
+                value={form.website}
+                onChange={set("website")}
+              />
+              <div className="flex items-baseline gap-2 border-b border-foreground/20 focus-within:border-foreground">
+                <span className="text-base text-muted-foreground">$</span>
+                <input
+                  required
+                  type="number"
+                  min={minBidCents / 100}
+                  step={incrementCents / 100}
+                  placeholder={`Bid amount in USD (min ${minBidCents / 100})`}
+                  className="w-full border-0 bg-transparent py-3 text-base tabular-nums outline-none placeholder:text-muted-foreground"
+                  value={form.amount}
+                  onChange={set("amount")}
+                />
+                <span className="text-xs uppercase tracking-widest text-muted-foreground">USD</span>
+              </div>
 
-            <button
-              type="submit"
-              disabled={submitting || !isSupabaseConfigured}
-              className="btn-cta w-full"
-            >
-              {submitting ? "Placing bid…" : "Place bid"}
-            </button>
-          </form>
+              <label className="flex cursor-pointer items-start gap-3 text-sm leading-relaxed">
+                <input
+                  required
+                  type="checkbox"
+                  checked={terms}
+                  onChange={(e) => setTerms(e.target.checked)}
+                  className="mt-1 size-4 shrink-0 accent-foreground"
+                />
+                <span>
+                  I understand that if I win this auction, I authorize Your Message Here to charge
+                  my payment method for my winning bid.
+                </span>
+              </label>
+
+              <p className="max-w-xl text-sm leading-relaxed text-muted-foreground">
+                You won't be charged now. Your payment method is required to verify your bid. If
+                you're the highest bidder when the auction closes, we'll attempt to charge your
+                winning bid.
+              </p>
+
+              <button
+                type="submit"
+                disabled={submitting || !isSupabaseConfigured || !isStripeConfigured}
+                className="btn-cta w-full"
+              >
+                {submitting ? "Starting…" : "Continue & verify bid"}{" "}
+                <span className="btn-arrow">→</span>
+              </button>
+            </form>
+          )}
         </section>
+
 
       </main>
 
