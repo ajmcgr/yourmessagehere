@@ -2,10 +2,10 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import logo from "@/assets/logo.png.asset.json";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
-export function SiteNav() {
+export function SiteNav({ ctaActive = false }: { ctaActive?: boolean } = {}) {
   return (
     <>
-    <FloatingBuyCta />
+    <FloatingBuyCta active={ctaActive} />
     <header className="grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-6 pt-3 pb-6 md:px-10">
       <Link to="/" className="min-w-0 transition-opacity hover:opacity-60">
         <img src={logo.url} alt="Your Message Here" className="h-12 w-auto md:h-16 auto-invert" />
@@ -18,7 +18,7 @@ export function SiteNav() {
   );
 }
 
-export function FloatingBuyCta() {
+export function FloatingBuyCta({ active = false }: { active?: boolean } = {}) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   if (pathname.startsWith("/buy")) return null;
   return (
@@ -26,12 +26,15 @@ export function FloatingBuyCta() {
       to="/buy"
       className="btn-cta fixed right-4 bottom-4 z-50 shadow-lg md:right-8 md:bottom-8"
     >
-      <span className="sm:hidden">Buy</span>
-      <span className="hidden sm:inline">Buy this billboard</span>{" "}
+      <span className="sm:hidden">{active ? "Bid" : "Buy"}</span>
+      <span className="hidden sm:inline">
+        {active ? "Bid on next week" : "Buy this billboard"}
+      </span>{" "}
       <span className="btn-arrow" aria-hidden="true">→</span>
     </Link>
   );
 }
+
 
 export function SiteLinks({ className = "mt-8" }: { className?: string }) {
   return (
