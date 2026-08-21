@@ -31,8 +31,10 @@ function Index() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="mx-auto flex max-w-5xl flex-wrap items-baseline justify-between gap-4 px-6 py-8">
-        <span className="text-sm font-medium tracking-tight">Your Message Here</span>
+      <header className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-6 py-8">
+        <Link to="/buy" className="transition-opacity hover:opacity-60">
+          <img src={logo.url} alt="Your Message Here" className="h-6 w-auto md:h-7" />
+        </Link>
         <div className="flex items-baseline gap-8 text-sm text-muted-foreground">
           <span>
             Current bid{" "}
