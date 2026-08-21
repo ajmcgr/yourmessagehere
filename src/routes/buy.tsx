@@ -283,6 +283,29 @@ function Buy() {
                 </tbody>
               </table>
             </div>
+            {pageCount > 1 && (
+              <div className="mt-4 flex items-center justify-between gap-4 text-sm">
+                <button
+                  type="button"
+                  onClick={() => setPage((p) => Math.max(0, p - 1))}
+                  disabled={page === 0}
+                  className="rounded border border-foreground/15 px-3 py-1.5 transition-colors hover:bg-foreground/5 disabled:opacity-40 disabled:hover:bg-transparent"
+                >
+                  ← Previous
+                </button>
+                <span className="text-muted-foreground tabular-nums">
+                  Page {page + 1} of {pageCount}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setPage((p) => Math.min(pageCount - 1, p + 1))}
+                  disabled={page >= pageCount - 1}
+                  className="rounded border border-foreground/15 px-3 py-1.5 transition-colors hover:bg-foreground/5 disabled:opacity-40 disabled:hover:bg-transparent"
+                >
+                  Next →
+                </button>
+              </div>
+            )}
           </section>
         )}
 
