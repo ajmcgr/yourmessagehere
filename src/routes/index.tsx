@@ -63,24 +63,21 @@ function Index() {
           <Billboard billboard={billboard} />
         </section>
 
-        <section className="mt-10 flex flex-wrap items-center justify-center gap-8 text-sm text-muted-foreground md:mt-12">
+        <section className="mt-10 flex flex-wrap items-center justify-center gap-8 text-sm font-semibold text-foreground md:mt-12">
           <span>
             Current bid{" "}
-            <span className="font-medium text-foreground tabular-nums">
-              {formatUsd(currentBidCents ?? startingBidCents)}
-            </span>
+            <span className="tabular-nums">{formatUsd(currentBidCents ?? startingBidCents)}</span>
           </span>
-          <Countdown target={endsAt} />
+          <span className="tabular-nums">
+            <Countdown target={endsAt} />
+          </span>
+          <Link to="/buy" className="underline-offset-4 hover:underline">
+            Buy this billboard →
+          </Link>
         </section>
 
         <section className="mt-8 text-center md:mt-10">
           <p className="text-xs leading-relaxed text-muted-foreground">
-            <Link
-              to="/buy"
-              className="font-medium text-foreground underline-offset-4 hover:underline"
-            >
-              Buy this billboard →
-            </Link>{" "}
             Every Friday at 10:00 PM New York time, the highest bidder wins it for the following
             seven days.
           </p>
