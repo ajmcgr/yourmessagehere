@@ -287,3 +287,8 @@ html {
   padding: 0.15em 0.35em;
   border-radius: 0.2em;
 }
+
+/* Billboard fullscreen control: fixed ink so it reads the same in both themes */
+@utility billboard-ink {
+  color: oklch(0.2 0 0 / 0.4);
+}
