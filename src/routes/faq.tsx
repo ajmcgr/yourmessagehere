@@ -223,7 +223,7 @@ function Faq() {
         <div className="mt-12 space-y-14">
           {sections.map((section) => (
             <section key={section.title}>
-              <h2 className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
+              <h2 className="text-sm font-bold tracking-normal text-foreground">
                 {section.title}
               </h2>
               <dl className="mt-6 divide-y divide-border border-t border-border">
