@@ -66,12 +66,12 @@ export function Billboard({
       className={imgClass}
     />
   ) : isFs ? (
-    <img src={placeholder.url} alt="Your message here — buy this billboard" className={imgClass} />
+    <img src={placeholder.url} alt="Your message here — buy the billboard" className={imgClass} />
   ) : (
     <Link to="/buy" className="block h-full w-full transition-opacity hover:opacity-60">
       <img
         src={placeholder.url}
-        alt="Your message here — buy this billboard"
+        alt="Your message here — buy the billboard"
         className={imgClass}
       />
     </Link>
