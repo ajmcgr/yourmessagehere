@@ -65,63 +65,63 @@ function Index() {
       <main className="mx-auto max-w-5xl px-6 pb-8">
         <h1 className="sr-only">Your Message Here — the internet's billboard</h1>
 
-        <section className="mb-6 flex flex-col items-center gap-3 pt-10 text-sm md:mb-8 md:flex-row md:flex-wrap md:justify-center md:gap-x-7 md:gap-y-3">
+        <section className="pt-5 md:pt-8">
+          <Billboard billboard={billboard} loading={loading} />
+        </section>
 
+        <section className="mt-3.5 text-sm md:mt-5">
           {loading ? (
-            <>
+            <div className="flex flex-wrap items-center justify-between gap-2.5 md:justify-center md:gap-x-7">
               <Skeleton className="h-5 w-40" />
               <Skeleton className="h-5 w-28" />
               <Skeleton className="h-5 w-36" />
               <Skeleton className="h-5 w-36" />
-            </>
+            </div>
           ) : (
-            <>
-              <span className="order-1 text-base font-semibold text-foreground md:order-none md:text-sm">
-                Current bid{" "}
-                <span className="marker-highlight tabular-nums font-bold">
-                  {formatUsd(currentBidCents ?? startingBidCents)}
-                </span>
-              </span>
-
-              <span className="order-2 md:order-none">
-                <span className="font-semibold text-foreground">Auction ends</span>{" "}
-                <Countdown target={endsAt} suffix="" />
-              </span>
-
-              <span className="order-3 md:order-none">
-                <span className="font-semibold text-foreground">Audience since launch</span>{" "}
-                {views === null ? (
-                  <Skeleton className="inline-block h-3 w-12 align-middle" />
-                ) : (
-                  <span className="tabular-nums font-medium text-foreground">
-                    {views.toLocaleString("en-US")}
+            <div className="flex flex-col gap-2.5 md:flex-row md:flex-wrap md:items-center md:justify-center md:gap-x-7 md:gap-y-3">
+              <div className="flex items-center justify-between gap-4 md:contents">
+                <span className="font-semibold text-foreground md:order-2">
+                  Current bid{" "}
+                  <span className="marker-highlight tabular-nums font-bold">
+                    {formatUsd(currentBidCents ?? startingBidCents)}
                   </span>
-                )}
-              </span>
+                </span>
 
-              <Link
-                to="/buy"
-                className="order-4 font-semibold text-foreground underline underline-offset-4 md:order-first"
-              >
-                Buy the billboard →
-              </Link>
-            </>
+                <span className="md:order-3">
+                  <Countdown target={endsAt} suffix=" left" />
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between gap-4 md:contents">
+                <span className="text-muted-foreground md:order-4">
+                  <span className="font-semibold text-foreground">Audience</span>{" "}
+                  {views === null ? (
+                    <Skeleton className="inline-block h-3 w-12 align-middle" />
+                  ) : (
+                    <span className="tabular-nums font-medium text-foreground">
+                      {views.toLocaleString("en-US")}
+                    </span>
+                  )}
+                </span>
+
+                <Link
+                  to="/buy"
+                  className="font-semibold text-foreground underline underline-offset-4 md:order-1"
+                >
+                  {hasActiveAdvertiser ? "Bid on next week →" : "Buy the billboard →"}
+                </Link>
+              </div>
+            </div>
           )}
         </section>
 
-        <section className="flex min-h-[55vh] items-center md:min-h-0">
-          <div className="w-full">
-            <Billboard billboard={billboard} loading={loading} />
-          </div>
-        </section>
-
-        <section className="mt-16 text-center md:mt-[11vh]">
+        <section className="mt-6 text-center md:mt-8">
           <p className="mx-auto max-w-md text-sm leading-relaxed text-muted-foreground">
-            The internet's billboard. One brand owns it for a week. Highest bid wins the next one.
+            The internet's billboard. One brand. One week. Highest bid wins the next one.
           </p>
         </section>
 
-        <SiteLinks className="mt-16 md:mt-[11vh]" />
+        <SiteLinks className="mt-16 md:mt-[18vh]" />
 
       </main>
 
