@@ -35,7 +35,13 @@ function Buy() {
   const { auction, billboard, bids, currentBidCents, minBidCents, incrementCents, endsAt, reload } =
     useAuction();
   const descriptions = useSiteDescriptions(bids.map((b) => b.website));
+  const [views, setViews] = useState<number | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    void recordPageView().then(setViews);
+  }, []);
+
   const [form, setForm] = useState({
     name: "",
     email: "",
