@@ -107,7 +107,15 @@ function Buy() {
               <dd className="mt-2 text-sm text-muted-foreground">
                 {weekEndingLabel(auction, endsAt)}
               </dd>
+              {views !== null && (
+                <dd className="mt-3 text-xs leading-relaxed">
+                  <span className="marker-highlight font-semibold tabular-nums">
+                    {views.toLocaleString("en-US")} page views since launch
+                  </span>
+                </dd>
+              )}
             </div>
+
           </dl>
           <a href="#place-bid" className="btn-cta mt-8 inline-flex">
             Place a bid <span className="btn-arrow">↓</span>
