@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { Billboard } from "@/components/Billboard";
 import { Countdown } from "@/components/Countdown";
 import { useAuction } from "@/hooks/useAuction";
-import { formatUsd, weekEndingLabel } from "@/lib/ymh";
+import { formatUsd, recordPageView, weekEndingLabel } from "@/lib/ymh";
 import { SiteFooter, SiteLinks, SiteNav } from "@/components/SiteNav";
 
 export const Route = createFileRoute("/")({
@@ -29,6 +30,11 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const { auction, billboard, currentBidCents, startingBidCents, endsAt } = useAuction();
+  const [views, setViews] = useState<number | null>(null);
+
+  useEffect(() => {
+    void recordPageView().then(setViews);
+  }, []);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -64,6 +70,13 @@ function Index() {
             Every Friday at 10:00 PM New York time, the highest bidder wins it for the following
             seven days.
           </p>
+          {views !== null && (
+            <p className="mt-3 text-xs leading-relaxed">
+              <span className="marker-highlight font-semibold tabular-nums">
+                {views.toLocaleString("en-US")} page views since launch
+              </span>
+            </p>
+          )}
         </section>
 
         <SiteLinks />

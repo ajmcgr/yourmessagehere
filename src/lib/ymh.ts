@@ -177,3 +177,11 @@ export function weekEndingLabel(
     year: "numeric",
   })}`;
 }
+
+/** Total site page views since launch. Increments once per page load. */
+export async function recordPageView(): Promise<number | null> {
+  if (!isSupabaseConfigured || !supabase) return null;
+  const { data, error } = await supabase.rpc("ymh_increment_page_view");
+  if (error) return null;
+  return typeof data === "number" ? data : Number(data ?? 0) || null;
+}

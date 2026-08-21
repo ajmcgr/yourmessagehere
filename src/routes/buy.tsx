@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { Billboard } from "@/components/Billboard";
 import { Countdown } from "@/components/Countdown";
 import { useAuction } from "@/hooks/useAuction";
+import { useSiteDescriptions } from "@/hooks/useSiteDescriptions";
 import { formatUsd, placeBid, weekEndingLabel } from "@/lib/ymh";
 import { isSupabaseConfigured } from "@/lib/supabase";
 import { SiteFooter, SiteLinks, SiteNav } from "@/components/SiteNav";
@@ -32,6 +33,7 @@ export const Route = createFileRoute("/buy")({
 function Buy() {
   const { auction, billboard, bids, currentBidCents, minBidCents, incrementCents, endsAt, reload } =
     useAuction();
+  const descriptions = useSiteDescriptions(bids.map((b) => b.website));
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
     name: "",
@@ -113,9 +115,9 @@ function Buy() {
         </section>
 
         {bids.length > 0 && (
-          <section className="mt-16">
+          <section className="mt-16 lg:-mx-24 xl:-mx-40">
             <h2 className="text-sm font-bold tracking-normal text-foreground">
-              Bidders ({bids.length})
+              Advertisers ({bids.length})
             </h2>
             <div className="mt-4 max-h-[28rem] overflow-y-auto border-t border-foreground/10">
               <table className="w-full text-sm">
@@ -123,7 +125,6 @@ function Buy() {
                   <tr className="text-left text-xs font-bold tracking-normal text-foreground">
                     <th className="w-8 py-3 font-bold">#</th>
                     <th className="py-3 font-bold">Advertiser</th>
-                    <th className="hidden py-3 font-bold sm:table-cell">Bidder</th>
                     <th className="hidden py-3 font-bold md:table-cell whitespace-nowrap">Date &amp; time</th>
                     <th className="py-3 text-right font-bold">Bid</th>
                   </tr>
@@ -134,10 +135,21 @@ function Buy() {
                     const host = b.website
                       ? b.website.replace(/^https?:\/\//i, "").replace(/\/.*$/, "")
                       : null;
+                    const description = b.website ? descriptions[b.website] : undefined;
                     return (
-                      <tr key={b.id} className="border-t border-foreground/10 align-middle">
+                      <tr
+                        key={b.id}
+                        onClick={
+                          b.website
+                            ? () => window.open(b.website!, "_blank", "noopener,noreferrer")
+                            : undefined
+                        }
+                        className={`border-t border-foreground/10 align-middle ${
+                          b.website ? "cursor-pointer transition-colors hover:bg-foreground/5" : ""
+                        }`}
+                      >
                         <td className="py-3 tabular-nums text-muted-foreground">{i + 1}</td>
-                        <td className="py-3">
+                        <td className="py-3 pr-4">
                           <div className="flex items-center gap-3">
                             {host ? (
                               <img
@@ -150,22 +162,26 @@ function Buy() {
                               <span className="size-6 shrink-0 rounded bg-foreground/10" />
                             )}
                             <span className="min-w-0">
-                              <span className="block truncate text-foreground">{b.advertiser}</span>
-                              {host && (
+                              {b.website ? (
                                 <a
-                                  href={b.website ?? undefined}
+                                  href={b.website}
                                   target="_blank"
                                   rel="noopener noreferrer nofollow"
-                                  className="block truncate text-xs text-muted-foreground underline-offset-4 hover:underline"
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="block truncate text-foreground underline-offset-4 hover:underline"
                                 >
-                                  {host}
+                                  {b.advertiser}
                                 </a>
+                              ) : (
+                                <span className="block truncate text-foreground">{b.advertiser}</span>
+                              )}
+                              {description && (
+                                <span className="block truncate text-xs text-muted-foreground">
+                                  {description}
+                                </span>
                               )}
                             </span>
                           </div>
-                        </td>
-                        <td className="hidden py-3 text-muted-foreground sm:table-cell">
-                          {b.bidder_name}
                         </td>
                         <td className="hidden whitespace-nowrap py-3 text-muted-foreground md:table-cell">
                           {new Date(b.created_at).toLocaleString("en-US", {
