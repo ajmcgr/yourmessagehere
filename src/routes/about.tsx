@@ -28,57 +28,60 @@ function About() {
     <div className="min-h-screen bg-background text-foreground">
       <SiteNav />
 
-      <main className="mx-auto max-w-2xl px-6 pb-32">
-        <h1 className="text-center text-3xl font-medium tracking-tight md:text-4xl">
-          About Your Message Here
-        </h1>
+      <main className="mx-auto max-w-3xl px-6 pb-32">
+        <article className="rounded-xl border border-border bg-card p-8 md:p-12">
+          <h1 className="text-center text-3xl font-bold tracking-tight md:text-4xl">
+            About Your Message Here
+          </h1>
 
-        <div className="mt-12 space-y-6 text-base leading-relaxed">
-          <p>Your Message Here is one billboard on the internet.</p>
+          <div className="mt-10 space-y-5 text-base leading-relaxed">
+            <p>Your Message Here is one billboard on the internet.</p>
 
-          <p className="font-medium">Hello there!</p>
+            <p className="font-bold">Hello there!</p>
 
-          <p>
-            Advertising online has become infinitely divisible — a million impressions, a million
-            placements, none of them memorable. We wanted the opposite: a single space, owned by a
-            single advertiser, seen by everyone who visits.
-          </p>
+            <p>
+              Advertising online has become infinitely divisible — a million impressions, a million
+              placements, none of them memorable. We wanted the opposite: a single space, owned by a
+              single advertiser, seen by everyone who visits.
+            </p>
 
-          <p>
-            Anyone can bid. No account, no payment up front — just a name, an email and a number.
-            Every Friday at 10:00 PM New York time the auction closes, the highest bidder pays, and
-            their creative goes up for the following seven days.
-          </p>
+            <p>
+              Anyone can bid. No account, no payment up front — just a name, an email and a number.
+              Every Friday at 10:00 PM New York time the auction closes, the highest bidder pays,
+              and their creative goes up for the following seven days.
+            </p>
 
-          <p>
-            Whether you're launching something, hiring, or just want to say something to the
-            internet for a week, the billboard is yours if you win it. Every advertiser who has
-            owned it is kept in the archive.
-          </p>
-        </div>
+            <p>
+              Whether you're launching something, hiring, or just want to say something to the
+              internet for a week, the billboard is yours if you win it. Every advertiser who has
+              owned it is kept in the archive.
+            </p>
+          </div>
 
-        <div className="mt-16">
-          <img
-            src={portrait.url}
-            alt="Alex MacGregor"
-            className="h-48 w-48 object-cover"
-            loading="lazy"
-          />
-          <p className="mt-6 font-medium leading-snug">
-            Alex MacGregor
-            <br />
-            Founder, Your Message Here
-          </p>
-          <a
-            href="https://x.com/alexmacgregor__"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-4 inline-block text-sm underline underline-offset-4"
-          >
-            Follow me on X
-          </a>
-        </div>
+          <div className="mt-12">
+            <img
+              src={portrait.url}
+              alt="Alex MacGregor"
+              className="h-32 w-32 object-cover"
+              loading="lazy"
+            />
+            <p className="mt-5 font-bold leading-snug">
+              Alex MacGregor
+              <br />
+              Founder, Your Message Here
+            </p>
+            <a
+              href="https://x.com/alexmacgregor__"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 inline-block text-sm font-medium text-primary underline underline-offset-4"
+            >
+              Follow me on X
+            </a>
+          </div>
+        </article>
       </main>
+
 
       <SiteFooter />
     </div>
