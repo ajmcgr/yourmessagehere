@@ -36,10 +36,10 @@ export function useAuction() {
     const client = supabase;
     if (!client || !auction?.id) return;
     const channel = client
-      .channel(`ymh_bids_${auction.id}`)
+      .channel(`ymh_auction_${auction.id}`)
       .on(
         "postgres_changes",
-        { event: "INSERT", schema: "public", table: "ymh_bids", filter: `auction_id=eq.${auction.id}` },
+        { event: "UPDATE", schema: "public", table: "ymh_auctions", filter: `id=eq.${auction.id}` },
         () => void load(),
       )
       .subscribe();

@@ -100,7 +100,7 @@ export async function fetchCurrentAuction(): Promise<Auction | null> {
 export async function fetchTopBids(auctionId?: string): Promise<Bid[]> {
   if (!isSupabaseConfigured || !supabase || !auctionId) return [];
   const { data, error } = await supabase
-    .from("ymh_bids")
+    .from("ymh_bids_public")
     .select("*")
     .eq("auction_id", auctionId)
     .order("amount_cents", { ascending: false })
