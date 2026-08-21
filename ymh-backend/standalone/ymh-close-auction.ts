@@ -5,6 +5,17 @@
 // the 24-hour payment expiry are both handled by the same run.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+function weekEndingLabel(weekEnd) {
+  if (!weekEnd) return "";
+  return `Week ending ${new Date(weekEnd).toLocaleDateString("en-US", {
+    timeZone: "America/New_York",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  })}`;
+}
+
+
 // ---- inlined from _shared/email.ts (single-file deploy) ----
 const SITE = "https://yourmessagehere.co";
 const LOGO = `${SITE}/__l5e/assets-v1/95a7cebf-ad72-4869-836e-e9359f2439f1/email-logo.png`;
@@ -86,7 +97,7 @@ Deno.serve(async (req) => {
       "You won the billboard — pay within 24 hours",
       emailLayout({
         heading: "You won the billboard 🏆",
-        body: `<p style="margin:0 0 16px 0;">Hi ${bid.bidder_name}, you won this week's auction with <strong style="color:#111111;">$${(bid.amount_cents / 100).toFixed(0)}</strong>.</p><p style="margin:0;">Complete payment within 24 hours or the billboard goes to the next bidder.</p>`,
+        body: `<p style="margin:0 0 16px 0;">Hi ${bid.bidder_name}, you won the auction for ${weekEndingLabel(auction["week_end"])} with <strong style="color:#111111;">$${(bid.amount_cents / 100).toFixed(0)}</strong>.</p><p style="margin:0;">Complete payment within 24 hours or the billboard goes to the next bidder.</p>`,
         cta: {
           label: "Pay now",
           url: `${SUPA_URL}/functions/v1/ymh-create-checkout?token=${bid.payment_token}`,

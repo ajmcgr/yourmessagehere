@@ -6,6 +6,17 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import Stripe from "https://esm.sh/stripe@17.0.0?target=deno";
 
+function weekEndingLabel(weekEnd) {
+  if (!weekEnd) return "";
+  return `Week ending ${new Date(weekEnd).toLocaleDateString("en-US", {
+    timeZone: "America/New_York",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  })}`;
+}
+
+
 // ---- inlined from _shared/email.ts (single-file deploy) ----
 const SITE = "https://yourmessagehere.co";
 const LOGO = `${SITE}/__l5e/assets-v1/95a7cebf-ad72-4869-836e-e9359f2439f1/email-logo.png`;
@@ -115,7 +126,7 @@ Deno.serve(async (req) => {
           "Payment received — upload your creative",
           emailLayout({
             heading: "The billboard is yours 🎉",
-            body: `<p style="margin:0 0 16px 0;">Payment received. You own the one billboard on the internet for the week.</p><p style="margin:0;">Upload your creative — 1600×900, JPG or PNG.</p>`,
+            body: `<p style="margin:0 0 16px 0;">Payment received. You own the one billboard on the internet for the week — ${weekEndingLabel(auction.week_end)}.</p><p style="margin:0;">Upload your creative — 1600×900, JPG or PNG.</p>`,
             cta: {
               label: "Upload your creative",
               url: `https://yourmessagehere.co/upload?token=${bid.payment_token}`,
