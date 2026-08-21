@@ -145,14 +145,32 @@
   }
 }
 
-/* Your Message Here — Swiss typographic base */
+/* Launch (trylaunch.ai) typography */
+@font-face {
+  font-family: "Reckless";
+  src: url("/__l5e/assets-v1/25ea6a9a-f93a-4561-a97e-ed0b177d7389/Reckless-Medium.otf")
+    format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme inline {
+  --font-sans:
+    ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+    "Noto Color Emoji";
+  --font-display: "Reckless", Georgia, serif;
+}
+
 html {
   font-family:
-    "Inter",
-    "Helvetica Neue",
-    Helvetica,
-    Arial,
-    sans-serif;
+    ui-sans-serif,
+    system-ui,
+    sans-serif,
+    "Apple Color Emoji",
+    "Segoe UI Emoji",
+    "Segoe UI Symbol",
+    "Noto Color Emoji";
   -webkit-font-smoothing: antialiased;
-  letter-spacing: -0.011em;
 }
+
