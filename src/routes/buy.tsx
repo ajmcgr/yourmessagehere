@@ -80,7 +80,15 @@ function Buy() {
         <Link to="/" className="hover:opacity-60">
           <img src={logo.url} alt="Your Message Here" className="h-6 w-auto md:h-7" />
         </Link>
-        <span className="text-sm text-muted-foreground">Friday, 10:00 PM ET</span>
+        <nav className="flex items-baseline gap-8 text-sm text-muted-foreground">
+          <Link to="/archive" className="transition-colors hover:text-foreground">
+            Archive
+          </Link>
+          <Link to="/about" className="transition-colors hover:text-foreground">
+            About
+          </Link>
+          <span>Friday, 10:00 PM ET</span>
+        </nav>
       </header>
 
       <main className="mx-auto grid max-w-5xl gap-16 px-6 pb-32 md:grid-cols-2">
