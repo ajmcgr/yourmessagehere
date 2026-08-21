@@ -56,14 +56,6 @@ export function SiteLinks({ className = "mt-8" }: { className?: string }) {
       <a href="mailto:alex@tryrocket.ai" className="transition-colors hover:text-foreground">
         Contact
       </a>
-      <a
-        href="https://tryrocket.ai"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="transition-colors hover:text-foreground"
-      >
-        Need branding?
-      </a>
     </nav>
   );
 }
