@@ -215,3 +215,10 @@ html {
   -webkit-font-smoothing: antialiased;
 }
 
+
+/* Invert monochrome marks (logo) when the OS is in dark mode */
+@media (prefers-color-scheme: dark) {
+  .auto-invert {
+    filter: invert(1);
+  }
+}
