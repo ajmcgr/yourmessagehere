@@ -169,8 +169,27 @@ function Buy() {
         </section>
 
 
-        {bids.length > 0 && (
+        {loading && (
           <section className="mt-16 lg:-mx-24 xl:-mx-40">
+            <Skeleton className="h-4 w-32" />
+            <div className="mt-4 border-t border-foreground/10">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="flex items-center gap-4 border-b border-foreground/10 py-5">
+                  <Skeleton className="size-10 shrink-0 rounded" />
+                  <div className="min-w-0 flex-1 space-y-2">
+                    <Skeleton className="h-4 w-40" />
+                    <Skeleton className="h-3 w-64 max-w-full" />
+                  </div>
+                  <Skeleton className="h-4 w-20" />
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {!loading && bids.length > 0 && (
+          <section className="mt-16 lg:-mx-24 xl:-mx-40">
+
             <h2 className="text-sm font-bold tracking-normal text-foreground">
               Advertisers ({bids.length})
             </h2>
