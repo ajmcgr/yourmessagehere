@@ -247,16 +247,6 @@ function Buy() {
           </form>
         </section>
 
-        {bids.length > 0 && (
-          <ul className="mt-16 space-y-2 text-sm text-muted-foreground">
-            {bids.map((b) => (
-              <li key={b.id} className="flex justify-between border-b border-foreground/10 py-2">
-                <span>{b.advertiser}</span>
-                <span className="tabular-nums text-foreground">{formatUsd(b.amount_cents)}</span>
-              </li>
-            ))}
-          </ul>
-        )}
       </main>
 
 
