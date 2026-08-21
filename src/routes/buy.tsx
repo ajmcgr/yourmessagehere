@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { Billboard } from "@/components/Billboard";
 import { Countdown } from "@/components/Countdown";
 import { useAuction } from "@/hooks/useAuction";
-import { formatUsd, placeBid } from "@/lib/ymh";
+import { formatUsd, placeBid, weekEndingLabel } from "@/lib/ymh";
 import { isSupabaseConfigured } from "@/lib/supabase";
 import { SiteFooter, SiteLinks, SiteNav } from "@/components/SiteNav";
 
