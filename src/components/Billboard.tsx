@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import type { Billboard as BillboardType } from "@/lib/ymh";
 
 export function Billboard({ billboard }: { billboard: BillboardType | null }) {
