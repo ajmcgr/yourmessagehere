@@ -1,17 +1,129 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { Elements, PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { Billboard } from "@/components/Billboard";
 import { Countdown } from "@/components/Countdown";
 import { useAuction } from "@/hooks/useAuction";
 import { useSiteDescriptions } from "@/hooks/useSiteDescriptions";
-import { formatUsd, placeBid, recordPageView, weekEndingLabel } from "@/lib/ymh";
+import {
+  confirmBid,
+  formatUsd,
+  recordPageView,
+  startBid,
+  weekEndingLabel,
+  type StartBidResult,
+} from "@/lib/ymh";
+import { getStripe, isStripeConfigured } from "@/lib/stripe";
 
 import { isSupabaseConfigured } from "@/lib/supabase";
 import { SiteFooter, SiteLinks, SiteNav } from "@/components/SiteNav";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const PAGE_SIZE = 50;
+
+/**
+ * Stripe SetupIntent step. The card is verified and saved, never charged here.
+ * The bid only becomes public after the server confirms the SetupIntent.
+ */
+function VerifyStep({
+  pending,
+  onVerified,
+  onCancel,
+  onStale,
+}: {
+  pending: StartBidResult;
+  onVerified: () => Promise<void> | void;
+  onCancel: () => void;
+  onStale: (message: string) => Promise<void> | void;
+}) {
+  return (
+    <Elements
+      stripe={getStripe()}
+      options={{
+        clientSecret: pending.client_secret,
+        appearance: { variables: { colorPrimary: "#111111", borderRadius: "8px" } },
+      }}
+    >
+      <VerifyForm
+        pending={pending}
+        onVerified={onVerified}
+        onCancel={onCancel}
+        onStale={onStale}
+      />
+    </Elements>
+  );
+}
+
+function VerifyForm({
+  pending,
+  onVerified,
+  onCancel,
+  onStale,
+}: {
+  pending: StartBidResult;
+  onVerified: () => Promise<void> | void;
+  onCancel: () => void;
+  onStale: (message: string) => Promise<void> | void;
+}) {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [busy, setBusy] = useState(false);
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!stripe || !elements) return;
+    setBusy(true);
+    try {
+      const { error, setupIntent } = await stripe.confirmSetup({
+        elements,
+        redirect: "if_required",
+      });
+      if (error || setupIntent?.status !== "succeeded") {
+        toast.error(
+          error?.message ??
+            "Your payment method could not be verified. You have not been charged — please try again.",
+        );
+        return;
+      }
+      await confirmBid(pending.bid_id, pending.setup_intent_id);
+      await onVerified();
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Your bid could not be verified. Please try again.";
+      if (/current bid changed|auction closed/i.test(message)) {
+        await onStale(message);
+        return;
+      }
+      toast.error(message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <form onSubmit={submit} className="mt-8 space-y-6">
+      <p className="text-sm leading-relaxed text-muted-foreground">
+        Verifying your bid of{" "}
+        <span className="font-bold text-foreground">{formatUsd(pending.amount_cents)}</span>. You
+        won't be charged now.
+      </p>
+      <PaymentElement />
+      <button type="submit" disabled={busy || !stripe} className="btn-cta w-full">
+        {busy ? "Verifying…" : "Verify payment method"} <span className="btn-arrow">→</span>
+      </button>
+      <button
+        type="button"
+        onClick={onCancel}
+        className="w-full text-sm text-muted-foreground underline-offset-4 hover:underline"
+      >
+        Cancel
+      </button>
+    </form>
+  );
+}
+
+
 
 export const Route = createFileRoute("/buy")({
   head: () => ({
