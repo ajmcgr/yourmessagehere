@@ -138,10 +138,12 @@
 }
 
 :root { color-scheme: light dark; }
+:root.light { color-scheme: light; }
+:root.dark { color-scheme: dark; }
 
-/* Follow the operating system appearance automatically */
+/* Follow the operating system appearance automatically (unless overridden) */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not(.light):not(.dark) {
     --background: oklch(0 0 0);
     --foreground: oklch(0.93 0 0);
     --card: oklch(0.14 0 0);
@@ -213,11 +215,15 @@ html {
 }
 
 
-/* Invert monochrome marks (logo) when the OS is in dark mode */
+/* Invert monochrome marks (logo) in dark mode */
 @media (prefers-color-scheme: dark) {
-  .auto-invert {
+  :root:not(.light):not(.dark) .auto-invert {
     filter: invert(1);
   }
+}
+
+.dark .auto-invert {
+  filter: invert(1);
 }
 
 /* Primary CTA */

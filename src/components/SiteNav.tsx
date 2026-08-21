@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import logo from "@/assets/logo.png.asset.json";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export function SiteNav() {
   return (
@@ -7,15 +8,14 @@ export function SiteNav() {
       <Link to="/" className="min-w-0 transition-opacity hover:opacity-60">
         <img src={logo.url} alt="Your Message Here" className="h-12 w-auto md:h-16 auto-invert" />
       </Link>
-      <Link
-        to="/buy"
-        className="btn-cta shrink-0"
-      >
-        <span className="sm:hidden">Buy</span>
-        <span className="hidden sm:inline">Buy this billboard</span>{" "}
-        <span className="btn-arrow" aria-hidden="true">→</span>
-
-      </Link>
+      <div className="flex shrink-0 items-center gap-2 md:gap-3">
+        <ThemeToggle />
+        <Link to="/buy" className="btn-cta shrink-0">
+          <span className="sm:hidden">Buy</span>
+          <span className="hidden sm:inline">Buy this billboard</span>{" "}
+          <span className="btn-arrow" aria-hidden="true">→</span>
+        </Link>
+      </div>
     </header>
   );
 }
