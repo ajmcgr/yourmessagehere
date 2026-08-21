@@ -101,8 +101,8 @@ function Buy() {
               </dd>
             </div>
           </dl>
-          <a href="#place-bid" className="btn-cta btn-arrow mt-8 inline-flex">
-            Place a bid <span className="btn-arrow">→</span>
+          <a href="#place-bid" className="btn-cta mt-8 inline-flex">
+            Place a bid <span className="btn-arrow">↓</span>
           </a>
         </section>
 
