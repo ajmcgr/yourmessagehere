@@ -29,6 +29,34 @@ async function sendEmail(to: string, subject: string, html: string) {
   });
 }
 
+// beehiiv — enroll every bidder in the Rocket mailing list.
+const BEEHIIV_PUB_ID = "pub_34f2ec46-4dd5-4040-9758-31a8acfb7022";
+
+async function subscribeToBeehiiv(email: string, name: string) {
+  const key = Deno.env.get("BEEHIIV_API_KEY");
+  if (!key) return;
+  try {
+    const res = await fetch(
+      `https://api.beehiiv.com/v2/publications/${BEEHIIV_PUB_ID}/subscriptions`,
+      {
+        method: "POST",
+        headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          reactivate_existing: true,
+          send_welcome_email: false,
+          utm_source: "yourmessagehere.co",
+          utm_medium: "bid_form",
+          custom_fields: [{ name: "First Name", value: name }],
+        }),
+      },
+    );
+    if (!res.ok) console.error(`beehiiv subscribe failed [${res.status}]: ${await res.text()}`);
+  } catch (e) {
+    console.error("beehiiv subscribe error", e);
+  }
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
   if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
