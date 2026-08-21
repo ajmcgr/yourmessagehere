@@ -287,17 +287,3 @@ html {
   padding: 0.15em 0.35em;
   border-radius: 0.2em;
 }
-
-/* Fullscreen control: extra subtle in dark mode (OS-dark fallback) */
-@media (prefers-color-scheme: dark) {
-  :root:not(.light):not(.dark) .fs-control {
-    background-color: color-mix(in oklch, var(--background) 15%, transparent);
-    color: color-mix(in oklch, var(--foreground) 25%, transparent);
-    opacity: 0.4;
-  }
-  :root:not(.light):not(.dark) .fs-control:hover {
-    background-color: color-mix(in oklch, var(--background) 50%, transparent);
-    color: color-mix(in oklch, var(--foreground) 80%, transparent);
-    opacity: 1;
-  }
-}
