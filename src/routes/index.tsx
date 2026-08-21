@@ -80,7 +80,7 @@ function Index() {
           href="https://x.com/alexmacgregor__"
           target="_blank"
           rel="noopener noreferrer"
-          className="font-medium text-foreground underline-offset-4 hover:underline"
+          className="text-muted-foreground underline-offset-4 hover:underline"
         >
           Alex
         </a>
