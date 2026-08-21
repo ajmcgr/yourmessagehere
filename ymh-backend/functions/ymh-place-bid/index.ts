@@ -1,6 +1,6 @@
 // Copy to supabase/functions/ymh-place-bid/index.ts in the ROCKET project.
 // Deploy: supabase functions deploy ymh-place-bid --no-verify-jwt
-// Secrets: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, RESEND_API_KEY
+// Secrets: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, RESEND_API_KEY, BEEHIIV_API_KEY
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const cors = {
