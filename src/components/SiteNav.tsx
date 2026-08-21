@@ -34,6 +34,9 @@ export function SiteLinks({ className = "mt-8" }: { className?: string }) {
       <Link to="/about" className="transition-colors hover:text-foreground">
         About
       </Link>
+      <Link to="/alerts" className="transition-colors hover:text-foreground">
+        Email alerts
+      </Link>
       <a href="mailto:alex@tryrocket.ai" className="transition-colors hover:text-foreground">
         Contact
       </a>
