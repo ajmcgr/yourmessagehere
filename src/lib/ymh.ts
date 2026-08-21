@@ -135,8 +135,9 @@ export type StartBidInput = {
 export type StartBidResult = {
   bid_id: string;
   amount_cents: number;
-  client_secret: string;
-  setup_intent_id: string;
+  /** Hosted Stripe Checkout URL (setup mode) — the bidder is redirected here. */
+  checkout_url: string;
+  checkout_session_id: string;
 };
 
 /** Reads the JSON error body an Edge Function returns alongside a 4xx status. */
