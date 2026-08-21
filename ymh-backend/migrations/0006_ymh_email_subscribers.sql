@@ -71,7 +71,7 @@ as $$
     select s.email, null::text
     from public.ymh_email_subscribers s
   )
-  select c.email, c.bidder_name
+  select c.email, max(c.bidder_name) as bidder_name
   from candidates c
   where not exists (
       select 1 from public.ymh_email_optouts o
@@ -83,6 +83,7 @@ as $$
         and es.kind = 'weekly_invite'
         and es.email = c.email
     )
+  group by c.email
   limit p_limit;
 $$;
 
