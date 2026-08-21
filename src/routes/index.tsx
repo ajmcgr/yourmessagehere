@@ -47,6 +47,10 @@ function Index() {
           <Link to="/archive" className="transition-colors hover:text-foreground">
             Archive
           </Link>
+          <Link to="/faq" className="transition-colors hover:text-foreground">
+            FAQ
+          </Link>
+
           <Link to="/about" className="transition-colors hover:text-foreground">
             About
           </Link>
