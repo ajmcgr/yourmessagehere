@@ -1,9 +1,18 @@
 import { Link } from "@tanstack/react-router";
 import type { Billboard as BillboardType } from "@/lib/ymh";
+import { Skeleton } from "@/components/ui/skeleton";
 import placeholder from "@/assets/billboard-placeholder.png.asset.json";
 
-export function Billboard({ billboard }: { billboard: BillboardType | null }) {
-  const inner = billboard?.image_url ? (
+export function Billboard({
+  billboard,
+  loading = false,
+}: {
+  billboard: BillboardType | null;
+  loading?: boolean;
+}) {
+  const inner = loading ? (
+    <Skeleton className="h-full w-full rounded-none" />
+  ) : billboard?.image_url ? (
     <img
       src={billboard.image_url}
       alt={billboard.headline ?? `Advertisement by ${billboard.advertiser ?? "this week's winner"}`}
@@ -20,6 +29,7 @@ export function Billboard({ billboard }: { billboard: BillboardType | null }) {
   );
 
 
+
   const frame = (
     <div className="w-full">
       <div className="aspect-[16/9] w-full overflow-hidden border border-foreground bg-background">
@@ -28,7 +38,7 @@ export function Billboard({ billboard }: { billboard: BillboardType | null }) {
     </div>
   );
 
-  if (billboard?.click_url) {
+  if (billboard?.click_url && !loading) {
     return (
       <a href={billboard.click_url} target="_blank" rel="noopener noreferrer nofollow">
         {frame}
