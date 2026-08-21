@@ -269,3 +269,11 @@ html {
 .btn-cta:hover .btn-arrow {
   transform: translateX(1.5px);
 }
+
+.marker-highlight {
+  background-color: color-mix(in oklab, oklch(0.92 0.17 100) 55%, transparent);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  padding: 0.15em 0.35em;
+  border-radius: 0.2em;
+}
