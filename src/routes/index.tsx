@@ -68,14 +68,15 @@ function Index() {
         <section className="mt-8 text-center md:mt-10">
           <p className="text-xs leading-relaxed text-muted-foreground">
             Every Friday at 10:00 PM New York time, the highest bidder wins it for the following
-            seven days.
+            seven days.{" "}
+            {views !== null && (
+              <>
+                <span className="tabular-nums">{views.toLocaleString("en-US")}</span> page views
+                since launch.
+              </>
+            )}
           </p>
-          {views !== null && (
-            <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-              <span className="tabular-nums">{views.toLocaleString("en-US")}</span> page views since
-              launch
-            </p>
-          )}
+
 
         </section>
 
