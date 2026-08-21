@@ -16,14 +16,15 @@ export function Countdown({
       : "text-sm tracking-tight";
 
   if (!r) {
-    return <span className={`${cls} tabular-nums text-muted-foreground`}>--:--:-- left</span>;
+    return <span className={`${cls} tabular-nums text-muted-foreground`}>--:--:--{suffix}</span>;
   }
 
   const clock = `${pad(r.hours)}:${pad(r.minutes)}:${pad(r.seconds)}`;
 
   return (
     <span className={`${cls} tabular-nums font-medium text-foreground`}>
-      {r.days > 0 ? `${r.days}d ${clock}` : clock} left
+      {r.days > 0 ? `${r.days}d ${clock}` : clock}
+      {suffix}
     </span>
   );
 }
