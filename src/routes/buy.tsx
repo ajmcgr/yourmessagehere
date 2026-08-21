@@ -47,6 +47,15 @@ function Buy() {
   const descriptions = useSiteDescriptions(bids.map((b) => b.website));
   const [views, setViews] = useState<number | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [page, setPage] = useState(0);
+
+  const pageCount = Math.max(1, Math.ceil(bids.length / PAGE_SIZE));
+  const safePage = Math.min(page, pageCount - 1);
+  const pagedBids = bids.slice(safePage * PAGE_SIZE, safePage * PAGE_SIZE + PAGE_SIZE);
+
+  useEffect(() => {
+    if (page !== safePage) setPage(safePage);
+  }, [page, safePage]);
 
   useEffect(() => {
     void recordPageView().then(setViews);
