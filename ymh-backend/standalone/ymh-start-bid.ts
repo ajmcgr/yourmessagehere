@@ -70,7 +70,8 @@ Deno.serve(async (req) => {
     const setupIntent = await stripe.setupIntents.create({
       customer: customer.id,
       usage: "off_session",
-      automatic_payment_methods: { enabled: true },
+      // Cards only: other methods can't be reliably charged off-session at auction close.
+      payment_method_types: ["card"],
       metadata: {
         product_source: "your_message_here",
         ymh_bid_id: bid.id,
