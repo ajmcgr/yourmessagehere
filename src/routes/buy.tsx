@@ -89,9 +89,12 @@ function Buy() {
                 Current bid
               </dt>
               <dd className="text-4xl font-medium tracking-tight tabular-nums md:text-6xl">
-                {currentBidCents === null ? "No bids yet" : formatUsd(currentBidCents)}
+                <span className="marker-highlight">
+                  {currentBidCents === null ? "No bids yet" : formatUsd(currentBidCents)}
+                </span>
               </dd>
             </div>
+
             <div>
               <dt className="text-xs uppercase tracking-widest text-muted-foreground">
                 Auction ends in
