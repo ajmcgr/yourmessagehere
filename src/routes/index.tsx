@@ -109,14 +109,20 @@ function Index() {
           )}
         </section>
 
-        <section className="mt-6 text-center md:mt-7">
+        <section className="flex min-h-[55vh] items-center md:min-h-0">
+          <div className="w-full">
+            <Billboard billboard={billboard} loading={loading} />
+          </div>
+        </section>
+
+        <section className="mt-16 text-center md:mt-[11vh]">
           <p className="mx-auto max-w-md text-sm leading-relaxed text-muted-foreground">
             The internet's billboard. One brand owns it for a week. Highest bid wins the next one.
           </p>
         </section>
 
+        <SiteLinks className="mt-16 md:mt-[11vh]" />
 
-        <SiteLinks className="mt-16 md:mt-[22vh]" />
       </main>
 
       <SiteFooter />
