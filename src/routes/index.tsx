@@ -45,10 +45,11 @@ function Index() {
           <Link to="/buy" className="underline-offset-4 hover:underline">
             Buy this billboard →
           </Link>
-          <span>
+          <span className="marker-highlight">
             Current bid{" "}
             <span className="tabular-nums">{formatUsd(currentBidCents ?? startingBidCents)}</span>
           </span>
+
           <span className="tabular-nums">
             <Countdown target={endsAt} />
           </span>
