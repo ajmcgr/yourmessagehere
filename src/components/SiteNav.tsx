@@ -20,9 +20,10 @@ export function SiteNav() {
 
         <Link
           to="/buy"
-          className="bg-foreground px-5 py-2 text-sm font-medium tracking-tight text-background transition-opacity hover:opacity-80"
+          className="rounded-full bg-foreground px-6 py-2.5 text-sm font-medium tracking-tight text-background transition-opacity hover:opacity-80"
         >
-          Buy
+          Buy this billboard →
+
         </Link>
       </nav>
     </header>
