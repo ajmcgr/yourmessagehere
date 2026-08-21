@@ -53,8 +53,10 @@ export function useAuction() {
     [auction?.ends_at],
   );
 
+  // Derive from real bid rows first so deleted/refunded bids disappear immediately;
+  // the auction column is only a fallback before bids load.
   const currentBidCents =
-    auction?.current_bid_cents ?? bids[0]?.amount_cents ?? null;
+    bids[0]?.amount_cents ?? (bids.length ? null : auction?.current_bid_cents ?? null);
   const startingBidCents = auction?.starting_bid_cents ?? DEFAULT_STARTING_BID_CENTS;
   const incrementCents = auction?.min_increment_cents ?? DEFAULT_INCREMENT_CENTS;
   const minBidCents =
