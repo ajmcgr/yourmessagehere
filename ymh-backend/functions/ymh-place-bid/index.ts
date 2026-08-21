@@ -102,7 +102,11 @@ Deno.serve(async (req) => {
     await sendEmail(
       email,
       `You're the highest bidder — ${usd(amount)}`,
-      `<p>Hi ${name},</p><p>Your bid of <strong>${usd(amount)}</strong> is now the highest. The auction closes Friday at 10:00 PM New York time.</p>`,
+      emailLayout({
+        heading: "You're the highest bidder 📣",
+        body: `<p style="margin:0 0 16px 0;">Hi ${name}, your bid of <strong style="color:#111111;">${usd(amount)}</strong> is now the highest bid for the billboard.</p><p style="margin:0;">The auction closes Friday at 10:00 PM New York time. We'll email you if someone outbids you.</p>`,
+        cta: { label: "View the auction", url: "https://yourmessagehere.co/buy" },
+      }),
     );
     await admin.from("ymh_email_events").insert({
       auction_id: bid?.auction_id ?? null,
@@ -115,8 +119,13 @@ Deno.serve(async (req) => {
       await sendEmail(
         previous.bidder_email,
         "You've been outbid",
-        `<p>Hi ${previous.bidder_name},</p><p>The current bid is now <strong>${usd(amount)}</strong>. <a href="https://yourmessagehere.co/buy">Bid again</a>.</p>`,
+        emailLayout({
+          heading: "You've been outbid",
+          body: `<p style="margin:0;">Hi ${previous.bidder_name}, the current bid is now <strong style="color:#111111;">${usd(amount)}</strong>. There's still time to take the billboard back.</p>`,
+          cta: { label: "Bid again", url: "https://yourmessagehere.co/buy" },
+        }),
       );
+
       await admin.from("ymh_email_events").insert({
         auction_id: bid?.auction_id ?? null,
         recipient: previous.bidder_email,
