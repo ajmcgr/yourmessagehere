@@ -33,8 +33,16 @@ Deno.serve(async (req) => {
     await sendEmail(
       bid.bidder_email,
       "You won the billboard — pay within 24 hours",
-      `<p>Hi ${bid.bidder_name},</p><p>You won with $${(bid.amount_cents / 100).toFixed(0)}. Complete payment within 24 hours:</p><p><a href="${SUPA_URL}/functions/v1/ymh-create-checkout?token=${bid.payment_token}">Pay now</a></p>`,
+      emailLayout({
+        heading: "You won the billboard 🏆",
+        body: `<p style="margin:0 0 16px 0;">Hi ${bid.bidder_name}, you won this week's auction with <strong style="color:#111111;">$${(bid.amount_cents / 100).toFixed(0)}</strong>.</p><p style="margin:0;">Complete payment within 24 hours or the billboard goes to the next bidder.</p>`,
+        cta: {
+          label: "Pay now",
+          url: `${SUPA_URL}/functions/v1/ymh-create-checkout?token=${bid.payment_token}`,
+        },
+      }),
     );
+
     await admin.from("ymh_email_events").insert({
       auction_id: auction["id"],
       bid_id: auction["winning_bid_id"],
