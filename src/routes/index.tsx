@@ -81,9 +81,9 @@ function Index() {
             </>
           ) : (
             <>
-              <span className="marker-highlight order-1 text-base font-semibold md:order-none md:text-sm">
+              <span className="order-1 text-base font-semibold text-foreground md:order-none md:text-sm">
                 Current bid{" "}
-                <span className="tabular-nums font-bold">
+                <span className="marker-highlight tabular-nums font-bold">
                   {formatUsd(currentBidCents ?? startingBidCents)}
                 </span>
               </span>
