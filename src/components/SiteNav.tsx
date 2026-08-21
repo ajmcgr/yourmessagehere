@@ -44,7 +44,7 @@ export function SiteLinks({ className = "mt-8" }: { className?: string }) {
 export function SiteFooter() {
   return (
     <footer className="mx-auto max-w-5xl px-6 pb-10 text-center text-xs leading-relaxed text-muted-foreground">
-      Copyright © 2026 Works App, Inc. Built with 🫶🏻 by{" "}
+      Built with 🫶🏻 by{" "}
       <a
         href="https://x.com/alexmacgregor__"
         target="_blank"
