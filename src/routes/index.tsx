@@ -38,9 +38,10 @@ function Index() {
         </Link>
         <Link
           to="/buy"
-          className="shrink-0 bg-foreground px-5 py-2 text-sm font-medium tracking-tight text-background transition-opacity hover:opacity-80"
+          className="shrink-0 rounded-full bg-foreground px-6 py-2.5 text-sm font-medium tracking-tight text-background transition-opacity hover:opacity-80"
         >
-          Buy
+          Buy this billboard →
+
         </Link>
       </header>
 
