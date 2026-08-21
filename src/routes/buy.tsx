@@ -153,13 +153,13 @@ function Buy() {
               Advertisers ({bids.length})
             </h2>
             <div className="mt-4 max-h-[28rem] overflow-y-auto border-t border-foreground/10">
-              <table className="w-full text-sm">
+              <table className="w-full text-base">
                 <thead className="sticky top-0 bg-background">
                   <tr className="text-left text-xs font-bold tracking-normal text-foreground">
-                    <th className="w-8 py-3 font-bold">#</th>
-                    <th className="py-3 font-bold">Advertiser</th>
-                    <th className="hidden py-3 font-bold md:table-cell whitespace-nowrap">Date &amp; time</th>
-                    <th className="py-3 text-right font-bold">Bid</th>
+                    <th className="w-8 py-4 font-bold">#</th>
+                    <th className="py-4 font-bold">Advertiser</th>
+                    <th className="hidden py-4 font-bold md:table-cell whitespace-nowrap">Placed</th>
+                    <th className="py-4 text-right font-bold">Bid</th>
                   </tr>
                 </thead>
 
@@ -181,18 +181,18 @@ function Buy() {
                           b.website ? "cursor-pointer transition-colors hover:bg-foreground/5" : ""
                         }`}
                       >
-                        <td className="py-3 tabular-nums text-muted-foreground">{i + 1}</td>
-                        <td className="py-3 pr-4">
-                          <div className="flex items-center gap-3">
+                        <td className="py-5 text-sm tabular-nums text-muted-foreground">{i + 1}</td>
+                        <td className="py-5 pr-4">
+                          <div className="flex items-center gap-4">
                             {host ? (
                               <img
-                                src={`https://www.google.com/s2/favicons?sz=64&domain=${host}`}
+                                src={`https://www.google.com/s2/favicons?sz=128&domain=${host}`}
                                 alt=""
                                 loading="lazy"
-                                className="size-6 shrink-0 rounded"
+                                className="size-10 shrink-0 rounded"
                               />
                             ) : (
-                              <span className="size-6 shrink-0 rounded bg-foreground/10" />
+                              <span className="size-10 shrink-0 rounded bg-foreground/10" />
                             )}
                             <span className="min-w-0">
                               {b.website ? (
@@ -209,22 +209,17 @@ function Buy() {
                                 <span className="block truncate text-foreground">{b.advertiser}</span>
                               )}
                               {description && (
-                                <span className="block truncate text-xs text-muted-foreground">
+                                <span className="block truncate text-sm text-muted-foreground">
                                   {description}
                                 </span>
                               )}
                             </span>
                           </div>
                         </td>
-                        <td className="hidden whitespace-nowrap py-3 text-muted-foreground md:table-cell">
-                          {new Date(b.created_at).toLocaleString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                            hour: "numeric",
-                            minute: "2-digit",
-                          })}
+                        <td className="hidden whitespace-nowrap py-5 text-sm text-muted-foreground md:table-cell">
+                          {timeAgo(b.created_at)}
                         </td>
-                        <td className="py-3 text-right tabular-nums text-foreground">
+                        <td className="py-5 text-right tabular-nums text-foreground">
                           {formatUsd(b.amount_cents)}
                         </td>
                       </tr>
@@ -235,6 +230,7 @@ function Buy() {
             </div>
           </section>
         )}
+
 
         <section id="place-bid" className="mt-16 scroll-mt-24">
           <h1 className="text-2xl font-medium tracking-tight">Place a bid</h1>
