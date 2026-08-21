@@ -452,10 +452,10 @@ function Buy() {
 
               <button
                 type="submit"
-                disabled={submitting || !isSupabaseConfigured || !isStripeConfigured}
+                disabled={submitting || !isSupabaseConfigured}
                 className="btn-cta w-full"
               >
-                {submitting ? "Starting…" : "Continue & verify bid"}{" "}
+                {submitting ? "Redirecting to Stripe…" : "Continue to secure checkout"}{" "}
                 <span className="btn-arrow">→</span>
               </button>
             </form>
