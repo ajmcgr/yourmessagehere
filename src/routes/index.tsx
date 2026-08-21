@@ -98,7 +98,7 @@ function Index() {
 
               <div className="flex items-center justify-between gap-4 md:contents">
                 <span className="text-muted-foreground md:order-4">
-                  <span className="font-semibold text-foreground">Audience</span>{" "}
+                  <span className="font-semibold text-foreground">Page views</span>{" "}
                   {views === null ? (
                     <Skeleton className="inline-block h-3 w-12 align-middle" />
                   ) : (

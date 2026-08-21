@@ -215,7 +215,7 @@ function Buy() {
             </div>
 
             <div>
-              <dt className="text-xs uppercase tracking-widest text-muted-foreground">Audience</dt>
+              <dt className="text-xs uppercase tracking-widest text-muted-foreground">Page views</dt>
               {views === null ? (
                 <dd className="mt-2">
                   <Skeleton className="h-10 w-32 md:h-14" />
