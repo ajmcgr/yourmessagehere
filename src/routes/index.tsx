@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Billboard } from "@/components/Billboard";
 import { Countdown } from "@/components/Countdown";
 import { useAuction } from "@/hooks/useAuction";
-import { formatUsd, recordPageView, weekEndingLabel } from "@/lib/ymh";
+import { formatUsd, recordPageView } from "@/lib/ymh";
 import { SiteFooter, SiteLinks, SiteNav } from "@/components/SiteNav";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
@@ -33,7 +33,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const { auction, billboard, currentBidCents, startingBidCents, endsAt, loading } = useAuction();
+  const { billboard, currentBidCents, startingBidCents, endsAt, loading } = useAuction();
   const [views, setViews] = useState<number | null>(null);
   const hasActiveAdvertiser = !loading && billboard?.status === "approved";
 
