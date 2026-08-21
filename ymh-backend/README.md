@@ -25,7 +25,12 @@ psql "$ROCKET_DB_URL" -f migrations/0001_ymh_init.sql
 psql "$ROCKET_DB_URL" -f migrations/0002_ymh_min_bid_5.sql
 psql "$ROCKET_DB_URL" -f migrations/0003_ymh_page_views.sql
 psql "$ROCKET_DB_URL" -f migrations/0004_ymh_stripe_verification.sql
+psql "$ROCKET_DB_URL" -f migrations/0005_ymh_weekly_invites.sql
 ```
+
+`0005` adds `ymh_email_optouts`, the idempotent `ymh_email_sends` ledger, the
+`ymh_job_locks` lease table, `ymh_try_lock` and
+`ymh_weekly_invite_recipients` — everything the weekly reminder email needs.
 
 `0004` adds the bid status enum plus `stripe_customer_id`,
 `stripe_payment_method_id`, `stripe_setup_intent_id`,
@@ -49,6 +54,8 @@ supabase functions deploy ymh-confirm-bid     --no-verify-jwt
 supabase functions deploy ymh-stripe-webhook  --no-verify-jwt
 supabase functions deploy ymh-close-auction   --no-verify-jwt
 supabase functions deploy ymh-admin           --no-verify-jwt
+supabase functions deploy ymh-weekly-invite   --no-verify-jwt
+supabase functions deploy ymh-unsubscribe     --no-verify-jwt
 ```
 
 `ymh-place-bid` and `ymh-create-checkout` are retired — delete them from the
@@ -69,6 +76,13 @@ Rocket project after deploying the new ones.
 - **ymh-stripe-webhook** — `payment_intent.succeeded` /
   `payment_intent.payment_failed`.
 - **ymh-admin** — backs `/admin`; requires the `x-ymh-admin-secret` header.
+- **ymh-weekly-invite** — emails every past Stripe-verified bidder once per
+  auction week (Resend) telling them the new bidding window is open. Bounded to
+  60 sends per run, single-flight via `ymh_try_lock`, idempotent through the
+  `ymh_email_sends` unique key, and it skips anyone in `ymh_email_optouts`.
+  Requires the `x-ymh-cron-secret` header.
+- **ymh-unsubscribe** — public one-click opt-out backing `/unsubscribe`; the
+  token is a salted digest of the address (`YMH_UNSUB_SALT`).
 
 ## 3. Secrets (server-side only, never in the frontend)
 
@@ -80,6 +94,7 @@ supabase secrets set \
   BEEHIIV_API_KEY=... \
   YMH_CRON_SECRET=$(openssl rand -hex 32) \
   YMH_ADMIN_SECRET=$(openssl rand -hex 32) \
+  YMH_UNSUB_SALT=$(openssl rand -hex 32) \
   SITE_URL=https://yourmessagehere.co
 ```
 
@@ -100,6 +115,23 @@ select cron.schedule(
   $$
   select net.http_post(
     url := 'https://<rocket-ref>.supabase.co/functions/v1/ymh-close-auction',
+    headers := '{"Content-Type":"application/json","x-ymh-cron-secret":"<YMH_CRON_SECRET>"}'::jsonb
+  );
+  $$
+);
+```
+
+Weekly reminder to past bidders — runs shortly after the auction rolls over
+(Friday 22:00 ET) and again a few times so a large list drains in 60-email
+batches. Already-emailed addresses are skipped, so extra runs are harmless.
+
+```sql
+select cron.schedule(
+  'ymh_weekly_invite',
+  '15,25,35 3 * * 6',            -- Sat 03:15/03:25/03:35 UTC = Fri 22:15 ET
+  $$
+  select net.http_post(
+    url := 'https://<rocket-ref>.supabase.co/functions/v1/ymh-weekly-invite',
     headers := '{"Content-Type":"application/json","x-ymh-cron-secret":"<YMH_CRON_SECRET>"}'::jsonb
   );
   $$
