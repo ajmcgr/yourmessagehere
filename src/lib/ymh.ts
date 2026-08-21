@@ -169,21 +169,30 @@ async function invoke<T>(
 }
 
 /**
- * Step 1 — validate the amount and open a PENDING bid plus a Stripe SetupIntent.
- * The bid is not public and does not move the current bid at this point.
+ * Step 1 — validate the amount, open a PENDING bid, and get a hosted Stripe
+ * Checkout URL (setup mode). The bid is not public and does not move the
+ * current bid at this point.
  */
 export async function startBid(input: StartBidInput) {
-  return invoke<StartBidResult>("ymh-start-bid", input, "Your bid could not be started.");
+  return invoke<StartBidResult>(
+    "ymh-start-bid",
+    {
+      ...input,
+      return_origin: typeof window === "undefined" ? "" : window.location.origin,
+    },
+    "Your bid could not be started.",
+  );
 }
 
 /**
- * Step 2 — after Stripe verifies the payment method, the server re-checks the
- * SetupIntent and the auction, then activates the bid. Only now is it public.
+ * Step 2 — the bidder returned from hosted Checkout. The server re-checks the
+ * session, its SetupIntent and the auction, then activates the bid. Only now
+ * is it public.
  */
-export async function confirmBid(bidId: string, setupIntentId: string) {
+export async function confirmBid(bidId: string, checkoutSessionId: string) {
   return invoke<{ ok: true; amount_cents: number }>(
     "ymh-confirm-bid",
-    { bid_id: bidId, setup_intent_id: setupIntentId },
+    { bid_id: bidId, checkout_session_id: checkoutSessionId },
     "Your bid could not be verified.",
   );
 }
