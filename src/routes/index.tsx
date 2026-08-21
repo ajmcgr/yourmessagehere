@@ -32,18 +32,11 @@ function Index() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-6 py-8">
+      <header className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-6 pt-3 pb-6">
         <Link to="/" className="transition-opacity hover:opacity-60">
           <img src={logo.url} alt="Your Message Here" className="h-9 w-auto md:h-12" />
         </Link>
         <div className="flex items-center gap-8 text-sm text-muted-foreground">
-          <span>
-            Current bid{" "}
-            <span className="font-medium text-foreground tabular-nums">
-              {formatUsd(currentBidCents ?? startingBidCents)}
-            </span>
-          </span>
-          <Countdown target={endsAt} />
           <Link to="/archive" className="transition-colors hover:text-foreground">
             Archive
           </Link>
