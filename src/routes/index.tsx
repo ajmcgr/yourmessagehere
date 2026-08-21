@@ -36,7 +36,7 @@ function Index() {
         <Link to="/" className="transition-opacity hover:opacity-60">
           <img src={logo.url} alt="Your Message Here" className="h-9 w-auto md:h-12" />
         </Link>
-        <div className="flex items-baseline gap-8 text-sm text-muted-foreground">
+        <div className="flex items-center gap-8 text-sm text-muted-foreground">
           <span>
             Current bid{" "}
             <span className="font-medium text-foreground tabular-nums">
@@ -44,6 +44,12 @@ function Index() {
             </span>
           </span>
           <Countdown target={endsAt} />
+          <Link
+            to="/buy"
+            className="bg-foreground px-5 py-2 text-sm font-medium tracking-tight text-background transition-opacity hover:opacity-80"
+          >
+            Buy
+          </Link>
         </div>
       </header>
 
@@ -54,27 +60,27 @@ function Index() {
           <Billboard billboard={billboard} />
         </section>
 
-        <section className="mt-16 flex flex-col items-center gap-6 text-center md:mt-24">
-          <Link
-            to="/buy"
-            className="border-b-2 border-foreground pb-1 text-2xl font-medium tracking-tight transition-opacity hover:opacity-60 md:text-4xl"
-          >
-            Buy this billboard →
-          </Link>
-          <p className="max-w-md text-sm leading-relaxed text-muted-foreground">
+        <section className="mt-8 text-center">
+          <p className="text-xs leading-relaxed text-muted-foreground">
+            <Link
+              to="/buy"
+              className="font-medium text-foreground underline-offset-4 hover:underline"
+            >
+              Buy this billboard →
+            </Link>{" "}
             There is one billboard on the internet. Every Friday at 10:00 PM New York time, the
             highest bidder wins it for the following seven days.
           </p>
         </section>
       </main>
 
-      <footer className="mx-auto max-w-5xl px-6 pb-10 text-center text-xs text-muted-foreground">
+      <footer className="mx-auto max-w-5xl px-6 pb-10 text-center text-xs leading-relaxed text-muted-foreground">
         Copyright © 2026 Works App, Inc. Built with 🫶🏻 by{" "}
         <a
           href="https://x.com/alexmacgregor__"
           target="_blank"
           rel="noopener noreferrer"
-          className="font-medium text-foreground underline-offset-4 hover:underline"
+          className="text-muted-foreground underline-offset-4 hover:underline"
         >
           Alex
         </a>
