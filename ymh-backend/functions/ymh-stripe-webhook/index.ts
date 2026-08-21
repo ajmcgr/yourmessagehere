@@ -5,6 +5,7 @@
 // Stripe endpoint: https://<rocket-ref>.supabase.co/functions/v1/ymh-stripe-webhook
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import Stripe from "https://esm.sh/stripe@17.0.0?target=deno";
+import { sendEmail, emailLayout } from "../_shared/email.ts";
 
 const admin = createClient(
   Deno.env.get("SUPABASE_URL")!,
@@ -12,15 +13,6 @@ const admin = createClient(
 );
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, { apiVersion: "2024-06-20" });
 
-async function sendEmail(to: string, subject: string, html: string) {
-  const key = Deno.env.get("RESEND_API_KEY");
-  if (!key) return;
-  await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ from: "Your Message Here <hello@yourmessagehere.co>", to, subject, html }),
-  });
-}
 
 Deno.serve(async (req) => {
   const signature = req.headers.get("stripe-signature");
@@ -70,8 +62,16 @@ Deno.serve(async (req) => {
         await sendEmail(
           bid.bidder_email,
           "Payment received — upload your creative",
-          `<p>The billboard is yours for the week.</p><p><a href="https://yourmessagehere.co/upload?token=${bid.payment_token}">Upload your creative</a> (1600×900, JPG or PNG).</p>`,
+          emailLayout({
+            heading: "The billboard is yours 🎉",
+            body: `<p style="margin:0 0 16px 0;">Payment received. You own the one billboard on the internet for the week.</p><p style="margin:0;">Upload your creative — 1600×900, JPG or PNG.</p>`,
+            cta: {
+              label: "Upload your creative",
+              url: `https://yourmessagehere.co/upload?token=${bid.payment_token}`,
+            },
+          }),
         );
+
         await admin.from("ymh_email_events").insert({
           auction_id: auctionId,
           bid_id: bidId,

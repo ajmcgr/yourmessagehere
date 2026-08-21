@@ -4,6 +4,7 @@
 // Schedule hourly with pg_cron (see ../README.md); the Friday 22:00 ET close and
 // the 24-hour payment expiry are both handled by the same run.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { sendEmail, emailLayout } from "../_shared/email.ts";
 
 const admin = createClient(
   Deno.env.get("SUPABASE_URL")!,
@@ -11,15 +12,6 @@ const admin = createClient(
 );
 const SUPA_URL = Deno.env.get("SUPABASE_URL")!;
 
-async function sendEmail(to: string, subject: string, html: string) {
-  const key = Deno.env.get("RESEND_API_KEY");
-  if (!key) return;
-  await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ from: "Your Message Here <hello@yourmessagehere.co>", to, subject, html }),
-  });
-}
 
 Deno.serve(async (req) => {
   if (req.headers.get("x-ymh-cron-secret") !== Deno.env.get("YMH_CRON_SECRET")) {
@@ -41,8 +33,16 @@ Deno.serve(async (req) => {
     await sendEmail(
       bid.bidder_email,
       "You won the billboard — pay within 24 hours",
-      `<p>Hi ${bid.bidder_name},</p><p>You won with $${(bid.amount_cents / 100).toFixed(0)}. Complete payment within 24 hours:</p><p><a href="${SUPA_URL}/functions/v1/ymh-create-checkout?token=${bid.payment_token}">Pay now</a></p>`,
+      emailLayout({
+        heading: "You won the billboard 🏆",
+        body: `<p style="margin:0 0 16px 0;">Hi ${bid.bidder_name}, you won this week's auction with <strong style="color:#111111;">$${(bid.amount_cents / 100).toFixed(0)}</strong>.</p><p style="margin:0;">Complete payment within 24 hours or the billboard goes to the next bidder.</p>`,
+        cta: {
+          label: "Pay now",
+          url: `${SUPA_URL}/functions/v1/ymh-create-checkout?token=${bid.payment_token}`,
+        },
+      }),
     );
+
     await admin.from("ymh_email_events").insert({
       auction_id: auction["id"],
       bid_id: auction["winning_bid_id"],

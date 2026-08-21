@@ -77,3 +77,9 @@ VITE_SUPABASE_PUBLISHABLE_KEY=<publishable/anon key>
 ```
 
 Only the publishable key ever reaches the browser.
+
+## 6. Shared email template
+
+Copy `functions/_shared/` to `supabase/functions/_shared/` before deploying —
+all three email-sending functions import the branded Resend layout from
+`_shared/email.ts` (logo, card layout, black CTA button).
