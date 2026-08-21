@@ -201,16 +201,16 @@ function Buy() {
           <section className="mt-16 lg:-mx-24 xl:-mx-40">
 
             <h2 className="text-sm font-bold tracking-normal text-foreground">
-              Advertisers ({bids.length})
+              Brands ({bids.length})
             </h2>
             <div className="mt-4 max-h-[28rem] overflow-y-auto border-t border-foreground/10">
               <table className="w-full text-base">
                 <thead className="sticky top-0 bg-background">
                   <tr className="text-left text-xs font-bold tracking-normal text-foreground">
-                    <th className="w-8 py-4 font-bold">#</th>
-                    <th className="py-4 font-bold">Advertiser</th>
-                    <th className="hidden py-4 font-bold md:table-cell whitespace-nowrap">Placed</th>
-                    <th className="py-4 text-right font-bold">Bid</th>
+                    <th className="w-8 py-4 pl-4 font-bold sm:pl-6">#</th>
+                    <th className="px-4 py-4 font-bold">Brand</th>
+                    <th className="hidden px-4 py-4 font-bold md:table-cell whitespace-nowrap">Placed</th>
+                    <th className="py-4 pr-4 text-right font-bold sm:pr-6">Bid</th>
                   </tr>
                 </thead>
 
@@ -235,8 +235,8 @@ function Buy() {
                           b.website ? "cursor-pointer transition-colors hover:bg-foreground/5" : ""
                         }`}
                       >
-                        <td className="py-5 text-sm tabular-nums text-muted-foreground">{i + 1}</td>
-                        <td className="py-5 pr-4">
+                        <td className="py-5 pl-4 text-sm tabular-nums text-muted-foreground sm:pl-6">{i + 1}</td>
+                        <td className="px-4 py-5">
                           <div className="flex items-center gap-4">
                             {host ? (
                               <img
@@ -270,10 +270,10 @@ function Buy() {
                             </span>
                           </div>
                         </td>
-                        <td className="hidden whitespace-nowrap py-5 text-sm text-muted-foreground md:table-cell">
+                        <td className="hidden whitespace-nowrap px-4 py-5 text-sm text-muted-foreground md:table-cell">
                           {timeAgo(b.created_at)}
                         </td>
-                        <td className="py-5 text-right font-bold tabular-nums text-money">
+                        <td className="py-5 pr-4 text-right font-bold tabular-nums text-money sm:pr-6">
                           {formatUsd(b.amount_cents)}
                         </td>
                       </tr>
