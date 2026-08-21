@@ -28,7 +28,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const { billboard, currentBidCents, startingBidCents, endsAt } = useAuction();
+  const { auction, billboard, currentBidCents, startingBidCents, endsAt } = useAuction();
 
   return (
     <div className="min-h-screen bg-background text-foreground">
