@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { SiteFooter, SiteNav } from "@/components/SiteNav";
+import { SiteFooter, SiteLinks, SiteNav } from "@/components/SiteNav";
 import { fetchArchivedBillboards, type Billboard } from "@/lib/ymh";
 
 export const Route = createFileRoute("/archive")({
@@ -101,6 +101,10 @@ function Archive() {
           </ul>
         )}
       </main>
+
+      <div className="mx-auto max-w-5xl px-6 pb-16">
+        <SiteLinks />
+      </div>
 
       <SiteFooter />
     </div>

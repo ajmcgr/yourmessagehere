@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Billboard } from "@/components/Billboard";
@@ -6,7 +6,7 @@ import { Countdown } from "@/components/Countdown";
 import { useAuction } from "@/hooks/useAuction";
 import { formatUsd, placeBid } from "@/lib/ymh";
 import { isSupabaseConfigured } from "@/lib/supabase";
-import logo from "@/assets/logo.png.asset.json";
+import { SiteFooter, SiteLinks, SiteNav } from "@/components/SiteNav";
 
 export const Route = createFileRoute("/buy")({
   head: () => ({
@@ -76,24 +76,8 @@ function Buy() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="mx-auto flex max-w-5xl items-baseline justify-between gap-4 px-6 py-8">
-        <Link to="/" className="hover:opacity-60">
-          <img src={logo.url} alt="Your Message Here" className="h-6 w-auto md:h-7" />
-        </Link>
-        <nav className="flex items-baseline gap-8 text-sm text-muted-foreground">
-          <Link to="/archive" className="transition-colors hover:text-foreground">
-            Archive
-          </Link>
-          <Link to="/faq" className="transition-colors hover:text-foreground">
-            FAQ
-          </Link>
+      <SiteNav />
 
-          <Link to="/about" className="transition-colors hover:text-foreground">
-            About
-          </Link>
-          <span>Friday, 10:00 PM ET</span>
-        </nav>
-      </header>
 
       <main className="mx-auto grid max-w-5xl gap-16 px-6 pb-32 md:grid-cols-2">
         <section>
@@ -197,6 +181,13 @@ function Buy() {
           </form>
         </section>
       </main>
+
+      <div className="mx-auto max-w-5xl px-6 pb-16">
+        <SiteLinks />
+      </div>
+
+      <SiteFooter />
     </div>
+
   );
 }
