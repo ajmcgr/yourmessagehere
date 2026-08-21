@@ -32,28 +32,16 @@ function Index() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-6 pt-3 pb-6">
-        <Link to="/" className="transition-opacity hover:opacity-60">
+      <header className="mx-auto grid max-w-5xl grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-6 pt-3 pb-6">
+        <Link to="/" className="min-w-0 transition-opacity hover:opacity-60">
           <img src={logo.url} alt="Your Message Here" className="h-9 w-auto md:h-12" />
         </Link>
-        <div className="flex items-center gap-8 text-sm text-muted-foreground">
-          <Link to="/archive" className="transition-colors hover:text-foreground">
-            Archive
-          </Link>
-          <Link to="/faq" className="transition-colors hover:text-foreground">
-            FAQ
-          </Link>
-
-          <Link to="/about" className="transition-colors hover:text-foreground">
-            About
-          </Link>
-          <Link
-            to="/buy"
-            className="bg-foreground px-5 py-2 text-sm font-medium tracking-tight text-background transition-opacity hover:opacity-80"
-          >
-            Buy
-          </Link>
-        </div>
+        <Link
+          to="/buy"
+          className="shrink-0 bg-foreground px-5 py-2 text-sm font-medium tracking-tight text-background transition-opacity hover:opacity-80"
+        >
+          Buy
+        </Link>
       </header>
 
       <main className="mx-auto max-w-5xl px-6 pb-32">
@@ -82,6 +70,18 @@ function Index() {
             seven days.
           </p>
         </section>
+
+        <nav className="mt-8 flex flex-wrap items-center justify-center gap-8 text-sm text-muted-foreground">
+          <Link to="/archive" className="transition-colors hover:text-foreground">
+            Archive
+          </Link>
+          <Link to="/faq" className="transition-colors hover:text-foreground">
+            FAQ
+          </Link>
+          <Link to="/about" className="transition-colors hover:text-foreground">
+            About
+          </Link>
+        </nav>
       </main>
 
       <footer className="mx-auto max-w-5xl px-6 pb-10 text-center text-xs leading-relaxed text-muted-foreground">
