@@ -260,7 +260,7 @@ function Buy() {
             <h2 className="text-sm font-bold tracking-normal text-foreground">
               Bids ({bids.length})
             </h2>
-            <div className="mt-4 max-h-[28rem] overflow-y-auto border-t border-foreground/10">
+            <div className="mt-4 border-t border-foreground/10">
               <table className="w-full table-fixed text-base">
                 <thead className="sticky top-0 bg-background">
                   <tr className="text-left text-xs font-bold tracking-normal text-foreground">
