@@ -215,7 +215,8 @@ function Buy() {
                 </thead>
 
                 <tbody>
-                  {bids.map((b, i) => {
+                  {pagedBids.map((b, idx) => {
+                    const i = page * PAGE_SIZE + idx;
                     const host = b.website
                       ? b.website.replace(/^https?:\/\//i, "").replace(/\/.*$/, "")
                       : null;
