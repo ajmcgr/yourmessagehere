@@ -29,6 +29,9 @@ export function SiteLinks() {
       <Link to="/about" className="transition-colors hover:text-foreground">
         About
       </Link>
+      <a href="mailto:alex@tryrocket.ai" className="transition-colors hover:text-foreground">
+        Contact
+      </a>
     </nav>
   );
 }
