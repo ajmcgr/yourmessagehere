@@ -6,6 +6,8 @@ import { useAuction } from "@/hooks/useAuction";
 import { formatUsd, recordPageView, weekEndingLabel } from "@/lib/ymh";
 import { SiteFooter, SiteLinks, SiteNav } from "@/components/SiteNav";
 import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "sonner";
+
 
 
 export const Route = createFileRoute("/")({
@@ -37,6 +39,23 @@ function Index() {
   useEffect(() => {
     void recordPageView().then(setViews);
   }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (localStorage.getItem("ymh_bookmark_prompt_seen")) return;
+    const isMac = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
+    const timer = window.setTimeout(() => {
+      localStorage.setItem("ymh_bookmark_prompt_seen", "1");
+      toast("Bookmark the billboard", {
+        description: `Check back every Friday to see who won the week. ${
+          isMac ? "⌘" : "Ctrl"
+        } + D to save it.`,
+        duration: 8000,
+      });
+    }, 2500);
+    return () => window.clearTimeout(timer);
+  }, []);
+
 
   return (
     <div className="min-h-screen bg-background text-foreground">
