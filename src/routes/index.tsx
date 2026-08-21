@@ -52,6 +52,7 @@ function Index() {
           <span className="tabular-nums">
             <Countdown target={endsAt} />
           </span>
+          <span className="text-muted-foreground">{weekEndingLabel(auction, endsAt)}</span>
         </section>
 
         <section className="mt-8 text-center md:mt-10">
