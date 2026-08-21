@@ -35,6 +35,7 @@ supabase secrets set \
   STRIPE_SECRET_KEY=sk_live_... \
   STRIPE_WEBHOOK_SECRET=whsec_... \
   RESEND_API_KEY=re_... \
+  BEEHIIV_API_KEY=... \
   YMH_CRON_SECRET=$(openssl rand -hex 32) \
   SITE_URL=https://yourmessagehere.co
 ```
