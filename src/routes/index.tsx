@@ -65,14 +65,8 @@ function Index() {
       <main className="mx-auto max-w-5xl px-6 pb-8">
         <h1 className="sr-only">Your Message Here — the internet's billboard</h1>
 
-        <section className="flex min-h-[55vh] items-center pt-16 md:min-h-0 md:pt-16">
-          <div className="w-full">
-            <Billboard billboard={billboard} loading={loading} />
-          </div>
-        </section>
+        <section className="mb-6 flex flex-col items-center gap-3 pt-10 text-sm md:mb-8 md:flex-row md:flex-wrap md:justify-center md:gap-x-7 md:gap-y-3">
 
-
-        <section className="mt-6 flex flex-col items-center gap-3 text-sm md:mt-8 md:flex-row md:flex-wrap md:justify-center md:gap-x-7 md:gap-y-3">
           {loading ? (
             <>
               <Skeleton className="h-5 w-40" />
@@ -115,14 +109,20 @@ function Index() {
           )}
         </section>
 
-        <section className="mt-6 text-center md:mt-7">
+        <section className="flex min-h-[55vh] items-center md:min-h-0">
+          <div className="w-full">
+            <Billboard billboard={billboard} loading={loading} />
+          </div>
+        </section>
+
+        <section className="mt-16 text-center md:mt-[11vh]">
           <p className="mx-auto max-w-md text-sm leading-relaxed text-muted-foreground">
             The internet's billboard. One brand owns it for a week. Highest bid wins the next one.
           </p>
         </section>
 
+        <SiteLinks className="mt-16 md:mt-[11vh]" />
 
-        <SiteLinks className="mt-16 md:mt-[22vh]" />
       </main>
 
       <SiteFooter />
