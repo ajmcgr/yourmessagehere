@@ -42,7 +42,7 @@ function Index() {
     <div className="min-h-screen bg-background text-foreground">
       <SiteNav />
 
-      <main className="mx-auto max-w-5xl px-6 pb-32">
+      <main className="mx-auto max-w-5xl px-6 pb-8">
         <h1 className="sr-only">Your Message Here — the internet's billboard</h1>
 
         <section className="flex min-h-[55vh] items-center pt-16 md:min-h-0 md:pt-16">
