@@ -89,17 +89,29 @@ function Index() {
               </span>
 
               <span className="order-2 md:order-none">
-                <Countdown target={endsAt} />
+                <span className="font-semibold text-foreground">Auction ends</span>{" "}
+                <Countdown target={endsAt} suffix="" />
+              </span>
+
+              <span className="order-3 md:order-none">
+                <span className="font-semibold text-foreground">Audience</span>{" "}
+                {views === null ? (
+                  <Skeleton className="inline-block h-3 w-12 align-middle" />
+                ) : (
+                  <span className="tabular-nums font-medium text-foreground">
+                    {views.toLocaleString("en-US")}
+                  </span>
+                )}
               </span>
 
               <Link
                 to="/buy"
-                className="order-3 font-semibold text-foreground underline-offset-4 hover:underline md:order-first"
+                className="order-4 font-semibold text-foreground underline-offset-4 hover:underline md:order-first"
               >
                 Buy this billboard →
               </Link>
 
-              <span className="order-4 text-xs text-muted-foreground md:order-none">
+              <span className="order-5 text-xs text-muted-foreground md:order-none">
                 <span className="md:hidden">{weekEndingLabel(auction, endsAt, { short: true })}</span>
                 <span className="hidden md:inline">
                   {weekEndingLabel(auction, endsAt, { short: true })}
@@ -112,16 +124,6 @@ function Index() {
         <section className="mt-6 text-center md:mt-7">
           <p className="mx-auto max-w-md text-sm leading-relaxed text-muted-foreground">
             The internet's billboard. Highest bid wins every Friday at 10 PM New York time.
-          </p>
-          <p className="mt-2 text-xs text-muted-foreground/70">
-            {views === null ? (
-              <Skeleton className="inline-block h-3 w-40 align-middle" />
-            ) : (
-              <>
-                <span className="tabular-nums">{views.toLocaleString("en-US")}</span> page views
-                since launch
-              </>
-            )}
           </p>
         </section>
 
