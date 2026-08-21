@@ -79,10 +79,41 @@ function Buy() {
     amount: "",
   });
   const [terms, setTerms] = useState(false);
-  const [pending, setPending] = useState<StartBidResult | null>(null);
+  const [verifying, setVerifying] = useState(false);
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
+
+  // Coming back from hosted Stripe Checkout: activate the bid server-side.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const bidId = params.get("ymh_bid");
+    const sessionId = params.get("ymh_session");
+    const cancelled = params.get("ymh_cancelled");
+    if (!bidId && !sessionId && !cancelled) return;
+    window.history.replaceState({}, "", "/buy");
+
+    if (cancelled) {
+      toast.error("Verification cancelled. Your card was not charged and no bid was placed.");
+      return;
+    }
+    if (!bidId || !sessionId) return;
+
+    setVerifying(true);
+    void confirmBid(bidId, sessionId)
+      .then(async () => {
+        toast.success("Bid verified. You're the highest bidder.");
+        await reload();
+      })
+      .catch((err) => {
+        toast.error(
+          err instanceof Error ? err.message : "Your bid could not be verified. Please try again.",
+        );
+        void reload();
+      })
+      .finally(() => setVerifying(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -107,10 +138,10 @@ function Buy() {
         terms_accepted: true,
         ...(website ? { website } : {}),
       });
-      setPending(started);
+      // Off to stripe.com to verify the card. No charge happens there.
+      window.location.href = started.checkout_url;
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Your bid could not be started.");
-    } finally {
       setSubmitting(false);
     }
   };
