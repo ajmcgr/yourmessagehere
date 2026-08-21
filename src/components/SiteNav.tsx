@@ -5,7 +5,7 @@ export function SiteNav() {
   return (
     <header className="grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-6 pt-3 pb-6 md:px-10">
       <Link to="/" className="min-w-0 transition-opacity hover:opacity-60">
-        <img src={logo.url} alt="Your Message Here" className="h-9 w-auto md:h-12 auto-invert" />
+        <img src={logo.url} alt="Your Message Here" className="h-11 w-auto md:h-14 auto-invert" />
       </Link>
       <Link
         to="/buy"
