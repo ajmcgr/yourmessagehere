@@ -243,7 +243,7 @@ function Faq() {
         <div className="mt-16">
           <Link
             to="/buy"
-            className="inline-block bg-foreground px-6 py-3 text-sm font-medium tracking-tight text-background transition-opacity hover:opacity-80"
+            className="inline-block rounded-lg bg-foreground px-6 py-2.5 text-sm font-medium tracking-tight text-background transition-opacity hover:opacity-80"
           >
             Buy this billboard →
           </Link>
