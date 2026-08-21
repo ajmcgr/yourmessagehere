@@ -42,6 +42,9 @@ function Index() {
         </section>
 
         <section className="mt-10 flex flex-wrap items-center justify-center gap-8 text-sm font-semibold text-foreground md:mt-12">
+          <Link to="/buy" className="underline-offset-4 hover:underline">
+            Buy this billboard →
+          </Link>
           <span>
             Current bid{" "}
             <span className="tabular-nums">{formatUsd(currentBidCents ?? startingBidCents)}</span>
@@ -49,9 +52,6 @@ function Index() {
           <span className="tabular-nums">
             <Countdown target={endsAt} />
           </span>
-          <Link to="/buy" className="underline-offset-4 hover:underline">
-            Buy this billboard →
-          </Link>
         </section>
 
         <section className="mt-8 text-center md:mt-10">
