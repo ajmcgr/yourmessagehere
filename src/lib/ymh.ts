@@ -217,6 +217,7 @@ export async function fetchArchivedBillboards(): Promise<Billboard[]> {
 export function weekEndingLabel(
   auction: Auction | null,
   endsAt: Date,
+  opts: { short?: boolean } = {},
 ): string {
   const end = auction?.week_end
     ? new Date(auction.week_end)
@@ -225,7 +226,7 @@ export function weekEndingLabel(
     timeZone: "America/New_York",
     month: "short",
     day: "numeric",
-    year: "numeric",
+    ...(opts.short ? {} : { year: "numeric" as const }),
   })}`;
 }
 
