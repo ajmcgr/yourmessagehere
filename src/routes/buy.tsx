@@ -81,8 +81,20 @@ function Buy() {
     }
   };
 
+  const timeAgo = (iso: string) => {
+    const secs = Math.max(0, (Date.now() - new Date(iso).getTime()) / 1000);
+    const mins = Math.floor(secs / 60);
+    if (mins < 1) return "just now";
+    if (mins < 60) return `${mins} minute${mins === 1 ? "" : "s"} ago`;
+    const hours = Math.floor(mins / 60);
+    if (hours < 24) return `${hours} hour${hours === 1 ? "" : "s"} ago`;
+    const days = Math.floor(hours / 24);
+    return `${days} day${days === 1 ? "" : "s"} ago`;
+  };
+
   const field =
     "w-full border-0 border-b border-foreground/20 bg-transparent py-3 text-base outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground";
+
 
   return (
     <div className="min-h-screen bg-background text-foreground">
