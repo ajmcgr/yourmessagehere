@@ -3,9 +3,11 @@ import { pad, useCountdown } from "@/hooks/useCountdown";
 export function Countdown({
   target,
   size = "sm",
+  suffix = " left",
 }: {
   target: Date;
   size?: "sm" | "lg";
+  suffix?: string;
 }) {
   const r = useCountdown(target);
   const cls =
