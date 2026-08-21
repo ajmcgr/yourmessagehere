@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Billboard } from "@/components/Billboard";
 import { Countdown } from "@/components/Countdown";
 import { useAuction } from "@/hooks/useAuction";
 import { useSiteDescriptions } from "@/hooks/useSiteDescriptions";
-import { formatUsd, placeBid, weekEndingLabel } from "@/lib/ymh";
+import { formatUsd, placeBid, recordPageView, weekEndingLabel } from "@/lib/ymh";
+
 import { isSupabaseConfigured } from "@/lib/supabase";
 import { SiteFooter, SiteLinks, SiteNav } from "@/components/SiteNav";
 
@@ -34,7 +35,13 @@ function Buy() {
   const { auction, billboard, bids, currentBidCents, minBidCents, incrementCents, endsAt, reload } =
     useAuction();
   const descriptions = useSiteDescriptions(bids.map((b) => b.website));
+  const [views, setViews] = useState<number | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    void recordPageView().then(setViews);
+  }, []);
+
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -107,7 +114,15 @@ function Buy() {
               <dd className="mt-2 text-sm text-muted-foreground">
                 {weekEndingLabel(auction, endsAt)}
               </dd>
+              {views !== null && (
+                <dd className="mt-3 text-xs leading-relaxed">
+                  <span className="marker-highlight font-semibold tabular-nums">
+                    {views.toLocaleString("en-US")} page views since launch
+                  </span>
+                </dd>
+              )}
             </div>
+
           </dl>
           <a href="#place-bid" className="btn-cta mt-8 inline-flex">
             Place a bid <span className="btn-arrow">↓</span>
