@@ -212,7 +212,7 @@ function Buy() {
           <section className="mt-16 lg:-mx-24 xl:-mx-40">
 
             <h2 className="text-sm font-bold tracking-normal text-foreground">
-              Brands ({bids.length})
+              Bids ({bids.length})
             </h2>
             <div className="mt-4 max-h-[28rem] overflow-y-auto border-t border-foreground/10">
               <table className="w-full text-base">
