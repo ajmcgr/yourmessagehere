@@ -35,7 +35,7 @@ function About() {
           </h1>
 
           <div className="mt-10 space-y-5 text-base leading-relaxed">
-            <p>Your Message Here is one billboard on the internet.</p>
+            <p className="text-center">Your Message Here is The Internet's billboard.</p>
 
             <p className="font-bold">Hello there!</p>
 
