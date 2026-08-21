@@ -11,13 +11,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Your Message Here — One billboard on the internet" },
+      { title: "Your Message Here — The Internet's Billboard" },
       {
         name: "description",
         content:
           "One billboard. One winner a week. Bid to own the internet's simplest billboard for seven days. Auction ends every Friday at 10:00 PM New York time.",
       },
-      { property: "og:title", content: "Your Message Here — One billboard on the internet" },
+      { property: "og:title", content: "Your Message Here — The Internet's Billboard" },
       {
         property: "og:description",
         content:
@@ -81,6 +81,7 @@ function Index() {
 
         <section className="mt-8 text-center md:mt-10">
           <p className="text-xs leading-relaxed text-muted-foreground">
+            <strong className="font-bold text-foreground">The Internet's billboard.</strong>{" "}
             Every Friday at 10:00 PM New York time, the highest bidder wins it for the following
             seven days.{" "}
             {views === null ? (
