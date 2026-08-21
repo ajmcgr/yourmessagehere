@@ -3,9 +3,9 @@ import logo from "@/assets/logo.png.asset.json";
 
 export function SiteNav() {
   return (
-    <header className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-6 py-8">
+    <header className="flex w-full flex-wrap items-center justify-between gap-4 px-6 py-8 md:px-10">
       <Link to="/" className="transition-opacity hover:opacity-60">
-        <img src={logo.url} alt="Your Message Here" className="h-9 w-auto md:h-12" />
+        <img src={logo.url} alt="Your Message Here" className="h-12 w-auto md:h-16" />
       </Link>
       <nav className="flex items-center gap-8 text-sm text-muted-foreground">
         <Link to="/archive" className="transition-colors hover:text-foreground">
