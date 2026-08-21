@@ -255,7 +255,7 @@ function Buy() {
                                 src={`https://www.google.com/s2/favicons?sz=128&domain=${host}`}
                                 alt=""
                                 loading="lazy"
-                                className="size-10 shrink-0 rounded"
+                                className="size-8 shrink-0 rounded sm:size-10"
                               />
                             ) : (
                               <span className="size-8 shrink-0 rounded bg-foreground/10 sm:size-10" />
