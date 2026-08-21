@@ -33,8 +33,8 @@ function Index() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <header className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-6 py-8">
-        <Link to="/buy" className="transition-opacity hover:opacity-60">
-          <img src={logo.url} alt="Your Message Here" className="h-6 w-auto md:h-7" />
+        <Link to="/" className="transition-opacity hover:opacity-60">
+          <img src={logo.url} alt="Your Message Here" className="h-9 w-auto md:h-12" />
         </Link>
         <div className="flex items-baseline gap-8 text-sm text-muted-foreground">
           <span>
@@ -68,8 +68,17 @@ function Index() {
         </section>
       </main>
 
-      <footer className="mx-auto max-w-5xl px-6 pb-10 text-xs text-muted-foreground">
-        yourmessagehere.co
+      <footer className="mx-auto max-w-5xl px-6 pb-10 text-center text-xs text-muted-foreground">
+        Copyright © 2026 Works App, Inc. Built with 🫶🏻 by{" "}
+        <a
+          href="https://x.com/alexmacgregor__"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-medium text-foreground underline-offset-4 hover:underline"
+        >
+          Alex
+        </a>
+        .
       </footer>
     </div>
   );
