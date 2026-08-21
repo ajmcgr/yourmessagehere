@@ -11,6 +11,8 @@ import { isSupabaseConfigured } from "@/lib/supabase";
 import { SiteFooter, SiteLinks, SiteNav } from "@/components/SiteNav";
 import { Skeleton } from "@/components/ui/skeleton";
 
+const PAGE_SIZE = 50;
+
 export const Route = createFileRoute("/buy")({
   head: () => ({
     meta: [
@@ -47,6 +49,15 @@ function Buy() {
   const descriptions = useSiteDescriptions(bids.map((b) => b.website));
   const [views, setViews] = useState<number | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [page, setPage] = useState(0);
+
+  const pageCount = Math.max(1, Math.ceil(bids.length / PAGE_SIZE));
+  const safePage = Math.min(page, pageCount - 1);
+  const pagedBids = bids.slice(safePage * PAGE_SIZE, safePage * PAGE_SIZE + PAGE_SIZE);
+
+  useEffect(() => {
+    if (page !== safePage) setPage(safePage);
+  }, [page, safePage]);
 
   useEffect(() => {
     void recordPageView().then(setViews);
@@ -215,7 +226,8 @@ function Buy() {
                 </thead>
 
                 <tbody>
-                  {bids.map((b, i) => {
+                  {pagedBids.map((b, idx) => {
+                    const i = safePage * PAGE_SIZE + idx;
                     const host = b.website
                       ? b.website.replace(/^https?:\/\//i, "").replace(/\/.*$/, "")
                       : null;
@@ -282,6 +294,29 @@ function Buy() {
                 </tbody>
               </table>
             </div>
+            {pageCount > 1 && (
+              <div className="mt-4 flex items-center justify-between gap-4 text-sm">
+                <button
+                  type="button"
+                  onClick={() => setPage(Math.max(0, safePage - 1))}
+                  disabled={safePage === 0}
+                  className="rounded border border-foreground/15 px-3 py-1.5 transition-colors hover:bg-foreground/5 disabled:opacity-40 disabled:hover:bg-transparent"
+                >
+                  ← Previous
+                </button>
+                <span className="text-muted-foreground tabular-nums">
+                  Page {safePage + 1} of {pageCount}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setPage(Math.min(pageCount - 1, safePage + 1))}
+                  disabled={safePage >= pageCount - 1}
+                  className="rounded border border-foreground/15 px-3 py-1.5 transition-colors hover:bg-foreground/5 disabled:opacity-40 disabled:hover:bg-transparent"
+                >
+                  Next →
+                </button>
+              </div>
+            )}
           </section>
         )}
 
