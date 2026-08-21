@@ -439,8 +439,8 @@ function Buy() {
                   className="mt-1 size-4 shrink-0 accent-foreground"
                 />
                 <span>
-                  I understand that if I win this auction, I authorize Your Message Here to charge
-                  my payment method for my winning bid.
+                  I understand that if I win this auction, I authorize Rocket DBA Your Message Here
+                  to charge my payment method for my winning bid.
                 </span>
               </label>
 
