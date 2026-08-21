@@ -11,9 +11,13 @@ export function SiteNav() {
         <Link to="/archive" className="transition-colors hover:text-foreground">
           Archive
         </Link>
+        <Link to="/faq" className="transition-colors hover:text-foreground">
+          FAQ
+        </Link>
         <Link to="/about" className="transition-colors hover:text-foreground">
           About
         </Link>
+
         <Link
           to="/buy"
           className="bg-foreground px-5 py-2 text-sm font-medium tracking-tight text-background transition-opacity hover:opacity-80"
