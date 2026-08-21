@@ -104,7 +104,7 @@ export async function fetchTopBids(auctionId?: string): Promise<Bid[]> {
     .select("*")
     .eq("auction_id", auctionId)
     .order("amount_cents", { ascending: false })
-    .limit(10);
+    .limit(100);
   if (error) return [];
   return (data as Bid[]) ?? [];
 }
