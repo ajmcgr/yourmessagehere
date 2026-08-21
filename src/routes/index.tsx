@@ -70,6 +70,13 @@ function Index() {
             Every Friday at 10:00 PM New York time, the highest bidder wins it for the following
             seven days.
           </p>
+          {views !== null && (
+            <p className="mt-3 text-xs leading-relaxed">
+              <span className="marker-highlight font-semibold tabular-nums">
+                {views.toLocaleString("en-US")} page views since launch
+              </span>
+            </p>
+          )}
         </section>
 
         <SiteLinks />
