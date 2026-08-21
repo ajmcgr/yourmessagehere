@@ -220,6 +220,7 @@ function Buy() {
                       ? b.website.replace(/^https?:\/\//i, "").replace(/\/.*$/, "")
                       : null;
                     const description = b.website ? descriptions[b.website] : undefined;
+                    const winning = i === 0;
                     return (
                       <tr
                         key={b.id}
@@ -229,6 +230,8 @@ function Buy() {
                             : undefined
                         }
                         className={`border-t border-foreground/10 align-middle ${
+                          winning ? "bg-money/10" : ""
+                        } ${
                           b.website ? "cursor-pointer transition-colors hover:bg-foreground/5" : ""
                         }`}
                       >
@@ -252,12 +255,12 @@ function Buy() {
                                   target="_blank"
                                   rel="noopener noreferrer nofollow"
                                   onClick={(e) => e.stopPropagation()}
-                                  className="block truncate text-foreground underline-offset-4 hover:underline"
+                                  className="block truncate font-bold text-foreground underline-offset-4 hover:underline"
                                 >
                                   {b.advertiser}
                                 </a>
                               ) : (
-                                <span className="block truncate text-foreground">{b.advertiser}</span>
+                                <span className="block truncate font-bold text-foreground">{b.advertiser}</span>
                               )}
                               {description && (
                                 <span className="block truncate text-sm text-muted-foreground">
@@ -270,7 +273,7 @@ function Buy() {
                         <td className="hidden whitespace-nowrap py-5 text-sm text-muted-foreground md:table-cell">
                           {timeAgo(b.created_at)}
                         </td>
-                        <td className="py-5 text-right tabular-nums text-foreground">
+                        <td className="py-5 text-right font-bold tabular-nums text-money">
                           {formatUsd(b.amount_cents)}
                         </td>
                       </tr>
