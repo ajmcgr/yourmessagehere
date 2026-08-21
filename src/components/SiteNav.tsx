@@ -1,9 +1,11 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import logo from "@/assets/logo.png.asset.json";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 export function SiteNav() {
   return (
+    <>
+    <FloatingBuyCta />
     <header className="grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-6 pt-3 pb-6 md:px-10">
       <Link to="/" className="min-w-0 transition-opacity hover:opacity-60">
         <img src={logo.url} alt="Your Message Here" className="h-12 w-auto md:h-16 auto-invert" />
@@ -12,10 +14,13 @@ export function SiteNav() {
         <ThemeToggle />
       </div>
     </header>
+    </>
   );
 }
 
 export function FloatingBuyCta() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  if (pathname.startsWith("/buy")) return null;
   return (
     <Link
       to="/buy"
