@@ -32,18 +32,7 @@ function Index() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-6 pt-3 pb-6 md:px-10">
-        <Link to="/" className="min-w-0 transition-opacity hover:opacity-60">
-          <img src={logo.url} alt="Your Message Here" className="h-9 w-auto md:h-12" />
-        </Link>
-        <Link
-          to="/buy"
-          className="shrink-0 rounded-lg bg-foreground px-6 py-2.5 text-sm font-medium tracking-tight text-background transition-opacity hover:opacity-80"
-        >
-          Buy this billboard →
-
-        </Link>
-      </header>
+      <SiteNav />
 
       <main className="mx-auto max-w-5xl px-6 pb-32">
         <h1 className="sr-only">Your Message Here — the internet's billboard</h1>
@@ -72,31 +61,11 @@ function Index() {
           </p>
         </section>
 
-        <nav className="mt-8 flex flex-wrap items-center justify-center gap-8 text-sm text-muted-foreground">
-          <Link to="/archive" className="transition-colors hover:text-foreground">
-            Archive
-          </Link>
-          <Link to="/faq" className="transition-colors hover:text-foreground">
-            FAQ
-          </Link>
-          <Link to="/about" className="transition-colors hover:text-foreground">
-            About
-          </Link>
-        </nav>
+        <SiteLinks />
       </main>
 
-      <footer className="mx-auto max-w-5xl px-6 pb-10 text-center text-xs leading-relaxed text-muted-foreground">
-        Copyright © 2026 Works App, Inc. Built with 🫶🏻 by{" "}
-        <a
-          href="https://x.com/alexmacgregor__"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-muted-foreground underline-offset-4 hover:underline"
-        >
-          Alex
-        </a>
-        .
-      </footer>
+      <SiteFooter />
     </div>
+
   );
 }
