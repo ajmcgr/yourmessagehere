@@ -369,8 +369,9 @@ function Buy() {
         <section id="place-bid" className="mt-16 scroll-mt-24">
           <h1 className="text-2xl font-medium tracking-tight">Place a bid</h1>
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
-            No account. You won't be charged now — Stripe verifies your payment method so your bid
-            counts. Minimum bid {formatUsd(minBidCents)} (increments of {formatUsd(incrementCents)}).
+            No account. You won't be charged now — you'll verify a card on Stripe's secure checkout
+            page so your bid counts. Minimum bid {formatUsd(minBidCents)} (increments of{" "}
+            {formatUsd(incrementCents)}).
           </p>
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
             Creative spec: <span className="text-foreground">1600 × 900 px</span> (16:9), JPG or
@@ -383,29 +384,11 @@ function Buy() {
               Bidding is offline until VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY are set.
             </p>
           )}
-          {isSupabaseConfigured && !isStripeConfigured && (
-            <p className="mt-6 border border-foreground/20 p-4 text-sm text-muted-foreground">
-              Bidding is offline until VITE_STRIPE_PUBLISHABLE_KEY is set.
-            </p>
-          )}
 
-          {pending ? (
-            <VerifyStep
-              pending={pending}
-              onCancel={() => setPending(null)}
-              onVerified={async () => {
-                setPending(null);
-                setForm((f) => ({ ...f, amount: "" }));
-                setTerms(false);
-                toast.success("Bid verified. You're the highest bidder.");
-                await reload();
-              }}
-              onStale={async (message) => {
-                setPending(null);
-                toast.error(message);
-                await reload();
-              }}
-            />
+          {verifying ? (
+            <p className="mt-8 border border-foreground/20 p-4 text-sm text-muted-foreground">
+              Verifying your payment method with Stripe…
+            </p>
           ) : (
             <form onSubmit={onSubmit} className="mt-8 space-y-6">
               <input required placeholder="Name" className={field} value={form.name} onChange={set("name")} />
