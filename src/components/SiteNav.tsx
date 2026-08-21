@@ -11,7 +11,10 @@ export function SiteNav() {
         to="/buy"
         className="btn-cta shrink-0"
       >
-        Buy this billboard <span className="btn-arrow" aria-hidden="true">→</span>
+        <span className="sm:hidden">Buy</span>
+        <span className="hidden sm:inline">Buy this billboard</span>{" "}
+        <span className="btn-arrow" aria-hidden="true">→</span>
+
       </Link>
     </header>
   );
