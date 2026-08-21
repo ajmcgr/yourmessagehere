@@ -26,7 +26,10 @@ const BEEHIIV_PUB_ID = "pub_34f2ec46-4dd5-4040-9758-31a8acfb7022";
 
 async function subscribeToBeehiiv(email: string, name: string) {
   const key = Deno.env.get("BEEHIIV_API_KEY");
-  if (!key) return;
+  if (!key) {
+    console.error("[ymh-place-bid] Beehiiv skipped: BEEHIIV_API_KEY is not configured");
+    return "missing_key";
+  }
   try {
     const res = await fetch(
       `https://api.beehiiv.com/v2/publications/${BEEHIIV_PUB_ID}/subscriptions`,
@@ -43,9 +46,15 @@ async function subscribeToBeehiiv(email: string, name: string) {
         }),
       },
     );
-    if (!res.ok) console.error(`beehiiv subscribe failed [${res.status}]: ${await res.text()}`);
+    if (!res.ok) {
+      console.error(`[ymh-place-bid] Beehiiv subscription failed [${res.status}]: ${await res.text()}`);
+      return "failed";
+    }
+    console.info(`[ymh-place-bid] Beehiiv subscription accepted [${res.status}]`);
+    return "accepted";
   } catch (e) {
-    console.error("beehiiv subscribe error", e);
+    console.error("[ymh-place-bid] Beehiiv subscription error", e);
+    return "failed";
   }
 }
 
@@ -97,6 +106,8 @@ Deno.serve(async (req) => {
     });
     if (error) return json({ error: error.message }, 400);
 
+    const beehiiv = await subscribeToBeehiiv(email, name);
+
     const usd = (c: number) => `$${(c / 100).toFixed(0)}`;
 
     await sendEmail(
@@ -133,8 +144,9 @@ Deno.serve(async (req) => {
       });
     }
 
-    return json({ ok: true, amount_cents: amount });
+    return json({ ok: true, amount_cents: amount, beehiiv });
   } catch (e) {
+    console.error("[ymh-place-bid] Unhandled error", e);
     return json({ error: e instanceof Error ? e.message : "Unexpected error" }, 500);
   }
 });
