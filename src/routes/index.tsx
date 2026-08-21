@@ -65,13 +65,15 @@ function Index() {
       <main className="mx-auto max-w-5xl px-6 pb-8">
         <h1 className="sr-only">Your Message Here — the internet's billboard</h1>
 
-        <section className="flex min-h-[55vh] items-center pt-5 md:min-h-0 md:pt-8">
+        <div className="flex min-h-[70vh] flex-col justify-center pt-5 md:block md:min-h-0 md:pt-8">
+        <section>
           <div className="w-full">
             <Billboard billboard={billboard} loading={loading} />
           </div>
         </section>
 
         <section className="mt-3.5 text-sm md:mt-5">
+
           {loading ? (
             <div className="flex flex-wrap items-center justify-between gap-2.5 md:justify-center md:gap-x-7">
               <Skeleton className="h-5 w-40" />
@@ -116,6 +118,8 @@ function Index() {
             </div>
           )}
         </section>
+        </div>
+
 
         <section className="mt-6 text-center md:mt-8">
           <p className="mx-auto max-w-md text-sm leading-relaxed text-muted-foreground">
