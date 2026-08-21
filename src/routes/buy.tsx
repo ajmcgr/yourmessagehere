@@ -30,7 +30,7 @@ export const Route = createFileRoute("/buy")({
 });
 
 function Buy() {
-  const { billboard, bids, currentBidCents, minBidCents, incrementCents, endsAt, reload } =
+  const { auction, billboard, bids, currentBidCents, minBidCents, incrementCents, endsAt, reload } =
     useAuction();
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
