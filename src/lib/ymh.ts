@@ -147,3 +147,17 @@ export async function placeBid(input: PlaceBidInput) {
 }
 
 export { functionsUrl };
+
+/** Every past billboard that ran, newest first. */
+export async function fetchArchivedBillboards(): Promise<Billboard[]> {
+  if (!isSupabaseConfigured || !supabase) return [];
+  const { data, error } = await supabase
+    .from("ymh_billboards")
+    .select("*")
+    .eq("status", "approved")
+    .lt("week_end", new Date().toISOString())
+    .order("week_start", { ascending: false })
+    .limit(200);
+  if (error) return [];
+  return (data as Billboard[]) ?? [];
+}
