@@ -132,6 +132,11 @@ function Buy() {
             creative. Minimum bid {formatUsd(minBidCents)} (increments of{" "}
             {formatUsd(incrementCents)}).
           </p>
+          <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground">
+            Creative spec: <span className="text-foreground">1600 × 900 px</span> (16:9), JPG or
+            PNG, under 2 MB. 2× retina file: 3200 × 1800 px.
+          </p>
+
 
           {!isSupabaseConfigured && (
             <p className="mt-6 border border-foreground/20 p-4 text-sm text-muted-foreground">
