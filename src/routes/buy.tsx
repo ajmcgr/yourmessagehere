@@ -79,7 +79,7 @@ function Buy() {
       <SiteNav />
 
 
-      <main className="mx-auto grid max-w-5xl gap-16 px-6 pb-32 md:grid-cols-2">
+      <main className="mx-auto max-w-3xl px-6 pb-32">
         <section>
           <Billboard billboard={billboard} />
           <dl className="mt-10 space-y-6">
@@ -100,27 +100,16 @@ function Buy() {
               </dd>
             </div>
           </dl>
-
-          {bids.length > 0 && (
-            <ul className="mt-10 space-y-2 text-sm text-muted-foreground">
-              {bids.map((b) => (
-                <li key={b.id} className="flex justify-between border-b border-foreground/10 py-2">
-                  <span>{b.advertiser}</span>
-                  <span className="tabular-nums text-foreground">{formatUsd(b.amount_cents)}</span>
-                </li>
-              ))}
-            </ul>
-          )}
         </section>
 
-        <section>
+        <section className="mt-16">
           <h1 className="text-2xl font-medium tracking-tight">Place a bid</h1>
-          <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
             No account. No payment now. If you win, we email you a Stripe link and you upload your
             creative. Minimum bid {formatUsd(minBidCents)} (increments of{" "}
             {formatUsd(incrementCents)}).
           </p>
-          <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
             Creative spec: <span className="text-foreground">1600 × 900 px</span> (16:9), JPG or
             PNG, under 2 MB. 2× retina file: 3200 × 1800 px.
           </p>
@@ -180,7 +169,19 @@ function Buy() {
             </button>
           </form>
         </section>
+
+        {bids.length > 0 && (
+          <ul className="mt-16 space-y-2 text-sm text-muted-foreground">
+            {bids.map((b) => (
+              <li key={b.id} className="flex justify-between border-b border-foreground/10 py-2">
+                <span>{b.advertiser}</span>
+                <span className="tabular-nums text-foreground">{formatUsd(b.amount_cents)}</span>
+              </li>
+            ))}
+          </ul>
+        )}
       </main>
+
 
       <div className="mx-auto max-w-5xl px-6 pb-16">
         <SiteLinks />
