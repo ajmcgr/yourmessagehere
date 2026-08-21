@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import type { Billboard as BillboardType } from "@/lib/ymh";
+import placeholder from "@/assets/billboard-placeholder.png.asset.json";
 
 export function Billboard({ billboard }: { billboard: BillboardType | null }) {
   const inner = billboard?.image_url ? (
@@ -9,15 +10,15 @@ export function Billboard({ billboard }: { billboard: BillboardType | null }) {
       className="h-full w-full object-cover"
     />
   ) : (
-    <Link
-      to="/buy"
-      className="flex h-full w-full items-center justify-center bg-background transition-opacity hover:opacity-60"
-    >
-      <p className="px-6 text-center text-2xl font-medium tracking-tight text-muted-foreground md:text-5xl">
-        Your message here
-      </p>
+    <Link to="/buy" className="block h-full w-full transition-opacity hover:opacity-60">
+      <img
+        src={placeholder.url}
+        alt="Your message here — buy this billboard"
+        className="h-full w-full object-cover"
+      />
     </Link>
   );
+
 
   const frame = (
     <div className="w-full">
