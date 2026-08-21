@@ -71,12 +71,12 @@ function Index() {
             seven days.
           </p>
           {views !== null && (
-            <p className="mt-3 text-xs leading-relaxed">
-              <span className="marker-highlight font-semibold tabular-nums">
-                {views.toLocaleString("en-US")} page views since launch
-              </span>
+            <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+              <span className="tabular-nums">{views.toLocaleString("en-US")}</span> page views since
+              launch
             </p>
           )}
+
         </section>
 
         <SiteLinks />
