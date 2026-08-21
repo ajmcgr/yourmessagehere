@@ -15,6 +15,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as ArchiveRouteImport } from './routes/archive'
 import { Route as BuyRouteImport } from './routes/buy'
 import { Route as FaqRouteImport } from './routes/faq'
+import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -46,6 +47,11 @@ const FaqRoute = FaqRouteImport.update({
   path: '/faq',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UnsubscribeRoute = UnsubscribeRouteImport.update({
+  id: '/unsubscribe',
+  path: '/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -54,6 +60,7 @@ export interface FileRoutesByFullPath {
   '/archive': typeof ArchiveRoute
   '/buy': typeof BuyRoute
   '/faq': typeof FaqRoute
+  '/unsubscribe': typeof UnsubscribeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,6 +69,7 @@ export interface FileRoutesByTo {
   '/archive': typeof ArchiveRoute
   '/buy': typeof BuyRoute
   '/faq': typeof FaqRoute
+  '/unsubscribe': typeof UnsubscribeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,13 +79,23 @@ export interface FileRoutesById {
   '/archive': typeof ArchiveRoute
   '/buy': typeof BuyRoute
   '/faq': typeof FaqRoute
+  '/unsubscribe': typeof UnsubscribeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/admin' | '/archive' | '/buy' | '/faq'
+  fullPaths:
+    '/' | '/about' | '/admin' | '/archive' | '/buy' | '/faq' | '/unsubscribe'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/admin' | '/archive' | '/buy' | '/faq'
-  id: '__root__' | '/' | '/about' | '/admin' | '/archive' | '/buy' | '/faq'
+  to: '/' | '/about' | '/admin' | '/archive' | '/buy' | '/faq' | '/unsubscribe'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/admin'
+    | '/archive'
+    | '/buy'
+    | '/faq'
+    | '/unsubscribe'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -87,6 +105,7 @@ export interface RootRouteChildren {
   ArchiveRoute: typeof ArchiveRoute
   BuyRoute: typeof BuyRoute
   FaqRoute: typeof FaqRoute
+  UnsubscribeRoute: typeof UnsubscribeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -133,6 +152,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FaqRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/unsubscribe': {
+      id: '/unsubscribe'
+      path: '/unsubscribe'
+      fullPath: '/unsubscribe'
+      preLoaderRoute: typeof UnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -143,6 +169,7 @@ const rootRouteChildren: RootRouteChildren = {
   ArchiveRoute: ArchiveRoute,
   BuyRoute: BuyRoute,
   FaqRoute: FaqRoute,
+  UnsubscribeRoute: UnsubscribeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
