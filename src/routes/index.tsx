@@ -89,7 +89,19 @@ function Index() {
               </span>
 
               <span className="order-2 md:order-none">
-                <Countdown target={endsAt} />
+                <span className="font-semibold text-foreground">Auction ends</span>{" "}
+                <Countdown target={endsAt} suffix="" />
+              </span>
+
+              <span className="order-3 md:order-none">
+                <span className="font-semibold text-foreground">Audience</span>{" "}
+                {views === null ? (
+                  <Skeleton className="inline-block h-3 w-12 align-middle" />
+                ) : (
+                  <span className="tabular-nums font-medium text-foreground">
+                    {views.toLocaleString("en-US")}
+                  </span>
+                )}
               </span>
 
               <Link
