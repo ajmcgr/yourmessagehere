@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { BrandIcon } from "@/components/BrandIcon";
 import { Billboard } from "@/components/Billboard";
 import { Countdown } from "@/components/Countdown";
 import { useAuction } from "@/hooks/useAuction";
@@ -295,16 +296,7 @@ function Buy() {
                         <td className="py-5 pl-3 text-sm tabular-nums text-muted-foreground sm:pl-6">{i + 1}</td>
                         <td className="px-2 py-5 sm:px-4">
                           <div className="flex min-w-0 items-center gap-3 sm:gap-4">
-                            {host ? (
-                              <img
-                                src={`https://www.google.com/s2/favicons?sz=128&domain=${host}`}
-                                alt=""
-                                loading="lazy"
-                                className="size-8 shrink-0 rounded sm:size-10"
-                              />
-                            ) : (
-                              <span className="size-8 shrink-0 rounded bg-foreground/10 sm:size-10" />
-                            )}
+                            <BrandIcon host={host} className="size-8 sm:size-10" />
                             <span className="min-w-0 flex-1">
                               {b.website ? (
                                 <a

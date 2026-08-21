@@ -1,3 +1,4 @@
+import { BrandIcon } from "@/components/BrandIcon";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { SiteFooter, SiteLinks, SiteNav } from "@/components/SiteNav";
@@ -168,16 +169,7 @@ function Archive() {
                                   >
                                     <td className="py-3 pr-3">
                                       <div className="flex min-w-0 items-center gap-2">
-                                        {h ? (
-                                          <img
-                                            src={`https://www.google.com/s2/favicons?sz=128&domain=${h}`}
-                                            alt=""
-                                            className="size-6 shrink-0 rounded-sm"
-                                            loading="lazy"
-                                          />
-                                        ) : (
-                                          <span className="size-6 shrink-0 rounded-sm bg-foreground/10" />
-                                        )}
+                                        <BrandIcon host={h} className="size-6 rounded-sm" />
                                         <span className="truncate font-bold">{b.advertiser}</span>
                                       </div>
                                     </td>
