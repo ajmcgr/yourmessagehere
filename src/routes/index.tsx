@@ -3,7 +3,7 @@ import { Billboard } from "@/components/Billboard";
 import { Countdown } from "@/components/Countdown";
 import { useAuction } from "@/hooks/useAuction";
 import { formatUsd } from "@/lib/ymh";
-import logo from "@/assets/logo.png.asset.json";
+import { SiteFooter, SiteLinks, SiteNav } from "@/components/SiteNav";
 
 export const Route = createFileRoute("/")({
   head: () => ({
