@@ -3,8 +3,8 @@
 // Secrets: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, STRIPE_SECRET_KEY
 //
 // Step 1 of bidding: validate the amount and create a PENDING bid that is NOT
-// public, then create a Stripe SetupIntent so the bidder can verify a payment
-// method. No money moves here.
+// public, then create a hosted Stripe Checkout session (setup mode) so the bidder can
+// verify a payment method on stripe.com. No money moves here.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import Stripe from "https://esm.sh/stripe@17.0.0?target=deno";
 
@@ -38,6 +38,18 @@ Deno.serve(async (req) => {
     const amount = Number(body.amount_cents);
     const termsAccepted = body.terms_accepted === true;
 
+    // Where Stripe sends the bidder back. Only our own origins are allowed.
+    const ALLOWED = [
+      "https://yourmessagehere.co",
+      "https://www.yourmessagehere.co",
+      "https://yourmessagehere.lovable.app",
+    ];
+    const requested = String(body.return_origin ?? "");
+    const origin =
+      ALLOWED.includes(requested) || /^https:\/\/[a-z0-9-]+\.lovableproject\.com$/.test(requested)
+        ? requested
+        : ALLOWED[0];
+
     if (!name || name.length > 120) return json({ error: "Please enter your name." }, 400);
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return json({ error: "Enter a valid email." }, 400);
     if (!advertiser || advertiser.length > 120) return json({ error: "Enter the advertiser." }, 400);
@@ -67,11 +79,22 @@ Deno.serve(async (req) => {
         metadata: { product_source: "your_message_here", advertiser },
       }));
 
-    const setupIntent = await stripe.setupIntents.create({
+    // Hosted Stripe Checkout in setup mode: the bidder verifies and saves a card
+    // on checkout.stripe.com. No charge happens here.
+    const session = await stripe.checkout.sessions.create({
+      mode: "setup",
       customer: customer.id,
-      usage: "off_session",
-      // Cards only: other methods can't be reliably charged off-session at auction close.
       payment_method_types: ["card"],
+      currency: "usd",
+      setup_intent_data: {
+        metadata: {
+          product_source: "your_message_here",
+          ymh_bid_id: bid.id,
+          ymh_auction_id: bid.auction_id,
+          advertiser,
+          amount_cents: String(amount),
+        },
+      },
       metadata: {
         product_source: "your_message_here",
         ymh_bid_id: bid.id,
@@ -79,19 +102,22 @@ Deno.serve(async (req) => {
         advertiser,
         amount_cents: String(amount),
       },
+      success_url: `${origin}/buy?ymh_bid=${bid.id}&ymh_session={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/buy?ymh_cancelled=1`,
     });
 
     await admin
       .from("ymh_bids")
-      .update({ stripe_customer_id: customer.id, stripe_setup_intent_id: setupIntent.id })
+      .update({ stripe_customer_id: customer.id })
       .eq("id", bid.id);
 
     return json({
       bid_id: bid.id,
       amount_cents: amount,
-      client_secret: setupIntent.client_secret,
-      setup_intent_id: setupIntent.id,
+      checkout_url: session.url,
+      checkout_session_id: session.id,
     });
+
   } catch (e) {
     console.error("[ymh-start-bid] Unhandled error", e);
     return json({ error: e instanceof Error ? e.message : "Unexpected error" }, 500);
