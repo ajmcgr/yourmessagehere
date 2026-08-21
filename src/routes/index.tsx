@@ -81,7 +81,7 @@ function Index() {
 
         <section className="mt-8 text-center md:mt-10">
           <p className="text-xs leading-relaxed text-muted-foreground">
-            <strong className="font-bold text-foreground">The Internet's billboard.</strong>{" "}
+            <strong className="font-bold">The Internet's billboard.</strong>{" "}
             Every Friday at 10:00 PM New York time, the highest bidder wins it for the following
             seven days.{" "}
             {views === null ? (
