@@ -10,13 +10,21 @@ export function SiteNav() {
       </Link>
       <div className="flex shrink-0 items-center gap-2 md:gap-3">
         <ThemeToggle />
-        <Link to="/buy" className="btn-cta shrink-0">
-          <span className="sm:hidden">Buy</span>
-          <span className="hidden sm:inline">Buy this billboard</span>{" "}
-          <span className="btn-arrow" aria-hidden="true">→</span>
-        </Link>
       </div>
     </header>
+  );
+}
+
+export function FloatingBuyCta() {
+  return (
+    <Link
+      to="/buy"
+      className="btn-cta fixed right-4 bottom-4 z-50 shadow-lg md:right-8 md:bottom-8"
+    >
+      <span className="sm:hidden">Buy</span>
+      <span className="hidden sm:inline">Buy this billboard</span>{" "}
+      <span className="btn-arrow" aria-hidden="true">→</span>
+    </Link>
   );
 }
 
