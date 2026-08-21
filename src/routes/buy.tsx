@@ -106,6 +106,78 @@ function Buy() {
           </a>
         </section>
 
+        {bids.length > 0 && (
+          <section className="mt-16">
+            <h2 className="text-sm uppercase tracking-widest text-muted-foreground">
+              Bidders ({bids.length})
+            </h2>
+            <div className="mt-4 max-h-[28rem] overflow-y-auto border-t border-foreground/10">
+              <table className="w-full text-sm">
+                <thead className="sticky top-0 bg-background">
+                  <tr className="text-left text-xs uppercase tracking-widest text-muted-foreground">
+                    <th className="w-8 py-3 font-normal">#</th>
+                    <th className="py-3 font-normal">Advertiser</th>
+                    <th className="hidden py-3 font-normal sm:table-cell">Bidder</th>
+                    <th className="hidden py-3 font-normal md:table-cell">Date</th>
+                    <th className="py-3 text-right font-normal">Bid</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {bids.map((b, i) => {
+                    const host = b.website
+                      ? b.website.replace(/^https?:\/\//i, "").replace(/\/.*$/, "")
+                      : null;
+                    return (
+                      <tr key={b.id} className="border-t border-foreground/10 align-middle">
+                        <td className="py-3 tabular-nums text-muted-foreground">{i + 1}</td>
+                        <td className="py-3">
+                          <div className="flex items-center gap-3">
+                            {host ? (
+                              <img
+                                src={`https://www.google.com/s2/favicons?sz=64&domain=${host}`}
+                                alt=""
+                                loading="lazy"
+                                className="size-6 shrink-0 rounded"
+                              />
+                            ) : (
+                              <span className="size-6 shrink-0 rounded bg-foreground/10" />
+                            )}
+                            <span className="min-w-0">
+                              <span className="block truncate text-foreground">{b.advertiser}</span>
+                              {host && (
+                                <a
+                                  href={b.website ?? undefined}
+                                  target="_blank"
+                                  rel="noopener noreferrer nofollow"
+                                  className="block truncate text-xs text-muted-foreground underline-offset-4 hover:underline"
+                                >
+                                  {host}
+                                </a>
+                              )}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="hidden py-3 text-muted-foreground sm:table-cell">
+                          {b.bidder_name}
+                        </td>
+                        <td className="hidden py-3 text-muted-foreground md:table-cell">
+                          {new Date(b.created_at).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                          })}
+                        </td>
+                        <td className="py-3 text-right tabular-nums text-foreground">
+                          {formatUsd(b.amount_cents)}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
+
         <section id="place-bid" className="mt-16 scroll-mt-24">
           <h1 className="text-2xl font-medium tracking-tight">Place a bid</h1>
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
