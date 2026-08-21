@@ -55,9 +55,11 @@ supabase functions deploy ymh-admin           --no-verify-jwt
 Rocket project after deploying the new ones.
 
 - **ymh-start-bid** — validates the amount, writes a `pending_verification`
-  bid, creates/reuses the Stripe customer and returns a SetupIntent client
-  secret.
-- **ymh-confirm-bid** — re-retrieves the SetupIntent server-side, re-checks the
+  bid, creates/reuses the Stripe customer and returns a hosted Stripe Checkout
+  URL (`mode: "setup"`, cards only). The bidder verifies the card on
+  checkout.stripe.com and is redirected back to `/buy?ymh_bid=…&ymh_session=…`.
+- **ymh-confirm-bid** — retrieves the Checkout session and its SetupIntent
+  server-side (metadata must match the bid), re-checks the
   auction and minimum bid, activates the bid, sends the "Your bid is in" and
   outbid emails, enrolls the bidder in beehiiv.
 - **ymh-close-auction** — closes at Friday 22:00 ET, marks the top verified bid
