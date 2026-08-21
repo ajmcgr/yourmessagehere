@@ -33,8 +33,9 @@ export function useAuction() {
 
   // Realtime: new bids on the current auction
   useEffect(() => {
-    if (!supabase || !auction?.id) return;
-    const channel = supabase
+    const client = supabase;
+    if (!client || !auction?.id) return;
+    const channel = client
       .channel(`ymh_bids_${auction.id}`)
       .on(
         "postgres_changes",
@@ -43,7 +44,7 @@ export function useAuction() {
       )
       .subscribe();
     return () => {
-      void supabase.removeChannel(channel);
+      void client.removeChannel(channel);
     };
   }, [auction?.id]);
 
