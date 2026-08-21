@@ -20,11 +20,6 @@ export function Billboard({ billboard }: { billboard: BillboardType | null }) {
       <div className="aspect-[16/9] w-full overflow-hidden border border-foreground bg-background">
         {inner}
       </div>
-      <div className="mx-auto flex w-full max-w-[70%] justify-between">
-        <div className="h-14 w-px bg-foreground/40 md:h-20" />
-        <div className="h-14 w-px bg-foreground/40 md:h-20" />
-      </div>
-      <div className="mx-auto h-px w-full max-w-[80%] bg-foreground/40" />
     </div>
   );
 

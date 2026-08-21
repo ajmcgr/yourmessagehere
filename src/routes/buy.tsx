@@ -6,6 +6,7 @@ import { Countdown } from "@/components/Countdown";
 import { useAuction } from "@/hooks/useAuction";
 import { formatUsd, placeBid } from "@/lib/ymh";
 import { isSupabaseConfigured } from "@/lib/supabase";
+import logo from "@/assets/logo.png.asset.json";
 
 export const Route = createFileRoute("/buy")({
   head: () => ({
@@ -76,8 +77,8 @@ function Buy() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <header className="mx-auto flex max-w-5xl items-baseline justify-between gap-4 px-6 py-8">
-        <Link to="/" className="text-sm font-medium tracking-tight hover:opacity-60">
-          Your Message Here
+        <Link to="/" className="hover:opacity-60">
+          <img src={logo.url} alt="Your Message Here" className="h-6 w-auto md:h-7" />
         </Link>
         <span className="text-sm text-muted-foreground">Friday, 10:00 PM ET</span>
       </header>

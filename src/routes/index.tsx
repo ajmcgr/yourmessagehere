@@ -3,6 +3,7 @@ import { Billboard } from "@/components/Billboard";
 import { Countdown } from "@/components/Countdown";
 import { useAuction } from "@/hooks/useAuction";
 import { formatUsd } from "@/lib/ymh";
+import logo from "@/assets/logo.png.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -31,8 +32,10 @@ function Index() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="mx-auto flex max-w-5xl flex-wrap items-baseline justify-between gap-4 px-6 py-8">
-        <span className="text-sm font-medium tracking-tight">Your Message Here</span>
+      <header className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-6 py-8">
+        <Link to="/buy" className="transition-opacity hover:opacity-60">
+          <img src={logo.url} alt="Your Message Here" className="h-6 w-auto md:h-7" />
+        </Link>
         <div className="flex items-baseline gap-8 text-sm text-muted-foreground">
           <span>
             Current bid{" "}
@@ -51,17 +54,17 @@ function Index() {
           <Billboard billboard={billboard} />
         </section>
 
-        <section className="mt-16 flex flex-col items-start gap-6 md:mt-24">
+        <section className="mt-16 flex flex-col items-center gap-6 text-center md:mt-24">
+          <Link
+            to="/buy"
+            className="border-b-2 border-foreground pb-1 text-2xl font-medium tracking-tight transition-opacity hover:opacity-60 md:text-4xl"
+          >
+            Buy this billboard →
+          </Link>
           <p className="max-w-md text-sm leading-relaxed text-muted-foreground">
             There is one billboard on the internet. Every Friday at 10:00 PM New York time, the
             highest bidder wins it for the following seven days.
           </p>
-          <Link
-            to="/buy"
-            className="border-b border-foreground pb-1 text-base font-medium tracking-tight transition-opacity hover:opacity-60"
-          >
-            Buy this billboard →
-          </Link>
         </section>
       </main>
 
