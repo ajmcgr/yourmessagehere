@@ -42,6 +42,11 @@ supabase secrets set \
 
 `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are injected automatically.
 
+beehiiv: every bid email is enrolled into publication
+`pub_34f2ec46-4dd5-4040-9758-31a8acfb7022` from `ymh-place-bid` (reactivates
+existing subscribers, no welcome email). Subscription failures are logged and
+never block a bid.
+
 ## 4. Stripe webhook
 
 Add an endpoint in the Stripe dashboard pointing at
