@@ -37,9 +37,12 @@ function Index() {
       <main className="mx-auto max-w-5xl px-6 pb-32">
         <h1 className="sr-only">Your Message Here — the internet's billboard</h1>
 
-        <section className="pt-8 md:pt-16">
-          <Billboard billboard={billboard} />
+        <section className="flex min-h-[55vh] items-center pt-16 md:min-h-0 md:pt-16">
+          <div className="w-full">
+            <Billboard billboard={billboard} />
+          </div>
         </section>
+
 
         <section className="mt-10 flex flex-wrap items-center justify-center gap-8 text-sm font-semibold text-foreground md:mt-12">
           <Link to="/buy" className="underline-offset-4 hover:underline">
