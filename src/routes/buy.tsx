@@ -99,6 +99,9 @@ function Buy() {
               <dd>
                 <Countdown target={endsAt} size="lg" />
               </dd>
+              <dd className="mt-2 text-sm text-muted-foreground">
+                {weekEndingLabel(auction, endsAt)}
+              </dd>
             </div>
           </dl>
           <a href="#place-bid" className="btn-cta mt-8 inline-flex">
