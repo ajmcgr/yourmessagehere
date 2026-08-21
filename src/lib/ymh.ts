@@ -185,3 +185,44 @@ export async function recordPageView(): Promise<number | null> {
   if (error) return null;
   return typeof data === "number" ? data : Number(data ?? 0) || null;
 }
+
+export type ArchivedWeek = {
+  auction: Auction;
+  billboard: Billboard | null;
+  bids: Bid[];
+};
+
+/** Past auction weeks with their winning creative and full bid history. */
+export async function fetchArchivedWeeks(): Promise<ArchivedWeek[]> {
+  if (!isSupabaseConfigured || !supabase) return [];
+  const nowIso = new Date().toISOString();
+
+  const { data: auctionRows, error } = await supabase
+    .from("ymh_auctions")
+    .select("*")
+    .lt("week_end", nowIso)
+    .order("week_start", { ascending: false })
+    .limit(100);
+  if (error || !auctionRows?.length) return [];
+
+  const auctions = auctionRows as Auction[];
+  const ids = auctions.map((a) => a.id);
+
+  const [{ data: boardRows }, { data: bidRows }] = await Promise.all([
+    supabase.from("ymh_billboards").select("*").in("auction_id", ids),
+    supabase
+      .from("ymh_bids_public")
+      .select("*")
+      .in("auction_id", ids)
+      .order("amount_cents", { ascending: false }),
+  ]);
+
+  const boards = (boardRows as Billboard[] | null) ?? [];
+  const bids = (bidRows as Bid[] | null) ?? [];
+
+  return auctions.map((auction) => ({
+    auction,
+    billboard: boards.find((b) => b.auction_id === auction.id) ?? null,
+    bids: bids.filter((b) => b.auction_id === auction.id),
+  }));
+}
