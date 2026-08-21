@@ -95,7 +95,7 @@ function Index() {
               </span>
 
               <span className="order-3 md:order-none">
-                <span className="font-semibold text-foreground">Audience</span>{" "}
+                <span className="font-semibold text-foreground">Audience since launch</span>{" "}
                 {views === null ? (
                   <Skeleton className="inline-block h-3 w-12 align-middle" />
                 ) : (
