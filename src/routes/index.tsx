@@ -118,6 +118,8 @@ function Index() {
             </div>
           )}
         </section>
+        </div>
+
 
         <section className="mt-6 text-center md:mt-8">
           <p className="mx-auto max-w-md text-sm leading-relaxed text-muted-foreground">
