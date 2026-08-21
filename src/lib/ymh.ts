@@ -33,7 +33,7 @@ export type Billboard = {
   status: "pending" | "approved" | "rejected";
 };
 
-export const DEFAULT_STARTING_BID_CENTS = 5000;
+export const DEFAULT_STARTING_BID_CENTS = 500;
 export const DEFAULT_INCREMENT_CENTS = 1000;
 
 export const formatUsd = (cents: number) =>

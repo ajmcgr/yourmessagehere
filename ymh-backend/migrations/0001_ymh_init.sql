@@ -28,7 +28,7 @@ create policy "ymh_settings public read"
   on public.ymh_settings for select to anon, authenticated using (true);
 
 insert into public.ymh_settings (key, value) values
-  ('starting_bid_cents', '5000'::jsonb),
+  ('starting_bid_cents', '500'::jsonb),
   ('min_increment_cents', '1000'::jsonb),
   ('payment_deadline_hours', '24'::jsonb)
 on conflict (key) do nothing;
@@ -40,7 +40,7 @@ create table if not exists public.ymh_auctions (
   ends_at timestamptz not null,
   week_start timestamptz not null,
   week_end timestamptz not null,
-  starting_bid_cents integer not null default 5000,
+  starting_bid_cents integer not null default 500,
   min_increment_cents integer not null default 1000,
   current_bid_cents integer,
   winning_bid_id uuid,
@@ -259,7 +259,7 @@ grant execute on function public.ymh_close_due_auctions() to service_role;
 
 -- ---------- seed the first auction (next Friday 22:00 America/New_York) ----------
 insert into public.ymh_auctions (status, ends_at, week_start, week_end, starting_bid_cents, min_increment_cents)
-select 'open', e, e, e + interval '7 days', 5000, 1000
+select 'open', e, e, e + interval '7 days', 500, 1000
 from (select (
   (date_trunc('day', (now() at time zone 'America/New_York'))
     + make_interval(days => (((5 - extract(isodow from (now() at time zone 'America/New_York'))::int) + 7) % 7))
