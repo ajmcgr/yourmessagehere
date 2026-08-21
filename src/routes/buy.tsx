@@ -121,7 +121,7 @@ function Buy() {
                     <th className="w-8 py-3 font-normal">#</th>
                     <th className="py-3 font-normal">Advertiser</th>
                     <th className="hidden py-3 font-normal sm:table-cell">Bidder</th>
-                    <th className="hidden py-3 font-normal md:table-cell">Date</th>
+                    <th className="hidden py-3 font-normal md:table-cell whitespace-nowrap">Date &amp; time</th>
                     <th className="py-3 text-right font-normal">Bid</th>
                   </tr>
                 </thead>
@@ -163,10 +163,12 @@ function Buy() {
                         <td className="hidden py-3 text-muted-foreground sm:table-cell">
                           {b.bidder_name}
                         </td>
-                        <td className="hidden py-3 text-muted-foreground md:table-cell">
-                          {new Date(b.created_at).toLocaleDateString("en-US", {
+                        <td className="hidden whitespace-nowrap py-3 text-muted-foreground md:table-cell">
+                          {new Date(b.created_at).toLocaleString("en-US", {
                             month: "short",
                             day: "numeric",
+                            hour: "numeric",
+                            minute: "2-digit",
                           })}
                         </td>
                         <td className="py-3 text-right tabular-nums text-foreground">
