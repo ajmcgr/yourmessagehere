@@ -181,8 +181,8 @@ function Buy() {
                   <Skeleton className="h-10 w-56 md:h-14" />
                 </dd>
               ) : (
-                <dd className="text-4xl font-medium tracking-tight tabular-nums md:text-6xl">
-                  <span className="marker-highlight">
+                <dd className="mt-3 text-4xl font-medium tracking-tight tabular-nums md:text-6xl">
+                  <span className="marker-highlight inline-block">
                     {currentBidCents === null ? "No bids yet" : formatUsd(currentBidCents)}
                   </span>
                 </dd>
