@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Billboard } from "@/components/Billboard";
@@ -181,6 +181,13 @@ function Buy() {
           </form>
         </section>
       </main>
+
+      <div className="mx-auto max-w-5xl px-6 pb-16">
+        <SiteLinks />
+      </div>
+
+      <SiteFooter />
     </div>
+
   );
 }
