@@ -70,7 +70,7 @@ function Index() {
           <Billboard billboard={billboard} />
         </section>
 
-        <section className="mt-8 text-center">
+        <section className="mt-16 text-center md:mt-20">
           <p className="text-xs leading-relaxed text-muted-foreground">
             <Link
               to="/buy"
@@ -78,8 +78,8 @@ function Index() {
             >
               Buy this billboard →
             </Link>{" "}
-            There is one billboard on the internet. Every Friday at 10:00 PM New York time, the
-            highest bidder wins it for the following seven days.
+            Every Friday at 10:00 PM New York time, the highest bidder wins it for the following
+            seven days.
           </p>
         </section>
       </main>
