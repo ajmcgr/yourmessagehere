@@ -52,12 +52,13 @@ function Buy() {
     }
     setSubmitting(true);
     try {
+      const website = form.website.trim();
       await placeBid({
         name: form.name.trim(),
         email: form.email.trim(),
         advertiser: form.advertiser.trim(),
-        website: form.website.trim() || undefined,
         amount_cents: amountCents,
+        ...(website ? { website } : {}),
       });
       toast.success("Bid placed. You're the highest bidder.");
       setForm((f) => ({ ...f, amount: "" }));
