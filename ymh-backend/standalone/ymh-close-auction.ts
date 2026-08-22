@@ -330,15 +330,10 @@ Deno.serve(async (req) => {
       .select("id, status, stripe_payment_intent_id")
       .eq("id", auction["winning_bid_id"]!)
       .maybeSingle();
-    if (!bid) continue;
-    if (bid["status"] !== "winner_paid" && !bid["stripe_payment_intent_id"]) continue;
-    if (bid["status"] === "winner_paid" || bid["status"] === "provisional_winner") {
-      if (bid["stripe_payment_intent_id"]) {
-        const intent = await stripe.paymentIntents.retrieve(bid["stripe_payment_intent_id"]!);
-        if (intent.status !== "succeeded") continue;
-        await fulfilWinner(auction["id"]!, bid["id"]!);
-      }
-    }
+    if (!bid || !bid["stripe_payment_intent_id"]) continue;
+    const intent = await stripe.paymentIntents.retrieve(bid["stripe_payment_intent_id"]!);
+    if (intent.status !== "succeeded") continue;
+    await fulfilWinner(auction["id"]!, bid["id"]!);
   }
 
   return new Response(JSON.stringify({ closed: (closed ?? []).length, charged, promoted }), {
