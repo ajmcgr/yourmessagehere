@@ -26,9 +26,9 @@ export function FloatingBuyCta({ active = false }: { active?: boolean } = {}) {
       to="/buy"
       className="btn-cta fixed right-4 bottom-4 z-50 shadow-lg md:right-8 md:bottom-8"
     >
-      <span className="sm:hidden">{active ? "Bid" : "Buy"}</span>
+      <span className="sm:hidden">{active ? "Buy" : "Buy"}</span>
       <span className="hidden sm:inline">
-        {active ? "Bid for next week" : "Buy the billboard"}
+        {active ? "Buy next week" : "Buy the billboard"}
       </span>{" "}
       <span className="btn-arrow" aria-hidden="true">→</span>
     </Link>
