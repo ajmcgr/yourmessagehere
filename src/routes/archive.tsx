@@ -140,7 +140,7 @@ function Archive() {
                       </div>
                     </div>
 
-                    <div>
+                    <div className="flex flex-col">
                       <div className="flex items-baseline justify-between gap-4">
                         <h3 className="text-sm font-bold">Bids</h3>
                         <span className="text-sm text-muted-foreground">
@@ -151,29 +151,29 @@ function Archive() {
                       {bids.length === 0 ? (
                         <p className="mt-4 text-sm text-muted-foreground">No bids recorded.</p>
                       ) : (
-                        <>
-                          <table className="mt-4 w-full table-fixed border-collapse text-base">
+                        <div className="mt-4 flex-1">
+                          <table className="h-full w-full table-fixed border-collapse text-base">
                             <tbody>
-                              {(isOpen ? bids : bids.slice(0, 5)).map((b, idx) => {
+                              {bids.slice(0, 5).map((b, idx) => {
                                 const h = host(b.website);
                                 return (
                                   <tr
                                     key={b.id}
                                     className={`border-b border-foreground/10 ${
-                                      idx === 0 && !isOpen ? "bg-money/10" : ""
+                                      idx === 0 ? "bg-money/10" : ""
                                     } ${b.website ? "cursor-pointer hover:bg-foreground/[0.03]" : ""}`}
                                     onClick={() => {
                                       if (b.website)
                                         window.open(b.website, "_blank", "noopener,noreferrer");
                                     }}
                                   >
-                                    <td className="py-5 pr-3 pl-3 sm:pl-4">
+                                    <td className="py-2 pr-3 pl-3 sm:pl-4">
                                       <div className="flex min-w-0 items-center gap-3">
                                         <BrandIcon host={h} className="size-8 sm:size-10" />
                                         <span className="truncate font-bold">{b.advertiser}</span>
                                       </div>
                                     </td>
-                                    <td className="w-24 py-5 pr-3 text-right font-bold tabular-nums whitespace-nowrap text-money sm:pr-4">
+                                    <td className="w-24 py-2 pr-3 text-right font-bold tabular-nums whitespace-nowrap text-money sm:pr-4">
                                       {formatUsd(b.amount_cents)}
                                     </td>
                                   </tr>
@@ -181,21 +181,10 @@ function Archive() {
                               })}
                             </tbody>
                           </table>
-
-                          {bids.length > 5 ? (
-                            <button
-                              type="button"
-                              onClick={() =>
-                                setOpen((o) => ({ ...o, [auction.id]: !isOpen }))
-                              }
-                              className="mt-4 text-sm underline underline-offset-4 hover:no-underline"
-                            >
-                              {isOpen ? "Show fewer" : `Show all ${bids.length} bids`}
-                            </button>
-                          ) : null}
-                        </>
+                        </div>
                       )}
                     </div>
+
                   </div>
                 </li>
               );
