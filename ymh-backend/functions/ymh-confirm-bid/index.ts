@@ -7,7 +7,7 @@
 // re-check the SetupIntent server-side, re-check the auction and the minimum
 // bid, then activate the bid transactionally. Only now does it become public.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import Stripe from "https://esm.sh/stripe@17.0.0?target=deno";
+import Stripe from "npm:stripe@17.0.0";
 import { sendEmail, emailLayout, weekEndingLabel } from "../_shared/email.ts";
 
 const cors = {
@@ -25,7 +25,7 @@ const admin = createClient(
   Deno.env.get("SUPABASE_URL")!,
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
 );
-const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, { apiVersion: "2024-06-20" });
+const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, { apiVersion: "2024-06-20", httpClient: Stripe.createFetchHttpClient() });
 
 const BEEHIIV_PUB_ID = "pub_34f2ec46-4dd5-4040-9758-31a8acfb7022";
 
