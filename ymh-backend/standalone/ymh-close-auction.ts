@@ -50,14 +50,21 @@ function emailLayout(opts: {
 </body></html>`;
 }
 
-async function sendEmail(to: string, subject: string, html: string) {
+async function sendEmail(to: string, subject: string, html: string): Promise<string> {
   const key = Deno.env.get("RESEND_API_KEY");
-  if (!key) return;
-  await fetch("https://api.resend.com/emails", {
+  if (!key) throw new Error("RESEND_API_KEY is not configured");
+  const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
     body: JSON.stringify({ from: FROM, to, subject: subject.startsWith("Your Message Here") ? subject : `Your Message Here — ${subject}`, html }),
   });
+  const responseBody = await response.text();
+  if (!response.ok) {
+    throw new Error(`Resend rejected the email [${response.status}]: ${responseBody}`);
+  }
+  const result = JSON.parse(responseBody) as { id?: string };
+  if (!result.id) throw new Error("Resend accepted the request without returning a message ID");
+  return result.id;
 }
 
 /** "Week ending Aug 28, 2026" for a week_end timestamp. */
@@ -139,28 +146,45 @@ async function fulfilWinner(auctionId: string, bidId: string) {
     .select("id")
     .eq("bid_id", bidId)
     .eq("template", "payment_received")
+    .eq("status", "sent")
+    .not("provider_id", "is", null)
     .maybeSingle();
   if (sent) return;
 
-  await sendEmail(
-    bid["bidder_email"],
-    "Payment received — upload your creative",
-    emailLayout({
-      heading: "The billboard is yours 🎉",
-      body: `<p style="margin:0 0 16px 0;">We charged your verified payment method ${usd(bid["amount_cents"])}. You own the one billboard on the internet for the week — ${weekEndingLabel(auction["week_end"])}.</p><p style="margin:0;">Upload your creative — 1600×900, JPG or PNG.</p>`,
-      cta: {
-        label: "Upload your creative",
-        url: `https://yourmessagehere.co/upload?token=${bid["payment_token"]}`,
-      },
-    }),
-  );
+  try {
+    const providerId = await sendEmail(
+      bid["bidder_email"],
+      "Payment received — upload your creative",
+      emailLayout({
+        heading: "The billboard is yours 🎉",
+        body: `<p style="margin:0 0 16px 0;">We charged your verified payment method ${usd(bid["amount_cents"])}. You own the one billboard on the internet for the week — ${weekEndingLabel(auction["week_end"])}.</p><p style="margin:0;">Upload your creative — 1600×900, JPG or PNG.</p>`,
+        cta: {
+          label: "Upload your creative",
+          url: `https://yourmessagehere.co/upload?token=${bid["payment_token"]}`,
+        },
+      }),
+    );
 
-  await admin.from("ymh_email_events").insert({
-    auction_id: auctionId,
-    bid_id: bidId,
-    recipient: bid["bidder_email"],
-    template: "payment_received",
-  });
+    await admin.from("ymh_email_events").insert({
+      auction_id: auctionId,
+      bid_id: bidId,
+      recipient: bid["bidder_email"],
+      template: "payment_received",
+      provider_id: providerId,
+      status: "sent",
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown email delivery error";
+    console.error(`[ymh-close-auction] Winner email failed for bid ${bidId}: ${message}`);
+    await admin.from("ymh_email_events").insert({
+      auction_id: auctionId,
+      bid_id: bidId,
+      recipient: bid["bidder_email"],
+      template: "payment_received",
+      status: "failed",
+      error: message.slice(0, 1000),
+    });
+  }
 }
 
 /** Charge one provisional winner. Returns true when the charge succeeded. */

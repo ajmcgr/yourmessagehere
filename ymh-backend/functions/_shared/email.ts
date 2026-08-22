@@ -41,14 +41,21 @@ export function emailLayout(opts: {
 </body></html>`;
 }
 
-export async function sendEmail(to: string, subject: string, html: string) {
+export async function sendEmail(to: string, subject: string, html: string): Promise<string> {
   const key = Deno.env.get("RESEND_API_KEY");
-  if (!key) return;
-  await fetch("https://api.resend.com/emails", {
+  if (!key) throw new Error("RESEND_API_KEY is not configured");
+  const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
     body: JSON.stringify({ from: FROM, to, subject: subject.startsWith("Your Message Here") ? subject : `Your Message Here — ${subject}`, html }),
   });
+  const responseBody = await response.text();
+  if (!response.ok) {
+    throw new Error(`Resend rejected the email [${response.status}]: ${responseBody}`);
+  }
+  const result = JSON.parse(responseBody) as { id?: string };
+  if (!result.id) throw new Error("Resend accepted the request without returning a message ID");
+  return result.id;
 }
 
 /** "Week ending Aug 28, 2026" for a week_end timestamp. */
