@@ -1,4 +1,3 @@
-import { BrandIcon } from "@/components/BrandIcon";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { SiteFooter, SiteLinks, SiteNav } from "@/components/SiteNav";
@@ -26,15 +25,6 @@ export const Route = createFileRoute("/archive")({
   component: Archive,
 });
 
-
-const host = (url: string | null) => {
-  if (!url) return null;
-  try {
-    return new URL(url).hostname.replace(/^www\./, "");
-  } catch {
-    return null;
-  }
-};
 
 function Archive() {
   const [items, setItems] = useState<ArchivedWeek[] | null>(null);
@@ -106,8 +96,8 @@ function Archive() {
                       </div>
                     );
                     return (
-                  <div className="mt-5 grid gap-8 md:grid-cols-2">
-                    <div>
+                  <div className="mt-5 flex justify-center">
+                    <div className="w-full max-w-2xl">
                       <div className="aspect-video w-full overflow-hidden border border-foreground/15">
                         {creativeHref ? (
                           <a
@@ -144,53 +134,8 @@ function Archive() {
                         ) : null}
                       </div>
                     </div>
-
-                    <div className="flex flex-col">
-                      <div className="flex items-baseline justify-between gap-4">
-                        <h3 className="text-sm font-bold">Bids</h3>
-                        <span className="text-sm text-muted-foreground">
-                          Top {Math.min(bids.length, 5)}
-                        </span>
-                      </div>
-
-                      {bids.length === 0 ? (
-                        <p className="mt-4 text-sm text-muted-foreground">No bids recorded.</p>
-                      ) : (
-                        <div className="mt-4 flex-1">
-                          <table className="h-full w-full table-fixed border-collapse text-sm">
-                            <tbody>
-                              {bids.slice(0, 5).map((b, idx) => {
-                                const h = host(b.website);
-                                return (
-                                  <tr
-                                    key={b.id}
-                                    className={`border-b border-foreground/10 ${
-                                      idx === 0 ? "bg-money/10" : ""
-                                    } ${b.website ? "cursor-pointer hover:bg-foreground/[0.03]" : ""}`}
-                                    onClick={() => {
-                                      if (b.website)
-                                        window.open(b.website, "_blank", "noopener,noreferrer");
-                                    }}
-                                  >
-                                    <td className="py-2 pr-3 pl-3 sm:pl-4">
-                                      <div className="flex min-w-0 items-center gap-3">
-                                        <BrandIcon host={h} className="size-8 sm:size-10" />
-                                        <span className="truncate font-bold">{b.advertiser}</span>
-                                      </div>
-                                    </td>
-                                    <td className="w-24 py-2 pr-3 text-right font-bold tabular-nums whitespace-nowrap text-money sm:pr-4">
-                                      {formatUsd(b.amount_cents)}
-                                    </td>
-                                  </tr>
-                                );
-                              })}
-                            </tbody>
-                          </table>
-                        </div>
-                      )}
-                    </div>
-
                   </div>
+
                     );
                   })()}
                 </li>
