@@ -112,7 +112,7 @@ function Index() {
                   to="/buy"
                   className="font-semibold text-foreground underline underline-offset-4 md:order-1"
                 >
-                  {hasActiveAdvertiser ? "Win next week's billboard →" : "Buy the billboard →"}
+                  {hasActiveAdvertiser ? "Win next week’s billboard →" : "Buy the billboard →"}
                 </Link>
               </div>
             </div>
