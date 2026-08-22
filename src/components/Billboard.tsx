@@ -141,7 +141,14 @@ export function Billboard({
         onClick={toggleFs}
         aria-label={isFs ? "Exit billboard fullscreen" : "View billboard fullscreen"}
         title={isFs ? "Exit fullscreen" : "Fullscreen"}
-        className="absolute bottom-3 left-3 z-10 grid size-8 place-items-center rounded-sm bg-transparent billboard-ink opacity-60 transition-opacity hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className={cn(
+          "absolute bottom-3 left-3 z-10 grid size-8 place-items-center rounded-sm bg-transparent opacity-80 transition-opacity hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+          darkIcon === null
+            ? "billboard-ink"
+            : darkIcon
+              ? "billboard-ink-dark"
+              : "billboard-ink-light",
+        )}
       >
         {isFs ? (
           <Minimize2 className="size-4" strokeWidth={1.5} />
