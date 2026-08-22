@@ -152,7 +152,7 @@ function Archive() {
                         <p className="mt-4 text-sm text-muted-foreground">No bids recorded.</p>
                       ) : (
                         <>
-                          <table className="mt-4 w-full table-fixed border-collapse text-sm">
+                          <table className="mt-4 w-full table-fixed border-collapse text-base">
                             <tbody>
                               {(isOpen ? bids : bids.slice(0, 5)).map((b, idx) => {
                                 const h = host(b.website);
@@ -167,13 +167,13 @@ function Archive() {
                                         window.open(b.website, "_blank", "noopener,noreferrer");
                                     }}
                                   >
-                                    <td className="py-3 pr-3">
-                                      <div className="flex min-w-0 items-center gap-2">
-                                        <BrandIcon host={h} className="size-6 rounded-sm" />
+                                    <td className="py-5 pr-3 pl-3 sm:pl-4">
+                                      <div className="flex min-w-0 items-center gap-3">
+                                        <BrandIcon host={h} className="size-8 sm:size-10" />
                                         <span className="truncate font-bold">{b.advertiser}</span>
                                       </div>
                                     </td>
-                                    <td className="w-24 py-3 text-right font-bold tabular-nums text-money">
+                                    <td className="w-24 py-5 pr-3 text-right font-bold tabular-nums whitespace-nowrap text-money sm:pr-4">
                                       {formatUsd(b.amount_cents)}
                                     </td>
                                   </tr>
