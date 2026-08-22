@@ -298,14 +298,17 @@ Deno.serve(async (req) => {
     if (emailResult === "failed") emailFailures++;
   }
 
+  const summary = {
+    closed: (closed ?? []).length,
+    charged,
+    promoted,
+    winner_emails_sent: emailsSent,
+    winner_email_failures: emailFailures,
+  };
+  console.log(`[ymh-close-auction] ${JSON.stringify(summary)}`);
+
   return new Response(
-    JSON.stringify({
-      closed: (closed ?? []).length,
-      charged,
-      promoted,
-      winner_emails_sent: emailsSent,
-      winner_email_failures: emailFailures,
-    }),
+    JSON.stringify(summary),
     { headers: { "Content-Type": "application/json" } },
   );
 });
