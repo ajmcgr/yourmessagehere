@@ -16,7 +16,7 @@ export const Route = createFileRoute("/upload")({
       {
         name: "description",
         content:
-          "Winners upload the image, headline, and link that runs on the internet's billboard for their week.",
+          "Winners upload the image and link that runs on the internet's billboard for their week.",
       },
       { property: "og:title", content: "Upload your creative — Your Message Here" },
       {
@@ -40,7 +40,6 @@ function UploadPage() {
 
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
-  const [headline, setHeadline] = useState("");
   const [clickUrl, setClickUrl] = useState("");
   const [state, setState] = useState<"idle" | "saving" | "done" | "error">("idle");
   const [message, setMessage] = useState("");
@@ -55,7 +54,6 @@ function UploadPage() {
       if (!alive) return;
       setCtx(res);
       if (res.ok) {
-        setHeadline(res.headline ?? "");
         setClickUrl(res.click_url ?? res.website ?? "");
         setPreview(res.image_url ?? null);
       }
@@ -83,7 +81,7 @@ function UploadPage() {
     setState("saving");
     try {
       const imageUrl = file ? await uploadCreativeImage(token, file) : ctx.image_url!;
-      await submitCreative({ token, imageUrl, headline, clickUrl });
+      await submitCreative({ token, imageUrl, headline: "", clickUrl });
       setState("done");
       setMessage("");
     } catch (err) {
@@ -109,7 +107,7 @@ function UploadPage() {
           <div className="mt-6 space-y-4">
             <p className="text-lg leading-relaxed text-muted-foreground">
               Your creative is live. It runs on the billboard for your week — you can come back to
-              this link any time to swap the image or headline.
+              this link any time to swap the image or link.
             </p>
             {preview ? (
               <img
@@ -148,20 +146,6 @@ function UploadPage() {
                     className="mt-4 w-full rounded-xl border border-border"
                   />
                 ) : null}
-              </div>
-
-              <div>
-                <label htmlFor="headline" className="block text-sm font-medium">
-                  Headline <span className="text-muted-foreground">(optional)</span>
-                </label>
-                <input
-                  id="headline"
-                  value={headline}
-                  onChange={(e) => setHeadline(e.target.value)}
-                  maxLength={120}
-                  className="mt-2 w-full rounded-md border border-input bg-background px-3 py-2 text-base"
-                  placeholder="One line under the billboard"
-                />
               </div>
 
               <div>
