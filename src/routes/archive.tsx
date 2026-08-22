@@ -1,4 +1,3 @@
-import { BrandIcon } from "@/components/BrandIcon";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { SiteFooter, SiteLinks, SiteNav } from "@/components/SiteNav";
@@ -26,15 +25,6 @@ export const Route = createFileRoute("/archive")({
   component: Archive,
 });
 
-
-const host = (url: string | null) => {
-  if (!url) return null;
-  try {
-    return new URL(url).hostname.replace(/^www\./, "");
-  } catch {
-    return null;
-  }
-};
 
 function Archive() {
   const [items, setItems] = useState<ArchivedWeek[] | null>(null);
@@ -106,8 +96,8 @@ function Archive() {
                       </div>
                     );
                     return (
-                  <div className="mt-5">
-                    <div>
+                  <div className="mt-5 flex justify-center">
+                    <div className="w-full max-w-2xl">
                       <div className="aspect-video w-full overflow-hidden border border-foreground/15">
                         {creativeHref ? (
                           <a
