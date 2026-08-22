@@ -76,7 +76,7 @@ export function Billboard({
       const { data } = ctx.getImageData(0, 0, 16, 16);
       let sum = 0;
       for (let i = 0; i < data.length; i += 4) {
-        sum += 0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2];
+        sum += 0.2126 * (data[i] ?? 0) + 0.7152 * (data[i + 1] ?? 0) + 0.0722 * (data[i + 2] ?? 0);
       }
       const avg = sum / (data.length / 4);
       setDarkIcon(avg > 140);
