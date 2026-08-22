@@ -299,3 +299,55 @@ export async function subscribeToAlerts(email: string): Promise<boolean> {
   const { error } = await supabase.rpc("ymh_subscribe_email", { p_email: email });
   return !error;
 }
+
+export type CreativeContext = {
+  ok: boolean;
+  error?: string;
+  auction_id?: string;
+  advertiser?: string | null;
+  website?: string | null;
+  amount_cents?: number;
+  week_start?: string;
+  week_end?: string;
+  headline?: string | null;
+  image_url?: string | null;
+  click_url?: string | null;
+  status?: string;
+};
+
+/** Look up the winner's upload link by its one-time token. */
+export async function fetchCreativeContext(token: string): Promise<CreativeContext> {
+  if (!isSupabaseConfigured || !supabase) return { ok: false, error: "unconfigured" };
+  const { data, error } = await supabase.rpc("ymh_creative_context", { p_token: token });
+  if (error) return { ok: false, error: error.message };
+  return (data as CreativeContext) ?? { ok: false, error: "not_found" };
+}
+
+/** Upload an image to the public creatives bucket, returning its public URL. */
+export async function uploadCreativeImage(token: string, file: File): Promise<string> {
+  if (!isSupabaseConfigured || !supabase) throw new Error("Storage is not configured.");
+  const ext = (file.name.split(".").pop() || "png").toLowerCase().replace(/[^a-z0-9]/g, "");
+  const path = `${token}/${Date.now()}.${ext || "png"}`;
+  const { error } = await supabase.storage
+    .from("ymh-creatives")
+    .upload(path, file, { cacheControl: "31536000", upsert: true, contentType: file.type });
+  if (error) throw new Error(error.message);
+  return supabase.storage.from("ymh-creatives").getPublicUrl(path).data.publicUrl;
+}
+
+/** Save (or replace) the winning creative for this token's auction week. */
+export async function submitCreative(input: {
+  token: string;
+  imageUrl: string;
+  headline: string;
+  clickUrl: string;
+}): Promise<void> {
+  if (!isSupabaseConfigured || !supabase) throw new Error("Not configured.");
+  const { error } = await supabase.rpc("ymh_submit_creative", {
+    p_token: input.token,
+    p_image_url: input.imageUrl,
+    p_headline: input.headline,
+    p_click_url: input.clickUrl,
+  });
+  if (error) throw new Error(error.message);
+}
