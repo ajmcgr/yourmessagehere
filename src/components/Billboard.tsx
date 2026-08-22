@@ -16,6 +16,7 @@ export function Billboard({
   const containerRef = useRef<HTMLDivElement>(null);
   const [nativeFs, setNativeFs] = useState(false);
   const [overlayFs, setOverlayFs] = useState(false);
+  const [darkIcon, setDarkIcon] = useState<boolean | null>(null);
   const isFs = nativeFs || overlayFs;
 
   useEffect(() => {
