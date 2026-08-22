@@ -49,6 +49,7 @@ function Buy() {
     billboard,
     bids,
     currentBidCents,
+    startingBidCents,
     minBidCents,
     incrementCents,
     endsAt,
