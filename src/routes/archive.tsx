@@ -26,11 +26,6 @@ export const Route = createFileRoute("/archive")({
   component: Archive,
 });
 
-const week = (start: string, end: string) => {
-  const f = (d: string) =>
-    new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
-  return `${f(start)} – ${f(end)}, ${new Date(end).getUTCFullYear()}`;
-};
 
 const host = (url: string | null) => {
   if (!url) return null;
@@ -94,9 +89,6 @@ function Archive() {
                         year: "numeric",
                       })}
                     </h2>
-                    <span className="tabular-nums text-sm text-muted-foreground">
-                      {week(auction.week_start, auction.week_end)}
-                    </span>
                   </div>
 
                   <div className="mt-5 grid gap-8 md:grid-cols-2">
