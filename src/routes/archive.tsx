@@ -157,7 +157,7 @@ function Archive() {
                         <p className="mt-4 text-sm text-muted-foreground">No bids recorded.</p>
                       ) : (
                         <div className="mt-4 flex-1">
-                          <table className="h-full w-full table-fixed border-collapse text-base">
+                          <table className="h-full w-full table-fixed border-collapse text-sm">
                             <tbody>
                               {bids.slice(0, 5).map((b, idx) => {
                                 const h = host(b.website);
