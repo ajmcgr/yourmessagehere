@@ -112,7 +112,7 @@ function Index() {
                   to="/buy"
                   className="font-semibold text-foreground underline underline-offset-4 md:order-1"
                 >
-                  {hasActiveAdvertiser ? "Bid on next week →" : "Buy the billboard →"}
+                  {hasActiveAdvertiser ? "Win next week’s billboard →" : "Buy the billboard →"}
                 </Link>
               </div>
             </div>
@@ -121,7 +121,7 @@ function Index() {
 
         <section className="mt-6 text-center md:mt-8">
           <p className="mx-auto max-w-md text-sm leading-relaxed text-muted-foreground">
-            The internet's billboard. One brand. One week. Highest bid wins the next one.
+            One brand owns this billboard each week. Highest bid wins next week.
           </p>
         </section>
         </div>
