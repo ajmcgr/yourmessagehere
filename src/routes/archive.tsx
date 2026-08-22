@@ -26,11 +26,6 @@ export const Route = createFileRoute("/archive")({
   component: Archive,
 });
 
-const week = (start: string, end: string) => {
-  const f = (d: string) =>
-    new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
-  return `${f(start)} – ${f(end)}, ${new Date(end).getUTCFullYear()}`;
-};
 
 const host = (url: string | null) => {
   if (!url) return null;
