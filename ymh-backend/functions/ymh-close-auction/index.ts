@@ -29,6 +29,77 @@ type WinnerBid = {
   advertiser: string;
 };
 
+/** Idempotently mark a winner paid, create the billboard row, and email the
+ *  "upload your creative" link. Safe to run repeatedly; the Stripe webhook does
+ *  the same work and neither path duplicates the email. */
+async function fulfilWinner(auctionId: string, bidId: string) {
+  const { data: bid } = await admin
+    .from("ymh_bids")
+    .select(
+      "id, status, advertiser, website, bidder_name, bidder_email, amount_cents, payment_token",
+    )
+    .eq("id", bidId)
+    .maybeSingle();
+  if (!bid) return;
+
+  await admin
+    .from("ymh_bids")
+    .update({ status: "winner_paid", payment_status: "paid", payment_failure_reason: null })
+    .eq("id", bidId);
+
+  await admin.from("ymh_auctions").update({ status: "paid" }).eq("id", auctionId);
+  const { data: auction } = await admin
+    .from("ymh_auctions")
+    .select("week_start, week_end")
+    .eq("id", auctionId)
+    .maybeSingle();
+  if (!auction) return;
+
+  const { data: existingBillboard } = await admin
+    .from("ymh_billboards")
+    .select("id")
+    .eq("auction_id", auctionId)
+    .maybeSingle();
+  if (!existingBillboard) {
+    await admin.from("ymh_billboards").insert({
+      auction_id: auctionId,
+      advertiser: bid["advertiser"],
+      click_url: bid["website"],
+      week_start: auction["week_start"],
+      week_end: auction["week_end"],
+      status: "pending",
+    });
+  }
+
+  const { data: sent } = await admin
+    .from("ymh_email_events")
+    .select("id")
+    .eq("bid_id", bidId)
+    .eq("template", "payment_received")
+    .maybeSingle();
+  if (sent) return;
+
+  await sendEmail(
+    bid["bidder_email"],
+    "Payment received — upload your creative",
+    emailLayout({
+      heading: "The billboard is yours 🎉",
+      body: `<p style="margin:0 0 16px 0;">We charged your verified payment method ${usd(bid["amount_cents"])}. You own the one billboard on the internet for the week — ${weekEndingLabel(auction["week_end"])}.</p><p style="margin:0;">Upload your creative — 1600×900, JPG or PNG.</p>`,
+      cta: {
+        label: "Upload your creative",
+        url: `https://yourmessagehere.co/upload?token=${bid["payment_token"]}`,
+      },
+    }),
+  );
+
+  await admin.from("ymh_email_events").insert({
+    auction_id: auctionId,
+    bid_id: bidId,
+    recipient: bid["bidder_email"],
+    template: "payment_received",
+  });
+}
+
 /** Charge one provisional winner. Returns true when the charge succeeded. */
 async function chargeWinner(auction: Record<string, string>, bidId: string) {
   // The amount is always read from the database, never from any client input.
@@ -77,7 +148,8 @@ async function chargeWinner(auction: Record<string, string>, bidId: string) {
       .eq("id", bid.id);
 
     if (intent.status === "succeeded") {
-      // The webhook also handles this; both paths are idempotent.
+      // The webhook does the same work; both paths are idempotent.
+      await fulfilWinner(bid.auction_id, bid.id);
       return true;
     }
 
@@ -179,6 +251,26 @@ Deno.serve(async (req) => {
       promoted++;
       await chargeWinner(auction, next.id);
     }
+  }
+
+  // Winners charged earlier but never emailed (e.g. the webhook missed the
+  // event): send the "upload your creative" email exactly once.
+  const { data: paidAuctions } = await admin
+    .from("ymh_auctions")
+    .select("id, winning_bid_id")
+    .in("status", ["paid", "awaiting_payment"])
+    .not("winning_bid_id", "is", null);
+
+  for (const auction of (paidAuctions ?? []) as Array<Record<string, string>>) {
+    const { data: bid } = await admin
+      .from("ymh_bids")
+      .select("id, status, stripe_payment_intent_id")
+      .eq("id", auction["winning_bid_id"]!)
+      .maybeSingle();
+    if (!bid || !bid["stripe_payment_intent_id"]) continue;
+    const intent = await stripe.paymentIntents.retrieve(bid["stripe_payment_intent_id"]!);
+    if (intent.status !== "succeeded") continue;
+    await fulfilWinner(auction["id"]!, bid["id"]!);
   }
 
   return new Response(JSON.stringify({ closed: (closed ?? []).length, charged, promoted }), {
