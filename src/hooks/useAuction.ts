@@ -53,12 +53,26 @@ export function useAuction() {
     [auction?.ends_at],
   );
 
+  // Weekly rollover: the moment this auction's deadline passes, ask the server
+  // for the new one. Retries so an open tab never sits on 00:00:00.
+  useEffect(() => {
+    if (loading) return;
+    const msLeft = endsAt.getTime() - Date.now();
+    if (msLeft > 0) {
+      const id = window.setTimeout(() => void load(), msLeft + 1500);
+      return () => window.clearTimeout(id);
+    }
+    const id = window.setInterval(() => void load(), 10000);
+    return () => window.clearInterval(id);
+  }, [endsAt.getTime(), loading]);
+
   // Derive from real bid rows so deleted bids disappear immediately.
   const currentBidCents = bids[0]?.amount_cents ?? null;
   const startingBidCents = auction?.starting_bid_cents ?? DEFAULT_STARTING_BID_CENTS;
   const incrementCents = auction?.min_increment_cents ?? DEFAULT_INCREMENT_CENTS;
   const minBidCents =
     currentBidCents === null ? startingBidCents : currentBidCents + incrementCents;
+
 
   return {
     auction,

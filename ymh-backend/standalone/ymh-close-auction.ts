@@ -200,6 +200,25 @@ Deno.serve(async (req) => {
     if (await chargeWinner(auction, auction["winning_bid_id"]!)) charged++;
   }
 
+  // Auctions closed by the website's own rollover (a visitor arriving after the
+  // deadline) still need their winner charged exactly once.
+  const { data: unpaid } = await admin
+    .from("ymh_auctions")
+    .select("id, week_end, winning_bid_id")
+    .eq("status", "awaiting_payment")
+    .not("winning_bid_id", "is", null);
+
+  for (const auction of (unpaid ?? []) as Array<Record<string, string>>) {
+    const { data: bid } = await admin
+      .from("ymh_bids")
+      .select("id, stripe_payment_intent_id, status")
+      .eq("id", auction["winning_bid_id"]!)
+      .maybeSingle();
+    if (!bid || bid["stripe_payment_intent_id"]) continue;
+    if (bid["status"] !== "provisional_winner") continue;
+    if (await chargeWinner(auction, auction["winning_bid_id"]!)) charged++;
+  }
+
   // Winners who never completed a required authentication: pass the billboard on.
   const { data: lapsed } = await admin
     .from("ymh_auctions")

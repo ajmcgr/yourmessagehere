@@ -85,7 +85,7 @@ function Index() {
             <div className="flex flex-col gap-2.5 md:flex-row md:flex-wrap md:items-center md:justify-center md:gap-x-7 md:gap-y-3">
               <div className="flex items-center justify-between gap-4 md:contents">
                 <span className="font-semibold text-foreground md:order-2">
-                  Current bid{" "}
+                  {currentBidCents === null ? "Opening bid" : "Current bid"}{" "}
                   <span className="marker-highlight tabular-nums font-bold">
                     {formatUsd(currentBidCents ?? startingBidCents)}
                   </span>

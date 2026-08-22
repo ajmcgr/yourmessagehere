@@ -49,6 +49,7 @@ function Buy() {
     billboard,
     bids,
     currentBidCents,
+    startingBidCents,
     minBidCents,
     incrementCents,
     endsAt,
@@ -174,7 +175,7 @@ function Buy() {
           <dl className="mt-10 space-y-6">
             <div>
               <dt className="text-xs uppercase tracking-widest text-muted-foreground">
-                Current bid
+                {currentBidCents === null ? "Opening bid" : "Current bid"}
               </dt>
               {loading ? (
                 <dd className="mt-2">
@@ -183,7 +184,7 @@ function Buy() {
               ) : (
                 <dd className="mt-3 text-4xl font-medium tracking-tight tabular-nums md:text-6xl">
                   <span className="marker-highlight inline-block">
-                    {currentBidCents === null ? "No bids yet" : formatUsd(currentBidCents)}
+                    {formatUsd(currentBidCents ?? startingBidCents)}
                   </span>
                 </dd>
               )}
