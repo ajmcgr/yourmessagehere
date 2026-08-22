@@ -394,7 +394,7 @@ function Buy() {
               />
               <input
                 required
-                placeholder="Advertiser / company"
+                placeholder="Brand"
                 className={field}
                 value={form.advertiser}
                 onChange={set("advertiser")}
