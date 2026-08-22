@@ -94,9 +94,6 @@ function Archive() {
                         year: "numeric",
                       })}
                     </h2>
-                    <span className="tabular-nums text-sm text-muted-foreground">
-                      {week(auction.week_start, auction.week_end)}
-                    </span>
                   </div>
 
                   <div className="mt-5 grid gap-8 md:grid-cols-2">
