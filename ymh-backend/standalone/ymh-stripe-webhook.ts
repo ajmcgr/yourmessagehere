@@ -171,6 +171,8 @@ Deno.serve(async (req) => {
         .eq("template", "payment_received")
         .eq("status", "sent")
         .not("provider_id", "is", null)
+        .neq("provider_id", "unknown")
+        .neq("provider_id", "")
         .maybeSingle();
 
       if (!sent) {

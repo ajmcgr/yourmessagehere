@@ -32,7 +32,7 @@ type WinnerBid = {
 /** Idempotently mark a winner paid, create the billboard row, and email the
  *  "upload your creative" link. Safe to run repeatedly; the Stripe webhook does
  *  the same work and neither path duplicates the email. */
-async function fulfilWinner(auctionId: string, bidId: string) {
+async function fulfilWinner(auctionId: string, bidId: string): Promise<"sent" | "already_sent" | "failed" | "skipped"> {
   const { data: bid } = await admin
     .from("ymh_bids")
     .select(
@@ -40,7 +40,7 @@ async function fulfilWinner(auctionId: string, bidId: string) {
     )
     .eq("id", bidId)
     .maybeSingle();
-  if (!bid) return;
+  if (!bid) return "skipped";
 
   await admin
     .from("ymh_bids")
@@ -53,7 +53,7 @@ async function fulfilWinner(auctionId: string, bidId: string) {
     .select("week_start, week_end")
     .eq("id", auctionId)
     .maybeSingle();
-  if (!auction) return;
+  if (!auction) return "skipped";
 
   const { data: existingBillboard } = await admin
     .from("ymh_billboards")
@@ -78,8 +78,10 @@ async function fulfilWinner(auctionId: string, bidId: string) {
     .eq("template", "payment_received")
     .eq("status", "sent")
     .not("provider_id", "is", null)
+    .neq("provider_id", "unknown")
+    .neq("provider_id", "")
     .maybeSingle();
-  if (sent) return;
+  if (sent) return "already_sent";
 
   try {
     const providerId = await sendEmail(
@@ -103,6 +105,7 @@ async function fulfilWinner(auctionId: string, bidId: string) {
       provider_id: providerId,
       status: "sent",
     });
+    return "sent";
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown email delivery error";
     console.error(`[ymh-close-auction] Winner email failed for bid ${bidId}: ${message}`);
@@ -114,6 +117,7 @@ async function fulfilWinner(auctionId: string, bidId: string) {
       status: "failed",
       error: message.slice(0, 1000),
     });
+    return "failed";
   }
 }
 
@@ -221,6 +225,8 @@ Deno.serve(async (req) => {
   if (error) return new Response(error.message, { status: 500 });
 
   let charged = 0;
+  let emailsSent = 0;
+  let emailFailures = 0;
   for (const auction of (closed ?? []) as Array<Record<string, string>>) {
     if (!auction["winning_bid_id"]) continue;
     if (await chargeWinner(auction, auction["winning_bid_id"]!)) charged++;
@@ -287,10 +293,19 @@ Deno.serve(async (req) => {
     if (!bid || !bid["stripe_payment_intent_id"]) continue;
     const intent = await stripe.paymentIntents.retrieve(bid["stripe_payment_intent_id"]!);
     if (intent.status !== "succeeded") continue;
-    await fulfilWinner(auction["id"]!, bid["id"]!);
+    const emailResult = await fulfilWinner(auction["id"]!, bid["id"]!);
+    if (emailResult === "sent") emailsSent++;
+    if (emailResult === "failed") emailFailures++;
   }
 
-  return new Response(JSON.stringify({ closed: (closed ?? []).length, charged, promoted }), {
-    headers: { "Content-Type": "application/json" },
-  });
+  return new Response(
+    JSON.stringify({
+      closed: (closed ?? []).length,
+      charged,
+      promoted,
+      winner_emails_sent: emailsSent,
+      winner_email_failures: emailFailures,
+    }),
+    { headers: { "Content-Type": "application/json" } },
+  );
 });
