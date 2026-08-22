@@ -132,7 +132,7 @@ function Buy() {
       const raw = form.website.trim();
       const website = raw && !/^https?:\/\//i.test(raw) ? `https://${raw}` : raw;
       const started = await startBid({
-        name: form.name.trim(),
+        name: form.advertiser.trim(),
         email: form.email.trim(),
         advertiser: form.advertiser.trim(),
         amount_cents: amountCents,
@@ -383,7 +383,7 @@ function Buy() {
             </p>
           ) : (
             <form onSubmit={onSubmit} className="mt-8 space-y-6">
-              <input required placeholder="Name" className={field} value={form.name} onChange={set("name")} />
+              
               <input
                 required
                 type="email"
