@@ -56,7 +56,7 @@ export function Billboard({
     }
   }, [overlayFs]);
 
-  const imgClass = cn("h-full w-full", isFs ? "object-contain" : "object-cover");
+  const imgClass = "h-full w-full object-cover";
 
   /** Sample the bottom-left corner of the creative so the control stays legible. */
   const onImgLoad = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
