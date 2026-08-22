@@ -43,7 +43,6 @@ const host = (url: string | null) => {
 
 function Archive() {
   const [items, setItems] = useState<ArchivedWeek[] | null>(null);
-  const [open, setOpen] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     let active = true;
@@ -83,7 +82,6 @@ function Archive() {
           <ul className="mt-16 space-y-20">
             {items.map(({ auction, billboard, bids }) => {
               const winner = bids[0] ?? null;
-              const isOpen = open[auction.id] ?? false;
               return (
                 <li key={auction.id}>
                   <div className="flex flex-wrap items-baseline justify-between gap-3">
