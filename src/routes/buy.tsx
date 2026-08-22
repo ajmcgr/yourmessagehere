@@ -74,7 +74,6 @@ function Buy() {
   }, []);
 
   const [form, setForm] = useState({
-    name: "",
     email: "",
     advertiser: "",
     website: "",
