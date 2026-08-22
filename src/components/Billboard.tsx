@@ -16,6 +16,7 @@ export function Billboard({
   const containerRef = useRef<HTMLDivElement>(null);
   const [nativeFs, setNativeFs] = useState(false);
   const [overlayFs, setOverlayFs] = useState(false);
+  const [darkIcon, setDarkIcon] = useState<boolean | null>(null);
   const isFs = nativeFs || overlayFs;
 
   useEffect(() => {
@@ -57,6 +58,33 @@ export function Billboard({
 
   const imgClass = cn("h-full w-full", isFs ? "object-contain" : "object-cover");
 
+  /** Sample the bottom-left corner of the creative so the control stays legible. */
+  const onImgLoad = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
+    const img = e.currentTarget;
+    try {
+      const w = img.naturalWidth;
+      const h = img.naturalHeight;
+      if (!w || !h) return;
+      const canvas = document.createElement("canvas");
+      canvas.width = 16;
+      canvas.height = 16;
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
+      if (!ctx) return;
+      const sw = Math.max(1, Math.round(w * 0.2));
+      const sh = Math.max(1, Math.round(h * 0.2));
+      ctx.drawImage(img, 0, h - sh, sw, sh, 0, 0, 16, 16);
+      const { data } = ctx.getImageData(0, 0, 16, 16);
+      let sum = 0;
+      for (let i = 0; i < data.length; i += 4) {
+        sum += 0.2126 * (data[i] ?? 0) + 0.7152 * (data[i + 1] ?? 0) + 0.0722 * (data[i + 2] ?? 0);
+      }
+      const avg = sum / (data.length / 4);
+      setDarkIcon(avg > 140);
+    } catch {
+      /* cross-origin creative — keep the default tint */
+    }
+  }, []);
+
   const inner = loading ? (
     <Skeleton className="h-full w-full rounded-none" />
   ) : billboard?.image_url ? (
@@ -64,6 +92,8 @@ export function Billboard({
       src={billboard.image_url}
       alt={billboard.headline ?? `Advertisement by ${billboard.advertiser ?? "this week's winner"}`}
       className={imgClass}
+      crossOrigin="anonymous"
+      onLoad={onImgLoad}
     />
   ) : isFs ? (
     <img src={placeholder.url} alt="Your message here — buy the billboard" className={imgClass} />
@@ -111,7 +141,14 @@ export function Billboard({
         onClick={toggleFs}
         aria-label={isFs ? "Exit billboard fullscreen" : "View billboard fullscreen"}
         title={isFs ? "Exit fullscreen" : "Fullscreen"}
-        className="absolute bottom-3 left-3 z-10 grid size-8 place-items-center rounded-sm bg-transparent billboard-ink opacity-60 transition-opacity hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className={cn(
+          "absolute bottom-3 left-3 z-10 grid size-8 place-items-center rounded-sm bg-transparent opacity-80 transition-opacity hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+          darkIcon === null
+            ? "billboard-ink"
+            : darkIcon
+              ? "billboard-ink-dark"
+              : "billboard-ink-light",
+        )}
       >
         {isFs ? (
           <Minimize2 className="size-4" strokeWidth={1.5} />

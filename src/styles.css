@@ -293,3 +293,14 @@ html {
 @utility billboard-ink {
   color: oklch(0.2 0 0 / 0.4);
 }
+
+/* Fullscreen control tint, chosen from the creative's own brightness. */
+@utility billboard-ink-dark {
+  color: oklch(0.18 0 0 / 0.75);
+  filter: drop-shadow(0 0 2px oklch(1 0 0 / 0.6));
+}
+
+@utility billboard-ink-light {
+  color: oklch(1 0 0 / 0.9);
+  filter: drop-shadow(0 0 2px oklch(0 0 0 / 0.6));
+}
