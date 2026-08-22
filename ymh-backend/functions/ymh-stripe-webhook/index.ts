@@ -60,8 +60,6 @@ Deno.serve(async (req) => {
       return new Response("ok");
     }
 
-    if (bid.status === "winner_paid") return new Response("ok"); // idempotent
-
     await admin
       .from("ymh_bids")
       .update({
@@ -80,34 +78,66 @@ Deno.serve(async (req) => {
       .maybeSingle();
 
     if (auction) {
-      await admin.from("ymh_billboards").insert({
-        auction_id: auctionId,
-        advertiser: bid.advertiser,
-        click_url: bid.website,
-        week_start: auction.week_start,
-        week_end: auction.week_end,
-        status: "pending",
-      });
+      const { data: existingBillboard } = await admin
+        .from("ymh_billboards")
+        .select("id")
+        .eq("auction_id", auctionId)
+        .maybeSingle();
+      if (!existingBillboard) {
+        await admin.from("ymh_billboards").insert({
+          auction_id: auctionId,
+          advertiser: bid.advertiser,
+          click_url: bid.website,
+          week_start: auction.week_start,
+          week_end: auction.week_end,
+          status: "pending",
+        });
+      }
 
-      await sendEmail(
-        bid.bidder_email,
-        "Payment received — upload your creative",
-        emailLayout({
-          heading: "The billboard is yours 🎉",
-          body: `<p style="margin:0 0 16px 0;">We charged your verified payment method $${(bid.amount_cents / 100).toFixed(0)}. You own the one billboard on the internet for the week — ${weekEndingLabel(auction.week_end)}.</p><p style="margin:0;">Upload your creative — 1600×900, JPG or PNG.</p>`,
-          cta: {
-            label: "Upload your creative",
-            url: `https://yourmessagehere.co/upload?token=${bid.payment_token}`,
-          },
-        }),
-      );
+      const { data: sent } = await admin
+        .from("ymh_email_events")
+        .select("id")
+        .eq("bid_id", bidId)
+        .eq("template", "payment_received")
+        .eq("status", "sent")
+        .not("provider_id", "is", null)
+        .maybeSingle();
 
-      await admin.from("ymh_email_events").insert({
-        auction_id: auctionId,
-        bid_id: bidId,
-        recipient: bid.bidder_email,
-        template: "payment_received",
-      });
+      if (!sent) {
+        try {
+          const providerId = await sendEmail(
+            bid.bidder_email,
+            "Payment received — upload your creative",
+            emailLayout({
+              heading: "The billboard is yours 🎉",
+              body: `<p style="margin:0 0 16px 0;">We charged your verified payment method $${(bid.amount_cents / 100).toFixed(0)}. You own the one billboard on the internet for the week — ${weekEndingLabel(auction.week_end)}.</p><p style="margin:0;">Upload your creative — 1600×900, JPG or PNG.</p>`,
+              cta: {
+                label: "Upload your creative",
+                url: `https://yourmessagehere.co/upload?token=${bid.payment_token}`,
+              },
+            }),
+          );
+          await admin.from("ymh_email_events").insert({
+            auction_id: auctionId,
+            bid_id: bidId,
+            recipient: bid.bidder_email,
+            template: "payment_received",
+            provider_id: providerId,
+            status: "sent",
+          });
+        } catch (error) {
+          const message = error instanceof Error ? error.message : "Unknown email delivery error";
+          console.error(`[ymh-stripe-webhook] Winner email failed for bid ${bidId}: ${message}`);
+          await admin.from("ymh_email_events").insert({
+            auction_id: auctionId,
+            bid_id: bidId,
+            recipient: bid.bidder_email,
+            template: "payment_received",
+            status: "failed",
+            error: message.slice(0, 1000),
+          });
+        }
+      }
     }
   }
 
