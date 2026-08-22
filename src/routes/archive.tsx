@@ -91,20 +91,35 @@ function Archive() {
                     </h2>
                   </div>
 
+                  {(() => {
+                    const creativeHref = billboard?.click_url ?? winner?.website ?? null;
+                    const creative = billboard?.image_url ? (
+                      <img
+                        src={billboard.image_url}
+                        alt={billboard.headline ?? billboard.advertiser ?? "Billboard creative"}
+                        className="h-full w-full object-cover"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center text-sm text-muted-foreground">
+                        {billboard?.headline ?? "No creative"}
+                      </div>
+                    );
+                    return (
                   <div className="mt-5 grid gap-8 md:grid-cols-2">
                     <div>
                       <div className="aspect-video w-full overflow-hidden border border-foreground/15">
-                        {billboard?.image_url ? (
-                          <img
-                            src={billboard.image_url}
-                            alt={billboard.headline ?? billboard.advertiser ?? "Billboard creative"}
-                            className="h-full w-full object-cover"
-                            loading="lazy"
-                          />
+                        {creativeHref ? (
+                          <a
+                            href={creativeHref}
+                            target="_blank"
+                            rel="noopener noreferrer nofollow"
+                            className="block h-full w-full"
+                          >
+                            {creative}
+                          </a>
                         ) : (
-                          <div className="flex h-full w-full items-center justify-center text-sm text-muted-foreground">
-                            {billboard?.headline ?? "No creative"}
-                          </div>
+                          creative
                         )}
                       </div>
                       <div className="mt-4 flex items-baseline justify-between gap-4 text-sm">
@@ -142,7 +157,7 @@ function Archive() {
                         <p className="mt-4 text-sm text-muted-foreground">No bids recorded.</p>
                       ) : (
                         <div className="mt-4 flex-1">
-                          <table className="h-full w-full table-fixed border-collapse text-base">
+                          <table className="h-full w-full table-fixed border-collapse text-sm">
                             <tbody>
                               {bids.slice(0, 5).map((b, idx) => {
                                 const h = host(b.website);
@@ -176,6 +191,8 @@ function Archive() {
                     </div>
 
                   </div>
+                    );
+                  })()}
                 </li>
               );
             })}
