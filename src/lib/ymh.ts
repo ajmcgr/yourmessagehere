@@ -84,18 +84,32 @@ export function nextAuctionEnd(from: Date = new Date()): Date {
   return new Date(candidate.getTime() - offsetMs(guess));
 }
 
+/**
+ * The single active auction. Server-side source of truth: the RPC closes any
+ * expired auction and opens the next one (idempotently) before returning, so a
+ * visitor arriving after Friday 10:00 PM ET never sees an ended auction.
+ */
 export async function fetchCurrentAuction(): Promise<Auction | null> {
   if (!isSupabaseConfigured || !supabase) return null;
-  const { data, error } = await supabase
+
+  const { data, error } = await supabase.rpc("ymh_current_auction");
+  if (!error && data) {
+    const row = (Array.isArray(data) ? data[0] : data) as Auction | undefined;
+    if (row?.id) return row;
+  }
+
+  // Fallback for projects where migration 0007 has not been applied yet.
+  const { data: fallback, error: fallbackError } = await supabase
     .from("ymh_auctions")
     .select("*")
     .eq("status", "open")
     .order("ends_at", { ascending: true })
     .limit(1)
     .maybeSingle();
-  if (error) return null;
-  return (data as Auction) ?? null;
+  if (fallbackError) return null;
+  return (fallback as Auction) ?? null;
 }
+
 
 export async function fetchTopBids(auctionId?: string): Promise<Bid[]> {
   if (!isSupabaseConfigured || !supabase || !auctionId) return [];
