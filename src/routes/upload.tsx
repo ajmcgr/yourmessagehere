@@ -16,7 +16,7 @@ export const Route = createFileRoute("/upload")({
       {
         name: "description",
         content:
-          "Winners upload the image, headline, and link that runs on the internet's billboard for their week.",
+          "Winners upload the image and link that runs on the internet's billboard for their week.",
       },
       { property: "og:title", content: "Upload your creative — Your Message Here" },
       {
@@ -107,7 +107,7 @@ function UploadPage() {
           <div className="mt-6 space-y-4">
             <p className="text-lg leading-relaxed text-muted-foreground">
               Your creative is live. It runs on the billboard for your week — you can come back to
-              this link any time to swap the image or headline.
+              this link any time to swap the image or link.
             </p>
             {preview ? (
               <img
