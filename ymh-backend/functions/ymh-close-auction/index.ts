@@ -16,6 +16,8 @@ const admin = createClient(
 );
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, { apiVersion: "2024-06-20", httpClient: Stripe.createFetchHttpClient() });
 
+const SITE = "https://yourmessagehere.co";
+
 const usd = (c: number) => `$${(c / 100).toFixed(0)}`;
 
 type WinnerBid = {
@@ -121,6 +123,47 @@ async function fulfilWinner(auctionId: string, bidId: string): Promise<"sent" | 
   }
 }
 
+/** A Stripe Checkout link the winner can use to settle with a different card. */
+async function settleCheckoutUrl(bid: WinnerBid, weekEnd: string): Promise<string> {
+  try {
+    const session = await stripe.checkout.sessions.create({
+      mode: "payment",
+      customer: bid.stripe_customer_id ?? undefined,
+      customer_email: bid.stripe_customer_id ? undefined : bid.bidder_email,
+      line_items: [{
+        quantity: 1,
+        price_data: {
+          currency: "usd",
+          unit_amount: bid.amount_cents,
+          product_data: { name: `Your Message Here — billboard week ending ${weekEndingLabel(weekEnd)}` },
+        },
+      }],
+      payment_intent_data: {
+        setup_future_usage: "off_session",
+        description: "Your Message Here — one week on the billboard",
+        metadata: {
+          product_source: "your_message_here",
+          auction_id: bid.auction_id,
+          bid_id: bid.id,
+          advertiser: bid.advertiser,
+        },
+      },
+      metadata: {
+        product_source: "your_message_here",
+        auction_id: bid.auction_id,
+        bid_id: bid.id,
+      },
+      success_url: `${SITE}/upload?paid=1`,
+      cancel_url: `${SITE}/buy`,
+      expires_at: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
+    });
+    return session.url ?? `${SITE}/buy`;
+  } catch (e) {
+    console.error(`[ymh-close-auction] Checkout link failed for bid ${bid.id}: ${e instanceof Error ? e.message : e}`);
+    return `${SITE}/buy`;
+  }
+}
+
 /** Charge one provisional winner. Returns true when the charge succeeded. */
 async function chargeWinner(auction: Record<string, string>, bidId: string) {
   // The amount is always read from the database, never from any client input.
@@ -183,13 +226,14 @@ async function chargeWinner(auction: Record<string, string>, bidId: string) {
       })
       .eq("id", bid.id);
 
+    const authUrl = await settleCheckoutUrl(bid, auction["week_end"] ?? "");
     await sendEmail(
       bid.bidder_email,
-      "Action needed — confirm your billboard payment",
+      "Action needed — confirm your billboard payment (24 hours)",
       emailLayout({
         heading: "One more step",
-        body: `<p style="margin:0 0 16px 0;">Hi ${bid.bidder_name}, you won the billboard for ${weekEndingLabel(auction["week_end"])} with <strong style="color:#111111;">${usd(bid.amount_cents)}</strong>.</p><p style="margin:0;">Your bank needs you to confirm the payment. Please confirm it soon — if we can't collect payment in time, the billboard goes to the next verified bidder.</p>`,
-        cta: { label: "Confirm payment", url: "https://yourmessagehere.co/buy" },
+        body: `<p style="margin:0 0 16px 0;">Hi ${bid.bidder_name}, you won the billboard for ${weekEndingLabel(auction["week_end"])} with <strong style="color:#111111;">${usd(bid.amount_cents)}</strong>.</p><p style="margin:0 0 16px 0;">Your bank needs you to confirm the payment. You have <strong style="color:#111111;">24 hours</strong> to settle — after that the billboard automatically passes to the next verified bidder.</p><p style="margin:0;">Use the button below to complete payment, or to pay with a different card.</p>`,
+        cta: { label: "Settle payment", url: authUrl },
       }),
     );
     return false;
@@ -204,12 +248,14 @@ async function chargeWinner(auction: Record<string, string>, bidId: string) {
       })
       .eq("id", bid.id);
 
+    const settleUrl = await settleCheckoutUrl(bid, auction["week_end"] ?? "");
     await sendEmail(
       bid.bidder_email,
-      "We couldn't charge your card",
+      "We couldn't charge your card — 24 hours to settle",
       emailLayout({
         heading: "Your payment didn't go through",
-        body: `<p style="margin:0 0 16px 0;">Hi ${bid.bidder_name}, you won the billboard for ${weekEndingLabel(auction["week_end"])} with <strong style="color:#111111;">${usd(bid.amount_cents)}</strong>, but your bank declined the charge.</p><p style="margin:0;">Reply to this email and we'll help. If payment can't be completed in time, the billboard passes to the next verified bidder.</p>`,
+        body: `<p style="margin:0 0 16px 0;">Hi ${bid.bidder_name}, you won the billboard for ${weekEndingLabel(auction["week_end"])} with <strong style="color:#111111;">${usd(bid.amount_cents)}</strong>, but your bank declined the charge.</p><p style="margin:0 0 16px 0;">You have <strong style="color:#111111;">24 hours</strong> to settle. Use the button below to pay with a different card — after that window the billboard automatically passes to the next verified bidder.</p><p style="margin:0;">Trouble with the link? Just reply to this email and we'll help.</p>`,
+        cta: { label: "Pay with another card", url: settleUrl },
       }),
     );
     return false;
