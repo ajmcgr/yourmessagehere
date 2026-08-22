@@ -51,14 +51,23 @@ function Archive() {
         </p>
 
         {items === null ? (
-          <div className="mt-16 space-y-16">
+          <ul className="mt-16 space-y-20">
             {[0, 1].map((i) => (
-              <div key={i}>
-                <Skeleton className="aspect-video w-full max-w-2xl" />
-                <Skeleton className="mt-4 h-4 w-56" />
-              </div>
+              <li key={i}>
+                <Skeleton className="h-7 w-64" />
+                <div className="mt-5 flex justify-center">
+                  <div className="w-full max-w-2xl">
+                    <Skeleton className="aspect-video w-full rounded-none" />
+                    <div className="mt-4 flex items-baseline justify-between gap-4">
+                      <Skeleton className="h-4 w-40" />
+                      <Skeleton className="h-4 w-16" />
+                    </div>
+                  </div>
+                </div>
+              </li>
             ))}
-          </div>
+          </ul>
+
         ) : items.length === 0 ? (
           <p className="mt-16 text-sm text-muted-foreground">
             No past weeks yet. The first week is still up for auction.
