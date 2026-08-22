@@ -266,8 +266,8 @@ export async function fetchArchivedWeeks(): Promise<ArchivedWeek[]> {
   const { data: auctionRows, error } = await supabase
     .from("ymh_auctions")
     .select("*")
-    .lt("week_end", nowIso)
-    .order("week_start", { ascending: false })
+    .lt("ends_at", nowIso)
+    .order("ends_at", { ascending: false })
     .limit(100);
   if (error || !auctionRows?.length) return [];
 

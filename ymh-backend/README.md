@@ -26,6 +26,8 @@ psql "$ROCKET_DB_URL" -f migrations/0002_ymh_min_bid_5.sql
 psql "$ROCKET_DB_URL" -f migrations/0003_ymh_page_views.sql
 psql "$ROCKET_DB_URL" -f migrations/0004_ymh_stripe_verification.sql
 psql "$ROCKET_DB_URL" -f migrations/0005_ymh_weekly_invites.sql
+psql "$ROCKET_DB_URL" -f migrations/0006_ymh_email_subscribers.sql
+psql "$ROCKET_DB_URL" -f migrations/0007_ymh_auto_rollover.sql
 ```
 
 `0005` adds `ymh_email_optouts`, the idempotent `ymh_email_sends` ledger, the
