@@ -111,7 +111,7 @@ export function Billboard({
     <div
       className={cn(
         "aspect-[16/9] w-full overflow-hidden border border-foreground bg-background",
-        isFs && "max-h-full max-w-[calc(100vh*16/9)] border-0",
+        isFs && "aspect-auto h-full max-h-none w-full max-w-none border-0 bg-black",
       )}
     >
       {inner}
@@ -132,7 +132,7 @@ export function Billboard({
       ref={containerRef}
       className={cn(
         "relative w-full",
-        isFs && "fixed inset-0 z-50 flex h-full w-full items-center justify-center bg-background",
+        isFs && "fixed inset-0 z-50 flex h-full w-full items-center justify-center bg-black",
       )}
     >
       {linked}
