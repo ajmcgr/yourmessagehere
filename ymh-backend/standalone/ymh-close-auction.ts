@@ -7,7 +7,7 @@
 // New model: the winner already verified a payment method while bidding, so we
 // charge it off-session here. No Checkout link, no manual re-entry of a card.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import Stripe from "https://esm.sh/stripe@17.0.0?target=deno";
+import Stripe from "npm:stripe@17.0.0";
 // ---- inlined shared email helper (single-file deploy) ----
 
 const SITE = "https://yourmessagehere.co";
@@ -84,7 +84,7 @@ const admin = createClient(
   Deno.env.get("SUPABASE_URL")!,
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
 );
-const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, { apiVersion: "2024-06-20" });
+const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, { apiVersion: "2024-06-20", httpClient: Stripe.createFetchHttpClient() });
 
 const usd = (c: number) => `$${(c / 100).toFixed(0)}`;
 
@@ -368,14 +368,17 @@ Deno.serve(async (req) => {
     if (emailResult === "failed") emailFailures++;
   }
 
+  const summary = {
+    closed: (closed ?? []).length,
+    charged,
+    promoted,
+    winner_emails_sent: emailsSent,
+    winner_email_failures: emailFailures,
+  };
+  console.log(`[ymh-close-auction] ${JSON.stringify(summary)}`);
+
   return new Response(
-    JSON.stringify({
-      closed: (closed ?? []).length,
-      charged,
-      promoted,
-      winner_emails_sent: emailsSent,
-      winner_email_failures: emailFailures,
-    }),
+    JSON.stringify(summary),
     { headers: { "Content-Type": "application/json" } },
   );
 });
