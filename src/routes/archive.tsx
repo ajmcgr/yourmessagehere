@@ -142,7 +142,7 @@ function Archive() {
                       <div className="flex items-baseline justify-between gap-4">
                         <h3 className="text-sm font-bold">Bids</h3>
                         <span className="text-sm text-muted-foreground">
-                          {bids.length} {bids.length === 1 ? "brand" : "brands"}
+                          Top {Math.min(bids.length, 5)}
                         </span>
                       </div>
 
