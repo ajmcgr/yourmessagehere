@@ -199,13 +199,14 @@ function Buy() {
               </dt>
               {loading ? (
                 <>
-                  <dd className="mt-2">
-                    <Skeleton className="h-10 w-64 md:h-14" />
+                  <dd>
+                    <Skeleton className="h-9 w-64 md:h-15" />
                   </dd>
                   <dd className="mt-2">
-                    <Skeleton className="h-4 w-40" />
+                    <Skeleton className="h-4 w-44" />
                   </dd>
                 </>
+
               ) : (
                 <>
                   <dd>
