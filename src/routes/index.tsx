@@ -32,7 +32,6 @@ export const Route = createFileRoute("/")({
       { name: "twitter:image", content: "https://yourmessagehere.co/og.jpg" },
     ],
     links: [{ rel: "canonical", href: "https://yourmessagehere.co/" }],
-    ],
   }),
   component: Index,
 });
