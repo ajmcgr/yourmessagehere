@@ -112,9 +112,7 @@ function Index() {
 
         <section className="mt-4 text-center md:mt-5">
           <p className="mx-auto text-sm leading-relaxed text-balance text-muted-foreground sm:whitespace-nowrap">
-            One brand owns this billboard each week. Changes Fridays at 10 PM New York time.
-          </p>
-          <p className="mt-2 text-sm">
+            One brand owns this billboard each week. Changes Fridays at 10 PM New York time.{" "}
             <a
               href="https://cloud.umami.is/share/81qD5QRhMHc3UUN0"
               target="_blank"
@@ -124,6 +122,7 @@ function Index() {
               Traffic ↗
             </a>
           </p>
+
         </section>
       </main>
 
