@@ -160,7 +160,8 @@ function Buy() {
   };
 
   const field =
-    "w-full border-0 border-b border-foreground/20 bg-transparent py-3 text-base outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground";
+    "w-full rounded-md border border-foreground/25 bg-transparent px-4 py-3 text-base outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground focus:ring-1 focus:ring-foreground/20";
+
 
 
   return (
@@ -407,7 +408,7 @@ function Buy() {
                 value={form.website}
                 onChange={set("website")}
               />
-              <div className="flex items-baseline gap-2 border-b border-foreground/20 focus-within:border-foreground">
+              <div className="flex items-center gap-2 rounded-md border border-foreground/25 px-4 transition-colors focus-within:border-foreground focus-within:ring-1 focus-within:ring-foreground/20">
                 <span className="text-base text-muted-foreground">$</span>
                 <input
                   required
@@ -421,6 +422,7 @@ function Buy() {
                 />
                 <span className="text-xs uppercase tracking-widest text-muted-foreground">USD</span>
               </div>
+
 
               <label className="flex cursor-pointer items-start gap-3 text-sm leading-relaxed">
                 <input
