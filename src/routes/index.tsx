@@ -59,20 +59,19 @@ function Index() {
 
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="flex min-h-screen flex-col bg-background text-foreground">
       <SiteNav ctaActive={hasActiveAdvertiser} />
 
-      <main className="mx-auto max-w-5xl px-6 pb-8">
+      <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 pb-8 md:px-6">
         <h1 className="sr-only">Your Message Here — the internet's billboard</h1>
 
-        <div className="flex min-h-[70vh] flex-col justify-center pt-5 md:block md:min-h-0 md:pt-8">
-        <section>
+        <section className="flex flex-1 items-center justify-center py-2">
           <div className="w-full">
             <Billboard billboard={billboard} loading={loading} />
           </div>
         </section>
 
-        <section className="mt-3.5 text-sm md:mt-5">
+        <section className="mt-6 text-sm md:mt-8">
 
           {loading ? (
             <div className="flex flex-wrap items-center justify-between gap-2.5 md:justify-center md:gap-x-7">
@@ -119,15 +118,11 @@ function Index() {
           )}
         </section>
 
-        <section className="mt-6 text-center md:mt-8">
+        <section className="mt-4 text-center md:mt-5">
           <p className="mx-auto max-w-md text-sm leading-relaxed text-muted-foreground">
             One brand owns this billboard each week. Highest bid wins next week.
           </p>
         </section>
-        </div>
-
-
-
       </main>
 
       <SiteFooter />
