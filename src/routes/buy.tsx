@@ -180,9 +180,10 @@ function Buy() {
                 {currentBidCents === null ? "Opening bid" : "Current bid"}
               </dt>
               {loading ? (
-                <dd className="mt-2">
-                  <Skeleton className="h-10 w-56 md:h-14" />
+                <dd className="mt-3">
+                  <Skeleton className="h-9 w-56 md:h-15" />
                 </dd>
+
               ) : (
                 <dd className="mt-3 text-4xl font-medium tracking-tight tabular-nums md:text-6xl">
                   <span className="marker-highlight inline-block">
