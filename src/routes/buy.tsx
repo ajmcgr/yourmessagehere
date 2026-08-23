@@ -180,9 +180,10 @@ function Buy() {
                 {currentBidCents === null ? "Opening bid" : "Current bid"}
               </dt>
               {loading ? (
-                <dd className="mt-2">
-                  <Skeleton className="h-10 w-56 md:h-14" />
+                <dd className="mt-3">
+                  <Skeleton className="h-9 w-56 md:h-15" />
                 </dd>
+
               ) : (
                 <dd className="mt-3 text-4xl font-medium tracking-tight tabular-nums md:text-6xl">
                   <span className="marker-highlight inline-block">
@@ -198,13 +199,14 @@ function Buy() {
               </dt>
               {loading ? (
                 <>
-                  <dd className="mt-2">
-                    <Skeleton className="h-10 w-64 md:h-14" />
+                  <dd>
+                    <Skeleton className="h-9 w-64 md:h-15" />
                   </dd>
                   <dd className="mt-2">
-                    <Skeleton className="h-4 w-40" />
+                    <Skeleton className="h-4 w-44" />
                   </dd>
                 </>
+
               ) : (
                 <>
                   <dd>
@@ -220,9 +222,10 @@ function Buy() {
             <div>
               <dt className="text-xs uppercase tracking-widest text-muted-foreground">Page views</dt>
               {views === null ? (
-                <dd className="mt-2">
-                  <Skeleton className="h-10 w-32 md:h-14" />
+                <dd>
+                  <Skeleton className="h-9 w-32 md:h-15" />
                 </dd>
+
               ) : (
                 <dd className="text-4xl font-medium tracking-tight tabular-nums md:text-6xl">
                   {views.toLocaleString("en-US")}
@@ -241,20 +244,51 @@ function Buy() {
 
         {loading && (
           <section className="mt-16 lg:-mx-24 xl:-mx-40">
-            <Skeleton className="h-4 w-32" />
+            <Skeleton className="h-5 w-24" />
             <div className="mt-4 border-t border-foreground/10">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="flex items-center gap-4 border-b border-foreground/10 py-5">
-                  <Skeleton className="size-8 shrink-0 rounded sm:size-10" />
-                  <div className="min-w-0 flex-1 space-y-2">
-                    <Skeleton className="h-4 w-40" />
-                    <Skeleton className="h-3 w-64 max-w-full" />
-                  </div>
-                  <Skeleton className="h-4 w-20" />
-                </div>
-              ))}
+              <table className="w-full table-fixed text-base">
+                <tbody>
+                  <tr>
+                    <td className="w-7 py-4 pl-3 sm:w-8 sm:pl-6">
+                      <Skeleton className="h-4 w-3" />
+                    </td>
+                    <td className="px-2 py-4 sm:px-4">
+                      <Skeleton className="h-4 w-14" />
+                    </td>
+                    <td className="hidden w-32 px-4 py-4 md:table-cell">
+                      <Skeleton className="ml-auto h-4 w-12" />
+                    </td>
+                    <td className="w-24 py-4 pr-3 sm:pr-6">
+                      <Skeleton className="ml-auto h-4 w-8" />
+                    </td>
+                  </tr>
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <tr key={i} className="border-t border-foreground/10">
+                      <td className="py-5 pl-3 sm:pl-6">
+                        <Skeleton className="h-4 w-3" />
+                      </td>
+                      <td className="px-2 py-5 sm:px-4">
+                        <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+                          <Skeleton className="size-8 shrink-0 rounded sm:size-10" />
+                          <div className="min-w-0 flex-1 space-y-2">
+                            <Skeleton className="h-4 w-40 max-w-full" />
+                            <Skeleton className="h-3.5 w-64 max-w-full" />
+                          </div>
+                        </div>
+                      </td>
+                      <td className="hidden px-4 py-5 md:table-cell">
+                        <Skeleton className="ml-auto h-4 w-16" />
+                      </td>
+                      <td className="py-5 pr-3 sm:pr-6">
+                        <Skeleton className="ml-auto h-4 w-14" />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </section>
+
         )}
 
         {!loading && bids.length > 0 && (

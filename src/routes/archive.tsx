@@ -54,14 +54,17 @@ function Archive() {
           <ul className="mt-16 space-y-20">
             {[0, 1].map((i) => (
               <li key={i}>
-                <Skeleton className="h-7 w-64" />
+                <Skeleton className="h-7 w-56 max-w-full" />
                 <div className="mt-5 flex justify-center">
                   <div className="w-full max-w-2xl">
-                    <Skeleton className="aspect-video w-full rounded-none" />
-                    <div className="mt-4 flex items-baseline justify-between gap-4">
-                      <Skeleton className="h-4 w-40" />
+                    <div className="aspect-video w-full overflow-hidden border border-foreground/15">
+                      <Skeleton className="h-full w-full rounded-none" />
+                    </div>
+                    <div className="mt-4 flex items-baseline justify-between gap-4 text-sm">
+                      <Skeleton className="h-4 w-40 max-w-full" />
                       <Skeleton className="h-4 w-16" />
                     </div>
+
                   </div>
                 </div>
               </li>
