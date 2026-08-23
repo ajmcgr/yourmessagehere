@@ -63,7 +63,7 @@ function Index() {
 
   return (
     <div className="flex min-h-[100dvh] flex-col bg-background text-foreground">
-      <SiteNav ctaActive={hasActiveAdvertiser} />
+      <SiteNav ctaActive={hasActiveAdvertiser} ctaLoading={loading} />
 
       <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 pb-8 md:px-6">
         <h1 className="sr-only">Your Message Here — the internet's billboard</h1>
