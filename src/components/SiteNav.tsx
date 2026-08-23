@@ -106,7 +106,7 @@ export function FloatingBuyCta({ active = false }: { active?: boolean } = {}) {
 
 export function SiteFooter() {
   return (
-    <footer className="mx-auto max-w-5xl px-6 pb-10 text-center text-xs leading-relaxed text-muted-foreground">
+    <footer className="mx-auto max-w-5xl px-6 pb-24 sm:pb-10 text-center text-xs leading-relaxed text-muted-foreground">
       Built with 🫶🏻 by{" "}
       <a
         href="https://x.com/alexmacgregor__"

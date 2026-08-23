@@ -63,7 +63,7 @@ function Index() {
 
 
   return (
-    <div className="flex min-h-screen flex-col bg-background text-foreground">
+    <div className="flex min-h-[100dvh] flex-col bg-background text-foreground">
       <SiteNav ctaActive={hasActiveAdvertiser} />
 
       <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 pb-8 md:px-6">
