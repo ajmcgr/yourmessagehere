@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Billboard } from "@/components/Billboard";
 import { Countdown } from "@/components/Countdown";
 import { useAuction } from "@/hooks/useAuction";
@@ -38,11 +38,10 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const { billboard, currentBidCents, startingBidCents, endsAt, loading } = useAuction();
-  const [views, setViews] = useState<number | null>(null);
   const hasActiveAdvertiser = !loading && billboard?.status === "approved";
 
   useEffect(() => {
-    void recordPageView().then(setViews);
+    void recordPageView();
   }, []);
 
   useEffect(() => {
