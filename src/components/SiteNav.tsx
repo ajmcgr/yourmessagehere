@@ -104,30 +104,6 @@ export function FloatingBuyCta({ active = false }: { active?: boolean } = {}) {
 }
 
 
-export function SiteLinks({ className = "mt-8" }: { className?: string }) {
-  return (
-    <nav
-      className={`${className} flex flex-wrap items-center justify-center gap-8 text-sm text-muted-foreground`}
-    >
-      <Link to="/archive" className="transition-colors hover:text-foreground">
-        Archive
-      </Link>
-      <Link to="/faq" className="transition-colors hover:text-foreground">
-        FAQ
-      </Link>
-      <Link to="/about" className="transition-colors hover:text-foreground">
-        About
-      </Link>
-      <Link to="/alerts" className="transition-colors hover:text-foreground">
-        Email alerts
-      </Link>
-      <a href="mailto:alex@tryrocket.ai" className="transition-colors hover:text-foreground">
-        Contact
-      </a>
-    </nav>
-  );
-}
-
 export function SiteFooter() {
   return (
     <footer className="mx-auto max-w-5xl px-6 pb-10 text-center text-xs leading-relaxed text-muted-foreground">
