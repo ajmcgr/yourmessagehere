@@ -1,4 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { Menu, X } from "lucide-react";
 import logo from "@/assets/logo.png.asset.json";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
@@ -12,9 +14,75 @@ export function SiteNav({ ctaActive = false }: { ctaActive?: boolean } = {}) {
       </Link>
       <div className="flex shrink-0 items-center gap-2 md:gap-3">
         <ThemeToggle />
+        <SiteMenu />
       </div>
     </header>
     </>
+  );
+}
+
+const menuLinks = [
+  { to: "/archive", label: "Archive" },
+  { to: "/faq", label: "FAQ" },
+  { to: "/about", label: "About" },
+  { to: "/alerts", label: "Email alerts" },
+] as const;
+
+function SiteMenu() {
+  const [open, setOpen] = useState(false);
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        aria-label={open ? "Close menu" : "Open menu"}
+        aria-expanded={open}
+        onClick={() => setOpen((v) => !v)}
+        className="flex size-9 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+      >
+        {open ? <X className="size-5" /> : <Menu className="size-5" />}
+      </button>
+
+      {open ? (
+        <>
+          <div
+            className="fixed inset-0 z-40"
+            aria-hidden="true"
+            onClick={() => setOpen(false)}
+          />
+          <nav className="absolute right-0 z-50 mt-2 w-48 overflow-hidden rounded-xl border border-border bg-background py-2 shadow-lg">
+            {menuLinks.map((l) => (
+              <Link
+                key={l.to}
+                to={l.to}
+                className="block px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              >
+                {l.label}
+              </Link>
+            ))}
+            <a
+              href="mailto:alex@tryrocket.ai"
+              className="block px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              Contact
+            </a>
+          </nav>
+        </>
+      ) : null}
+    </div>
   );
 }
 
