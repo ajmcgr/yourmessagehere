@@ -118,15 +118,11 @@ function Index() {
           )}
         </section>
 
-        <section className="mt-6 text-center md:mt-8">
+        <section className="mt-4 text-center md:mt-5">
           <p className="mx-auto max-w-md text-sm leading-relaxed text-muted-foreground">
             One brand owns this billboard each week. Highest bid wins next week.
           </p>
         </section>
-        </div>
-
-
-
       </main>
 
       <SiteFooter />
