@@ -107,16 +107,20 @@ export function Billboard({
     </Link>
   );
 
+  const hasAd = !loading && Boolean(billboard?.image_url);
+
   const frame = (
     <div
       className={cn(
-        "billboard-frame aspect-[16/9] w-full overflow-hidden border bg-background",
+        "aspect-[16/9] w-full overflow-hidden bg-background",
+        hasAd ? "border-0" : "billboard-frame border",
         isFs && "aspect-auto h-full max-h-none w-full max-w-none border-0 bg-black",
       )}
     >
       {inner}
     </div>
   );
+
 
   const linked =
     billboard?.click_url && !loading && !isFs ? (
