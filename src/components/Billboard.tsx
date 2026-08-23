@@ -110,7 +110,7 @@ export function Billboard({
   const frame = (
     <div
       className={cn(
-        "aspect-[16/9] w-full overflow-hidden border border-foreground bg-background",
+        "billboard-frame aspect-[16/9] w-full overflow-hidden border bg-background",
         isFs && "aspect-auto h-full max-h-none w-full max-w-none border-0 bg-black",
       )}
     >
