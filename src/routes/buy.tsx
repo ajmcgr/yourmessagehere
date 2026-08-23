@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { BrandIcon } from "@/components/BrandIcon";
 import { Billboard } from "@/components/Billboard";
 import { Countdown } from "@/components/Countdown";
+import { showShareBidToast } from "@/components/ShareBidToast";
 import { useAuction } from "@/hooks/useAuction";
 import { useSiteDescriptions } from "@/hooks/useSiteDescriptions";
 import {
@@ -105,6 +106,7 @@ function Buy() {
       .then(async () => {
         toast.success("Bid verified. You're the highest bidder.");
         await reload();
+        showShareBidToast("");
       })
       .catch((err) => {
         toast.error(
