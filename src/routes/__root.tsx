@@ -117,6 +117,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         "data-key": "QVNvLRaKWXxjFXw7y8Fw3A",
         async: true,
       },
+      {
+        src: "https://cloud.umami.is/script.js",
+        "data-website-id": "3d48f038-4dcd-4817-ad60-7a7ad98b47f1",
+        defer: true,
+      },
     ],
   }),
   shellComponent: RootShell,
