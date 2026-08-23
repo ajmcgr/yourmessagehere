@@ -105,6 +105,7 @@ function Buy() {
       .then(async () => {
         toast.success("Bid verified. You're the highest bidder.");
         await reload();
+        showShareBidToast("");
       })
       .catch((err) => {
         toast.error(
