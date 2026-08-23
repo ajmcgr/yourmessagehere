@@ -26,8 +26,12 @@ export const Route = createFileRoute("/")({
           "One billboard. One winner a week. Bidding closes every Friday at 10:00 PM New York time.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://yourmessagehere.co/" },
+      { property: "og:image", content: "https://yourmessagehere.co/og.jpg" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://yourmessagehere.co/og.jpg" },
     ],
+    links: [{ rel: "canonical", href: "https://yourmessagehere.co/" }],
   }),
   component: Index,
 });
