@@ -398,9 +398,8 @@ function Buy() {
         <section id="place-bid" className="mt-16 scroll-mt-24">
           <h1 className="text-2xl font-medium tracking-tight">Place a bid</h1>
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
-            No account. You won't be charged now — you'll verify a card on Stripe's secure checkout
-            page so your bid counts. Minimum bid {formatUsd(minBidCents)} (increments of{" "}
-            {formatUsd(incrementCents)}).
+            You won't be charged now. Your payment method is required to verify your bid. If you're
+            the highest bidder when the auction closes, we'll attempt to charge your winning bid.
           </p>
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
             Creative spec: <span className="text-foreground">1600 × 900 px</span> (16:9), JPG or
@@ -475,11 +474,6 @@ function Buy() {
                 </span>
               </label>
 
-              <p className="max-w-xl text-sm leading-relaxed text-muted-foreground">
-                You won't be charged now. Your payment method is required to verify your bid. If
-                you're the highest bidder when the auction closes, we'll attempt to charge your
-                winning bid.
-              </p>
 
               <button
                 type="submit"
