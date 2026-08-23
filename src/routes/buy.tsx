@@ -287,9 +287,8 @@ function Buy() {
                 </tbody>
               </table>
             </div>
-
-            </div>
           </section>
+
         )}
 
         {!loading && bids.length > 0 && (
