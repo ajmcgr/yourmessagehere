@@ -304,3 +304,14 @@ html {
   color: oklch(1 0 0 / 0.9);
   filter: drop-shadow(0 0 2px oklch(0 0 0 / 0.6));
 }
+
+/* Billboard frame border: visible in light mode, invisible on dark backgrounds */
+:root { --billboard-border: var(--foreground); }
+.dark { --billboard-border: transparent; }
+@media (prefers-color-scheme: dark) {
+  :root:not(.light):not(.dark) { --billboard-border: transparent; }
+}
+
+@utility billboard-frame {
+  border-color: var(--billboard-border);
+}
