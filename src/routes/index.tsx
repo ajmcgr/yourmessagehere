@@ -99,15 +99,6 @@ function Index() {
               </div>
 
               <div className="flex items-center justify-between gap-4 md:contents">
-                <a
-                  href="https://cloud.umami.is/share/81qD5QRhMHc3UUN0"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-muted-foreground underline underline-offset-4 transition-colors hover:text-foreground md:order-4"
-                >
-                  Traffic ↗
-                </a>
-
                 <Link
                   to="/buy"
                   className="font-semibold text-foreground underline underline-offset-4 md:order-1"
@@ -122,6 +113,16 @@ function Index() {
         <section className="mt-4 text-center md:mt-5">
           <p className="mx-auto text-sm leading-relaxed text-balance text-muted-foreground sm:whitespace-nowrap">
             One brand owns this billboard each week. Changes Fridays at 10 PM New York time.
+          </p>
+          <p className="mt-2 text-sm">
+            <a
+              href="https://cloud.umami.is/share/81qD5QRhMHc3UUN0"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-muted-foreground underline underline-offset-4 transition-colors hover:text-foreground"
+            >
+              Traffic ↗
+            </a>
           </p>
         </section>
       </main>
