@@ -4,10 +4,13 @@ import { Menu, X } from "lucide-react";
 import logo from "@/assets/logo.png.asset.json";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
-export function SiteNav({ ctaActive = false }: { ctaActive?: boolean } = {}) {
+export function SiteNav({
+  ctaActive = false,
+  ctaLoading = false,
+}: { ctaActive?: boolean; ctaLoading?: boolean } = {}) {
   return (
     <>
-    <FloatingBuyCta active={ctaActive} />
+    <FloatingBuyCta active={ctaActive} loading={ctaLoading} />
     <header className="grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-6 pt-3 pb-6 md:px-10">
       <Link to="/" className="inline-flex w-fit min-w-0 justify-self-start transition-opacity hover:opacity-60">
         <img src={logo.url} alt="Your Message Here" className="h-12 w-auto md:h-16 auto-invert" />
@@ -86,15 +89,22 @@ function SiteMenu() {
   );
 }
 
-export function FloatingBuyCta({ active = false }: { active?: boolean } = {}) {
+export function FloatingBuyCta({
+  active = false,
+  loading = false,
+}: { active?: boolean; loading?: boolean } = {}) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   if (pathname.startsWith("/buy")) return null;
   return (
     <Link
       to="/buy"
-      className="btn-cta fixed right-4 bottom-4 z-50 shadow-lg md:right-8 md:bottom-8"
+      aria-hidden={loading ? true : undefined}
+      tabIndex={loading ? -1 : undefined}
+      className={`btn-cta fixed right-4 bottom-4 z-50 shadow-lg md:right-8 md:bottom-8${
+        loading ? " invisible" : ""
+      }`}
     >
-      <span className="sm:hidden">{active ? "Buy" : "Buy"}</span>
+      <span className="sm:hidden">Buy</span>
       <span className="hidden sm:inline">
         {active ? "Buy next week" : "Buy the billboard"}
       </span>{" "}
