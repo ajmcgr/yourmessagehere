@@ -9,7 +9,7 @@ export function SiteNav({ ctaActive = false }: { ctaActive?: boolean } = {}) {
     <>
     <FloatingBuyCta active={ctaActive} />
     <header className="grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-6 pt-3 pb-6 md:px-10">
-      <Link to="/" className="min-w-0 transition-opacity hover:opacity-60">
+      <Link to="/" className="inline-flex w-fit min-w-0 justify-self-start transition-opacity hover:opacity-60">
         <img src={logo.url} alt="Your Message Here" className="h-12 w-auto md:h-16 auto-invert" />
       </Link>
       <div className="flex shrink-0 items-center gap-2 md:gap-3">
