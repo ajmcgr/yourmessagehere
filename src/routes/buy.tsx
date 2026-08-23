@@ -370,7 +370,8 @@ function Buy() {
           </p>
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
             Creative spec: <span className="text-foreground">1600 × 900 px</span> (16:9), JPG or
-            PNG, under 2 MB. 2× retina file: 3200 × 1800 px.
+            PNG, under 2 MB. 2× retina file: 3200 × 1800 px. If you win, we'll email you a form to
+            upload your creative.
           </p>
 
 
