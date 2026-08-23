@@ -77,13 +77,17 @@ function Index() {
         <section className="mt-6 text-sm md:mt-8">
 
           {loading ? (
-            <div className="flex flex-wrap items-center justify-between gap-2.5 md:justify-center md:gap-x-7">
-              <Skeleton className="h-5 w-40" />
-              <Skeleton className="h-5 w-28" />
-              <Skeleton className="h-5 w-36" />
-              <Skeleton className="h-5 w-36" />
+            <div className="flex flex-col gap-2.5 md:flex-row md:flex-wrap md:items-center md:justify-center md:gap-x-7 md:gap-y-3">
+              <div className="flex items-center justify-between gap-4 md:contents">
+                <Skeleton className="h-5 w-44 md:order-2" />
+                <Skeleton className="h-5 w-28 md:order-3" />
+              </div>
+              <div className="flex items-center justify-between gap-4 md:contents">
+                <Skeleton className="h-5 w-52 md:order-1" />
+              </div>
             </div>
           ) : (
+
             <div className="flex flex-col gap-2.5 md:flex-row md:flex-wrap md:items-center md:justify-center md:gap-x-7 md:gap-y-3">
               <div className="flex items-center justify-between gap-4 md:contents">
                 <span className="font-semibold text-foreground md:order-2">
