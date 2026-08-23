@@ -119,7 +119,7 @@ function Index() {
         </section>
 
         <section className="mt-4 text-center md:mt-5">
-          <p className="mx-auto max-w-md text-sm leading-relaxed text-muted-foreground">
+          <p className="mx-auto text-sm leading-relaxed text-balance text-muted-foreground sm:whitespace-nowrap">
             One brand owns this billboard each week. Highest bid wins next week.
           </p>
         </section>
