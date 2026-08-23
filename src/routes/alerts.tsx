@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { SiteFooter, SiteLinks, SiteNav } from "@/components/SiteNav";
+import { SiteFooter, SiteNav } from "@/components/SiteNav";
 import { subscribeToAlerts } from "@/lib/ymh";
 
 export const Route = createFileRoute("/alerts")({
@@ -105,7 +105,6 @@ function Alerts() {
           One email a week, nothing else. Unsubscribe any time.
         </p>
 
-        <SiteLinks className="mt-16" />
         <SiteFooter />
       </main>
     </div>

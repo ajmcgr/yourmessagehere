@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { SiteFooter, SiteLinks, SiteNav } from "@/components/SiteNav";
+import { SiteFooter, SiteNav } from "@/components/SiteNav";
 import { Skeleton } from "@/components/ui/skeleton";
 import { fetchArchivedWeeks, formatUsd, type ArchivedWeek } from "@/lib/ymh";
 
@@ -155,7 +155,6 @@ function Archive() {
       </main>
 
       <div className="mx-auto max-w-5xl px-6 pb-16">
-        <SiteLinks />
       </div>
 
       <SiteFooter />

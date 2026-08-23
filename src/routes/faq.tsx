@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { SiteFooter, SiteLinks, SiteNav } from "@/components/SiteNav";
+import { SiteFooter, SiteNav } from "@/components/SiteNav";
 
 export const Route = createFileRoute("/faq")({
   head: () => ({
@@ -256,7 +256,6 @@ function Faq() {
       </main>
 
       <div className="mx-auto max-w-5xl px-6 pb-16">
-        <SiteLinks />
       </div>
 
       <SiteFooter />

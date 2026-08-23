@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { SiteFooter, SiteLinks, SiteNav } from "@/components/SiteNav";
+import { SiteFooter, SiteNav } from "@/components/SiteNav";
 import { functionsUrl } from "@/lib/supabase";
 
 export const Route = createFileRoute("/unsubscribe")({
@@ -60,7 +60,6 @@ function Unsubscribe() {
               ? "This unsubscribe link is incomplete or expired. Reply to any of our emails and we'll remove you."
               : "Removing you from the weekly reminder."}
         </p>
-        <SiteLinks className="mt-12" />
         <SiteFooter />
       </main>
     </div>

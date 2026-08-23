@@ -15,7 +15,7 @@ import {
 } from "@/lib/ymh";
 
 import { isSupabaseConfigured } from "@/lib/supabase";
-import { SiteFooter, SiteLinks, SiteNav } from "@/components/SiteNav";
+import { SiteFooter, SiteNav } from "@/components/SiteNav";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const PAGE_SIZE = 50;
@@ -459,7 +459,6 @@ function Buy() {
 
 
       <div className="mx-auto max-w-5xl px-6 pb-16">
-        <SiteLinks />
       </div>
 
       <SiteFooter />

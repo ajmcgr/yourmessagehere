@@ -4,7 +4,7 @@ import { Billboard } from "@/components/Billboard";
 import { Countdown } from "@/components/Countdown";
 import { useAuction } from "@/hooks/useAuction";
 import { formatUsd, recordPageView } from "@/lib/ymh";
-import { SiteFooter, SiteLinks, SiteNav } from "@/components/SiteNav";
+import { SiteFooter, SiteNav } from "@/components/SiteNav";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 
@@ -127,7 +127,6 @@ function Index() {
         </div>
 
 
-        <SiteLinks className="mt-16 md:mt-[18vh]" />
 
       </main>
 

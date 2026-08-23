@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { SiteFooter, SiteLinks, SiteNav } from "@/components/SiteNav";
+import { SiteFooter, SiteNav } from "@/components/SiteNav";
 import portrait from "@/assets/alex.png.asset.json";
 
 export const Route = createFileRoute("/about")({
@@ -84,7 +84,6 @@ function About() {
 
 
       <div className="mx-auto max-w-5xl px-6 pb-16">
-        <SiteLinks />
       </div>
 
       <SiteFooter />
