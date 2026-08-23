@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { BrandIcon } from "@/components/BrandIcon";
 import { Billboard } from "@/components/Billboard";
 import { Countdown } from "@/components/Countdown";
+import { showShareBidToast } from "@/components/ShareBidToast";
 import { useAuction } from "@/hooks/useAuction";
 import { useSiteDescriptions } from "@/hooks/useSiteDescriptions";
 import {
