@@ -108,12 +108,13 @@ export function Billboard({
   );
 
   const hasAd = !loading && Boolean(billboard?.image_url);
+  const showFrame = !loading && !hasAd;
 
   const frame = (
     <div
       className={cn(
         "aspect-[16/9] w-full overflow-hidden bg-background",
-        hasAd ? "border-0" : "billboard-frame border",
+        showFrame ? "billboard-frame border" : "border-0",
         isFs && "aspect-auto h-full max-h-none w-full max-w-none border-0 bg-black",
       )}
     >
