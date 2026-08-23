@@ -105,7 +105,7 @@ function Index() {
                   rel="noopener noreferrer"
                   className="text-muted-foreground underline underline-offset-4 transition-colors hover:text-foreground md:order-4"
                 >
-                  Live analytics ↗
+                  Traffic ↗
                 </a>
 
                 <Link
