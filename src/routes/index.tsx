@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Billboard } from "@/components/Billboard";
 import { Countdown } from "@/components/Countdown";
 import { useAuction } from "@/hooks/useAuction";
@@ -38,11 +38,10 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const { billboard, currentBidCents, startingBidCents, endsAt, loading } = useAuction();
-  const [views, setViews] = useState<number | null>(null);
   const hasActiveAdvertiser = !loading && billboard?.status === "approved";
 
   useEffect(() => {
-    void recordPageView().then(setViews);
+    void recordPageView();
   }, []);
 
   useEffect(() => {
@@ -100,16 +99,14 @@ function Index() {
               </div>
 
               <div className="flex items-center justify-between gap-4 md:contents">
-                <span className="text-muted-foreground md:order-4">
-                  <span className="font-semibold text-foreground">Page views</span>{" "}
-                  {views === null ? (
-                    <Skeleton className="inline-block h-3 w-12 align-middle" />
-                  ) : (
-                    <span className="tabular-nums font-medium text-foreground">
-                      {views.toLocaleString("en-US")}
-                    </span>
-                  )}
-                </span>
+                <a
+                  href="https://cloud.umami.is/share/81qD5QRhMHc3UUN0"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-muted-foreground underline underline-offset-4 transition-colors hover:text-foreground md:order-4"
+                >
+                  Live analytics ↗
+                </a>
 
                 <Link
                   to="/buy"
