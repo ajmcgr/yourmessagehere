@@ -222,9 +222,10 @@ function Buy() {
             <div>
               <dt className="text-xs uppercase tracking-widest text-muted-foreground">Page views</dt>
               {views === null ? (
-                <dd className="mt-2">
-                  <Skeleton className="h-10 w-32 md:h-14" />
+                <dd>
+                  <Skeleton className="h-9 w-32 md:h-15" />
                 </dd>
+
               ) : (
                 <dd className="text-4xl font-medium tracking-tight tabular-nums md:text-6xl">
                   {views.toLocaleString("en-US")}
