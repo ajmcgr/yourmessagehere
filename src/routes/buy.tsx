@@ -220,18 +220,18 @@ function Buy() {
             </div>
 
             <div>
-              <dt className="text-xs uppercase tracking-widest text-muted-foreground">Page views</dt>
-              {views === null ? (
-                <dd>
-                  <Skeleton className="h-9 w-32 md:h-15" />
-                </dd>
-
-              ) : (
-                <dd className="text-4xl font-medium tracking-tight tabular-nums md:text-6xl">
-                  {views.toLocaleString("en-US")}
-                </dd>
-              )}
-              <dd className="mt-2 text-sm text-muted-foreground">page views since launch</dd>
+              <dt className="text-xs uppercase tracking-widest text-muted-foreground">Traffic</dt>
+              <dd className="text-4xl font-medium tracking-tight md:text-6xl">
+                <a
+                  href="https://cloud.umami.is/share/81qD5QRhMHc3UUN0"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline-offset-4 hover:underline"
+                >
+                  Traffic ↗
+                </a>
+              </dd>
+              <dd className="mt-2 text-sm text-muted-foreground">live analytics, public dashboard</dd>
             </div>
 
 
