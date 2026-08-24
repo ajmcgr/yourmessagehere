@@ -10,7 +10,6 @@ import { useSiteDescriptions } from "@/hooks/useSiteDescriptions";
 import {
   confirmBid,
   formatUsd,
-  recordPageView,
   startBid,
   weekEndingLabel,
 } from "@/lib/ymh";
@@ -58,7 +57,6 @@ function Buy() {
     reload,
   } = useAuction();
   const descriptions = useSiteDescriptions(bids.map((b) => b.website));
-  const [views, setViews] = useState<number | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [page, setPage] = useState(0);
 
@@ -69,10 +67,6 @@ function Buy() {
   useEffect(() => {
     if (page !== safePage) setPage(safePage);
   }, [page, safePage]);
-
-  useEffect(() => {
-    void recordPageView().then(setViews);
-  }, []);
 
   const [form, setForm] = useState({
     email: "",
