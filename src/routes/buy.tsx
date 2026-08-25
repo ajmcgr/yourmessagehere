@@ -215,17 +215,16 @@ function Buy() {
 
             <div>
               <dt className="text-xs uppercase tracking-widest text-muted-foreground">Traffic</dt>
-              <dd className="text-4xl font-medium tracking-tight md:text-6xl">
+              <dd className="text-[22px] font-medium tracking-tight md:text-2xl">
                 <a
                   href="https://cloud.umami.is/share/81qD5QRhMHc3UUN0"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="underline-offset-4 hover:underline"
                 >
-                  Traffic ↗
+                  View live traffic ↗
                 </a>
               </dd>
-              <dd className="mt-2 text-sm text-muted-foreground">live analytics, public dashboard</dd>
             </div>
 
 
