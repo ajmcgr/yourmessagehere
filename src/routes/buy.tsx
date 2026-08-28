@@ -15,6 +15,7 @@ import {
 } from "@/lib/ymh";
 
 import { isSupabaseConfigured } from "@/lib/supabase";
+import { getTotalVisitors } from "@/lib/analytics.functions";
 import { SiteFooter, SiteNav } from "@/components/SiteNav";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -59,6 +60,13 @@ function Buy() {
   const descriptions = useSiteDescriptions(bids.map((b) => b.website));
   const [submitting, setSubmitting] = useState(false);
   const [page, setPage] = useState(0);
+  const [visitors, setVisitors] = useState<number | null>(null);
+
+  useEffect(() => {
+    void getTotalVisitors()
+      .then((r) => setVisitors(r.visitors))
+      .catch(() => setVisitors(null));
+  }, []);
 
   const pageCount = Math.max(1, Math.ceil(bids.length / PAGE_SIZE));
   const safePage = Math.min(page, pageCount - 1);
