@@ -39,9 +39,16 @@ export const Route = createFileRoute("/")({
 function Index() {
   const { billboard, currentBidCents, startingBidCents, endsAt, loading } = useAuction();
   const hasActiveAdvertiser = !loading && billboard?.status === "approved";
+  const [visitors, setVisitors] = useState<number | null>(null);
 
   useEffect(() => {
     void recordPageView();
+  }, []);
+
+  useEffect(() => {
+    void getTotalVisitors()
+      .then((r) => setVisitors(r.visitors))
+      .catch(() => setVisitors(null));
   }, []);
 
   useEffect(() => {
