@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { getTotalVisitors } from "@/lib/analytics.functions";
 import { Billboard } from "@/components/Billboard";
 import { Countdown } from "@/components/Countdown";
 import { useAuction } from "@/hooks/useAuction";
@@ -39,9 +40,16 @@ export const Route = createFileRoute("/")({
 function Index() {
   const { billboard, currentBidCents, startingBidCents, endsAt, loading } = useAuction();
   const hasActiveAdvertiser = !loading && billboard?.status === "approved";
+  const [visitors, setVisitors] = useState<number | null>(null);
 
   useEffect(() => {
     void recordPageView();
+  }, []);
+
+  useEffect(() => {
+    void getTotalVisitors()
+      .then((r) => setVisitors(r.visitors))
+      .catch(() => setVisitors(null));
   }, []);
 
   useEffect(() => {
@@ -123,7 +131,7 @@ function Index() {
               rel="noopener noreferrer"
               className="text-muted-foreground underline underline-offset-4 transition-colors hover:text-foreground"
             >
-              Traffic ↗
+              {visitors === null ? "Traffic ↗" : `Total visitors ${visitors.toLocaleString("en-US")} ↗`}
             </a>
           </p>
 
