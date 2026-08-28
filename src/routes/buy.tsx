@@ -214,16 +214,22 @@ function Buy() {
             </div>
 
             <div>
-              <dt className="text-xs uppercase tracking-widest text-muted-foreground">Traffic</dt>
-              <dd className="text-[22px] font-medium tracking-tight md:text-2xl">
-                <a
-                  href="https://cloud.umami.is/share/81qD5QRhMHc3UUN0"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline-offset-4 hover:underline"
-                >
-                  View live traffic ↗
-                </a>
+              <dt className="text-xs uppercase tracking-widest text-muted-foreground">
+                Total visitors
+              </dt>
+              <dd className="text-[22px] font-medium tracking-tight tabular-nums md:text-2xl">
+                {visitors === null ? (
+                  <Skeleton className="h-6 w-28" />
+                ) : (
+                  <a
+                    href="https://cloud.umami.is/share/81qD5QRhMHc3UUN0"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline-offset-4 hover:underline"
+                  >
+                    {visitors.toLocaleString("en-US")} ↗
+                  </a>
+                )}
               </dd>
             </div>
 
