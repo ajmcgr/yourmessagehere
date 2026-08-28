@@ -123,7 +123,7 @@ function Index() {
               rel="noopener noreferrer"
               className="text-muted-foreground underline underline-offset-4 transition-colors hover:text-foreground"
             >
-              Traffic ↗
+              {visitors === null ? "Traffic ↗" : `Total visitors ${visitors.toLocaleString("en-US")} ↗`}
             </a>
           </p>
 
