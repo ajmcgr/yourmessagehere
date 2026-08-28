@@ -15,6 +15,7 @@ import {
 } from "@/lib/ymh";
 
 import { isSupabaseConfigured } from "@/lib/supabase";
+import { getTotalVisitors } from "@/lib/analytics.functions";
 import { SiteFooter, SiteNav } from "@/components/SiteNav";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -59,6 +60,13 @@ function Buy() {
   const descriptions = useSiteDescriptions(bids.map((b) => b.website));
   const [submitting, setSubmitting] = useState(false);
   const [page, setPage] = useState(0);
+  const [visitors, setVisitors] = useState<number | null>(null);
+
+  useEffect(() => {
+    void getTotalVisitors()
+      .then((r) => setVisitors(r.visitors))
+      .catch(() => setVisitors(null));
+  }, []);
 
   const pageCount = Math.max(1, Math.ceil(bids.length / PAGE_SIZE));
   const safePage = Math.min(page, pageCount - 1);
@@ -214,16 +222,22 @@ function Buy() {
             </div>
 
             <div>
-              <dt className="text-xs uppercase tracking-widest text-muted-foreground">Traffic</dt>
-              <dd className="text-[22px] font-medium tracking-tight md:text-2xl">
-                <a
-                  href="https://cloud.umami.is/share/81qD5QRhMHc3UUN0"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline-offset-4 hover:underline"
-                >
-                  View live traffic ↗
-                </a>
+              <dt className="text-xs uppercase tracking-widest text-muted-foreground">
+                Total visitors
+              </dt>
+              <dd className="text-[22px] font-medium tracking-tight tabular-nums md:text-2xl">
+                {visitors === null ? (
+                  <Skeleton className="h-6 w-28" />
+                ) : (
+                  <a
+                    href="https://cloud.umami.is/share/81qD5QRhMHc3UUN0"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline-offset-4 hover:underline"
+                  >
+                    {visitors.toLocaleString("en-US")} ↗
+                  </a>
+                )}
               </dd>
             </div>
 
