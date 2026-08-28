@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { getTotalVisitors } from "@/lib/analytics.functions";
 import { Billboard } from "@/components/Billboard";
 import { Countdown } from "@/components/Countdown";
 import { useAuction } from "@/hooks/useAuction";
