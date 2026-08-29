@@ -148,11 +148,12 @@ Deno.serve(async (req) => {
       .maybeSingle();
 
     if (auction) {
-      const { data: existingBillboard } = await admin
+      const { data: boards } = await admin
         .from("ymh_billboards")
-        .select("id")
+        .select("id, image_url")
         .eq("auction_id", auctionId)
-        .maybeSingle();
+        .limit(1);
+      const existingBillboard = boards?.[0] ?? null;
       if (!existingBillboard) {
         await admin.from("ymh_billboards").insert({
           auction_id: auctionId,
@@ -164,18 +165,19 @@ Deno.serve(async (req) => {
         });
       }
 
-      const { data: sent } = await admin
+      // limit(1), never maybeSingle(): several matching rows made maybeSingle()
+      // error out and read as "never sent", which duplicated the email.
+      const { data: sentRows } = await admin
         .from("ymh_email_events")
         .select("id")
         .eq("bid_id", bidId)
         .eq("template", "payment_received")
         .eq("status", "sent")
-        .not("provider_id", "is", null)
-        .neq("provider_id", "unknown")
-        .neq("provider_id", "")
-        .maybeSingle();
+        .limit(1);
+      const sent = (sentRows?.length ?? 0) > 0 || Boolean(existingBillboard?.["image_url"]);
 
       if (!sent) {
+
         try {
           const providerId = await sendEmail(
             bid.bidder_email,
