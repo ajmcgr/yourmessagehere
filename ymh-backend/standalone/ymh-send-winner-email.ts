@@ -63,11 +63,15 @@ Deno.serve(async (req) => {
   }
 
   let bidId: string | null = null;
+  let force = false;
   try {
-    bidId = (await req.json())?.bid_id ?? null;
+    const body = await req.json();
+    bidId = body?.bid_id ?? null;
+    force = body?.force === true;
   } catch {
     bidId = null;
   }
+
 
   // Default target: the winning bid of the most recently closed auction.
   if (!bidId) {
@@ -96,6 +100,26 @@ Deno.serve(async (req) => {
     .eq("id", bid["auction_id"])
     .maybeSingle();
   if (!auction) return Response.json({ ok: false, error: "Auction not found" }, { status: 404 });
+
+  // Never re-send unless explicitly forced ({"force":true}).
+  if (!force) {
+    const { data: sentRows } = await admin
+      .from("ymh_email_events")
+      .select("id")
+      .eq("bid_id", bid["id"])
+      .eq("template", "payment_received")
+      .eq("status", "sent")
+      .limit(1);
+    const { data: boards } = await admin
+      .from("ymh_billboards")
+      .select("image_url")
+      .eq("auction_id", bid["auction_id"])
+      .limit(1);
+    if ((sentRows?.length ?? 0) > 0 || boards?.[0]?.["image_url"]) {
+      return Response.json({ ok: true, skipped: "already_sent" });
+    }
+  }
+
 
   const key = Deno.env.get("RESEND_API_KEY");
   if (!key) return Response.json({ ok: false, error: "RESEND_API_KEY is not configured" }, { status: 500 });

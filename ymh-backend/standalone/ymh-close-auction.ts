@@ -127,11 +127,12 @@ async function fulfilWinner(auctionId: string, bidId: string): Promise<"sent" | 
     .maybeSingle();
   if (!auction) return "skipped";
 
-  const { data: existingBillboard } = await admin
+  const { data: boards } = await admin
     .from("ymh_billboards")
-    .select("id")
+    .select("id, image_url")
     .eq("auction_id", auctionId)
-    .maybeSingle();
+    .limit(1);
+  const existingBillboard = boards?.[0] ?? null;
   if (!existingBillboard) {
     await admin.from("ymh_billboards").insert({
       auction_id: auctionId,
@@ -141,19 +142,23 @@ async function fulfilWinner(auctionId: string, bidId: string): Promise<"sent" | 
       week_end: auction["week_end"],
       status: "pending",
     });
+  } else if (existingBillboard["image_url"]) {
+    // Creative already uploaded — nothing left to ask them for.
+    return "already_sent";
   }
 
-  const { data: sent } = await admin
+  // Any prior "sent" event stops a resend. Use limit(1), never maybeSingle():
+  // maybeSingle() errors when several rows match, which read as "never sent"
+  // and caused the duplicate-email loop.
+  const { data: sentRows } = await admin
     .from("ymh_email_events")
     .select("id")
     .eq("bid_id", bidId)
     .eq("template", "payment_received")
     .eq("status", "sent")
-    .not("provider_id", "is", null)
-    .neq("provider_id", "unknown")
-    .neq("provider_id", "")
-    .maybeSingle();
-  if (sent) return "already_sent";
+    .limit(1);
+  if (sentRows && sentRows.length > 0) return "already_sent";
+
 
   try {
     const providerId = await sendEmail(
