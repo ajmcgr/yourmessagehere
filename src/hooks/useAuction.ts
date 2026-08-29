@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { settleAuctions } from "@/lib/settle.functions";
+
 import {
   DEFAULT_INCREMENT_CENTS,
   DEFAULT_STARTING_BID_CENTS,
@@ -25,7 +27,11 @@ export function useAuction() {
     setBids(b);
     setBillboard(bb);
     setLoading(false);
+    // Safety net: settle any auction that has already closed (charge the
+    // winner, send the upload email). Throttled + idempotent server-side.
+    void settleAuctions().catch(() => {});
   };
+
 
   useEffect(() => {
     void load();
