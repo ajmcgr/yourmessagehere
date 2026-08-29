@@ -31,6 +31,8 @@ type WinnerBid = {
   advertiser: string;
 };
 
+let lastEmailError: string | null = null;
+
 /** Idempotently mark a winner paid, create the billboard row, and email the
  *  "upload your creative" link. Safe to run repeatedly; the Stripe webhook does
  *  the same work and neither path duplicates the email. */
@@ -110,6 +112,7 @@ async function fulfilWinner(auctionId: string, bidId: string): Promise<"sent" | 
     return "sent";
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown email delivery error";
+    lastEmailError = `bid ${bidId}: ${message}`;
     console.error(`[ymh-close-auction] Winner email failed for bid ${bidId}: ${message}`);
     await admin.from("ymh_email_events").insert({
       auction_id: auctionId,
@@ -165,7 +168,9 @@ async function settleCheckoutUrl(bid: WinnerBid, weekEnd: string): Promise<strin
 }
 
 /** Charge one provisional winner. Returns true when the charge succeeded. */
-async function chargeWinner(auction: Record<string, string>, bidId: string) {
+type ChargeResult = { charged: boolean; email?: "sent" | "already_sent" | "failed" | "skipped" };
+
+async function chargeWinner(auction: Record<string, string>, bidId: string): Promise<ChargeResult> {
   // The amount is always read from the database, never from any client input.
   const { data } = await admin
     .from("ymh_bids")
@@ -175,7 +180,7 @@ async function chargeWinner(auction: Record<string, string>, bidId: string) {
     .eq("id", bidId)
     .maybeSingle();
   const bid = data as WinnerBid | null;
-  if (!bid) return false;
+  if (!bid) return { charged: false };
 
   if (!bid.stripe_customer_id || !bid.stripe_payment_method_id) {
     await admin
@@ -186,7 +191,7 @@ async function chargeWinner(auction: Record<string, string>, bidId: string) {
         payment_failure_reason: "No verified payment method on file",
       })
       .eq("id", bid.id);
-    return false;
+    return { charged: false };
   }
 
   try {
@@ -213,8 +218,8 @@ async function chargeWinner(auction: Record<string, string>, bidId: string) {
 
     if (intent.status === "succeeded") {
       // The webhook does the same work; both paths are idempotent.
-      await fulfilWinner(bid.auction_id, bid.id);
-      return true;
+      const email = await fulfilWinner(bid.auction_id, bid.id);
+      return { charged: true, email };
     }
 
     await admin
@@ -236,7 +241,7 @@ async function chargeWinner(auction: Record<string, string>, bidId: string) {
         cta: { label: "Settle payment", url: authUrl },
       }),
     );
-    return false;
+    return { charged: false };
   } catch (e) {
     const message = e instanceof Error ? e.message : "Card declined";
     await admin
@@ -258,11 +263,12 @@ async function chargeWinner(auction: Record<string, string>, bidId: string) {
         cta: { label: "Pay with another card", url: settleUrl },
       }),
     );
-    return false;
+    return { charged: false };
   }
 }
 
 Deno.serve(async (req) => {
+  lastEmailError = null;
   if (req.headers.get("x-ymh-cron-secret") !== Deno.env.get("YMH_CRON_SECRET")) {
     return new Response("Unauthorized", { status: 401 });
   }
@@ -273,9 +279,15 @@ Deno.serve(async (req) => {
   let charged = 0;
   let emailsSent = 0;
   let emailFailures = 0;
+
+  const applyCharge = (result: ChargeResult) => {
+    if (result.charged) charged++;
+    if (result.email === "sent") emailsSent++;
+    if (result.email === "failed") emailFailures++;
+  };
   for (const auction of (closed ?? []) as Array<Record<string, string>>) {
     if (!auction["winning_bid_id"]) continue;
-    if (await chargeWinner(auction, auction["winning_bid_id"]!)) charged++;
+    applyCharge(await chargeWinner(auction, auction["winning_bid_id"]!));
   }
 
   // Auctions closed by the website's own rollover (a visitor arriving after the
@@ -294,7 +306,7 @@ Deno.serve(async (req) => {
       .maybeSingle();
     if (!bid || bid["stripe_payment_intent_id"]) continue;
     if (bid["status"] !== "provisional_winner") continue;
-    if (await chargeWinner(auction, auction["winning_bid_id"]!)) charged++;
+    applyCharge(await chargeWinner(auction, auction["winning_bid_id"]!));
   }
 
   // Winners who never completed a required authentication: pass the billboard on.
@@ -318,7 +330,7 @@ Deno.serve(async (req) => {
     });
     if (next?.id) {
       promoted++;
-      await chargeWinner(auction, next.id);
+      applyCharge(await chargeWinner(auction, next.id));
     }
   }
 
@@ -336,9 +348,14 @@ Deno.serve(async (req) => {
       .select("id, status, stripe_payment_intent_id")
       .eq("id", auction["winning_bid_id"]!)
       .maybeSingle();
-    if (!bid || !bid["stripe_payment_intent_id"]) continue;
-    const intent = await stripe.paymentIntents.retrieve(bid["stripe_payment_intent_id"]!);
-    if (intent.status !== "succeeded") continue;
+    if (!bid) continue;
+    if (bid["stripe_payment_intent_id"]) {
+      const intent = await stripe.paymentIntents.retrieve(bid["stripe_payment_intent_id"]!);
+      if (intent.status !== "succeeded") continue;
+    } else if (bid["status"] !== "winner_paid") {
+      // Not charged yet and not settled by hand — nothing to confirm.
+      continue;
+    }
     const emailResult = await fulfilWinner(auction["id"]!, bid["id"]!);
     if (emailResult === "sent") emailsSent++;
     if (emailResult === "failed") emailFailures++;
@@ -350,6 +367,7 @@ Deno.serve(async (req) => {
     promoted,
     winner_emails_sent: emailsSent,
     winner_email_failures: emailFailures,
+    last_email_error: lastEmailError,
   };
   console.log(`[ymh-close-auction] ${JSON.stringify(summary)}`);
 
