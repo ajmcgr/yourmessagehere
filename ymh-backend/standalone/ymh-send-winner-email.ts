@@ -63,11 +63,15 @@ Deno.serve(async (req) => {
   }
 
   let bidId: string | null = null;
+  let force = false;
   try {
-    bidId = (await req.json())?.bid_id ?? null;
+    const body = await req.json();
+    bidId = body?.bid_id ?? null;
+    force = body?.force === true;
   } catch {
     bidId = null;
   }
+
 
   // Default target: the winning bid of the most recently closed auction.
   if (!bidId) {
